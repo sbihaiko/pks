@@ -117,12 +117,7 @@ fn run_hook_post_commit(path: &Path, sha: &str, branch: &str) -> i32 {
 }
 
 fn run_refresh(dry_run: bool) -> i32 {
-    if dry_run {
-        println!("pks refresh --dry-run: (not yet implemented)");
-    } else {
-        println!("pks refresh: (not yet implemented)");
-    }
-    0
+    crate::commands::refresh::RefreshCommand::run(dry_run)
 }
 
 #[cfg(test)]

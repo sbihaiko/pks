@@ -10,6 +10,7 @@ pub enum CliCommand {
     HookPostCommit { path: PathBuf, sha: String, branch: String },
     Status { port: u16 },
     Validate { path: PathBuf },
+    Refresh { dry_run: bool },
     Unknown(Vec<String>),
 }
 
@@ -39,6 +40,10 @@ pub fn parse_args(args: &[String]) -> CliCommand {
             let path = args.get(2).map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
             CliCommand::Validate { path }
         }
+        Some("refresh") => {
+            let dry_run = args.iter().any(|a| a == "--dry-run");
+            CliCommand::Refresh { dry_run }
+        }
         _ => CliCommand::Unknown(args.to_vec()),
     }
 }
@@ -50,9 +55,10 @@ pub async fn run_command(cmd: CliCommand) -> i32 {
         CliCommand::HookPostCommit { path, sha, branch } => run_hook_post_commit(&path, &sha, &branch),
         CliCommand::Status { port } => status::run_status(port).await,
         CliCommand::Validate { path } => validate::run_validate(&path),
+        CliCommand::Refresh { dry_run } => run_refresh(dry_run),
         CliCommand::Unknown(args) => {
             eprintln!("pks: unknown command. Args: {:?}", &args[1..]);
-            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate> [path]");
+            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh> [path]");
             1
         }
     }
@@ -110,73 +116,14 @@ fn run_hook_post_commit(path: &Path, sha: &str, branch: &str) -> i32 {
     0
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn args(s: &[&str]) -> Vec<String> {
-        s.iter().map(|&a| a.to_string()).collect()
+fn run_refresh(dry_run: bool) -> i32 {
+    if dry_run {
+        println!("pks refresh --dry-run: (not yet implemented)");
+    } else {
+        println!("pks refresh: (not yet implemented)");
     }
-
-    #[test]
-    fn parse_init_command() {
-        let cmd = parse_args(&args(&["pks", "init", "/tmp/repo"]));
-        assert!(matches!(cmd, CliCommand::Init { .. }));
-    }
-
-    #[test]
-    fn parse_doctor_command() {
-        let cmd = parse_args(&args(&["pks", "doctor", "/tmp/repo"]));
-        assert!(matches!(cmd, CliCommand::Doctor { .. }));
-    }
-
-    #[test]
-    fn parse_hook_post_commit() {
-        let cmd = parse_args(&args(&["pks", "hook-post-commit", "/tmp/repo", "abc123", "main"]));
-        let CliCommand::HookPostCommit { sha, branch, .. } = cmd else {
-            panic!("wrong command parsed");
-        };
-        assert_eq!(sha, "abc123");
-        assert_eq!(branch, "main");
-    }
-
-    #[test]
-    fn parse_unknown_returns_unknown_variant() {
-        let cmd = parse_args(&args(&["pks", "foobar"]));
-        assert!(matches!(cmd, CliCommand::Unknown(_)));
-    }
-
-    #[tokio::test]
-    async fn run_unknown_returns_exit_code_1() {
-        let cmd = CliCommand::Unknown(args(&["pks", "foobar"]));
-        assert_eq!(run_command(cmd).await, 1);
-    }
-
-    #[test]
-    fn parse_status_uses_default_port_3030() {
-        let cmd = parse_args(&args(&["pks", "status"]));
-        let CliCommand::Status { port } = cmd else { panic!("wrong variant"); };
-        assert_eq!(port, 3030);
-    }
-
-    #[test]
-    fn parse_status_accepts_custom_port() {
-        let cmd = parse_args(&args(&["pks", "status", "8080"]));
-        let CliCommand::Status { port } = cmd else { panic!("wrong variant"); };
-        assert_eq!(port, 8080);
-    }
-
-    #[test]
-    fn parse_validate_uses_current_dir_as_default() {
-        let cmd = parse_args(&args(&["pks", "validate"]));
-        let CliCommand::Validate { path } = cmd else { panic!("wrong variant"); };
-        assert_eq!(path, std::path::PathBuf::from("."));
-    }
-
-    #[test]
-    fn parse_validate_accepts_explicit_path() {
-        let cmd = parse_args(&args(&["pks", "validate", "/tmp/vault"]));
-        let CliCommand::Validate { path } = cmd else { panic!("wrong variant"); };
-        assert_eq!(path, std::path::PathBuf::from("/tmp/vault"));
-    }
+    0
 }
+
+#[cfg(test)]
+mod tests;

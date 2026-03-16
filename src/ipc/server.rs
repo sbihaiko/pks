@@ -73,8 +73,30 @@ impl IpcServer {
             }
             PksCommand::Search { query, top_n, .. } => self.dispatch_search(&query, top_n),
             PksCommand::Refresh { dry_run } => self.dispatch_refresh(dry_run),
-            PksCommand::RecordToolEvent { .. } => {
-                // Shadow journaling deferred to M12 — acknowledge without processing
+            PksCommand::RecordToolEvent {
+                session_id,
+                tool_name,
+                input_summary,
+                outcome,
+                file_paths,
+                decision_note,
+            } => {
+                use crate::git::BareCommit;
+                use crate::hooks::journal_entry::ToolEvent;
+                use crate::hooks::ShadowJournalHook;
+                let repo_path = crate::repo_watcher::RepoWatcher::vaults_dir_from_env();
+                let mut hook = ShadowJournalHook::new(repo_path.clone(), session_id);
+                hook.record_tool_event(ToolEvent {
+                    tool_name,
+                    input_summary,
+                    outcome,
+                    file_paths,
+                    decision_note,
+                });
+                let bc = BareCommit::new(repo_path);
+                if let Err(e) = hook.flush_to_vault(&bc) {
+                    tracing::warn!("shadow journal flush failed: {e}");
+                }
                 PksResponse::EventRecorded
             }
         }

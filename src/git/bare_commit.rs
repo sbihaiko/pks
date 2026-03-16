@@ -35,7 +35,7 @@ impl BareCommit {
         let branch_ref = repo.find_branch(PKS_BRANCH, git2::BranchType::Local)?;
         let parent_commit = branch_ref.get().peel_to_commit()?;
         let parent_tree = parent_commit.tree()?;
-        let new_tree_oid = build_tree_with_file(&repo, &parent_tree, file_path, blob_oid)?;
+        let new_tree_oid = build_tree_with_file(&repo, Some(&parent_tree), file_path, blob_oid)?;
         let new_tree = repo.find_tree(new_tree_oid)?;
         let sig = bot_sig(&repo);
         repo.commit(
@@ -72,21 +72,35 @@ fn bot_sig(repo: &Repository) -> Signature<'static> {
         .unwrap_or_else(|_| Signature::now("pks-bot", "pks@localhost").unwrap())
 }
 
-/// Inserts `file_path` with `blob_oid` into a new tree based on `parent_tree`.
-/// Flat file paths only (no sub-directories) in this implementation.
+/// Inserts `file_path` (possibly nested, e.g. `dir/sub/file.md`) with `blob_oid`
+/// into a new tree based on `parent_tree`. Handles arbitrary depth recursively.
 fn build_tree_with_file(
     repo: &Repository,
-    parent_tree: &git2::Tree,
+    parent_tree: Option<&git2::Tree>,
     file_path: &str,
     blob_oid: git2::Oid,
 ) -> Result<git2::Oid, git2::Error> {
-    let mut builder = repo.treebuilder(Some(parent_tree))?;
-    let filename = std::path::Path::new(file_path)
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or(file_path);
-    builder.insert(filename, blob_oid, 0o100644)?;
-    builder.write()
+    match file_path.split_once('/') {
+        None => {
+            let mut builder = repo.treebuilder(parent_tree)?;
+            builder.insert(file_path, blob_oid, 0o100644)?;
+            builder.write()
+        }
+        Some((dir_name, rest)) => {
+            let existing_subtree = parent_tree
+                .and_then(|t| t.get_name(dir_name))
+                .and_then(|e| repo.find_tree(e.id()).ok());
+            let new_subtree_oid = build_tree_with_file(
+                repo,
+                existing_subtree.as_ref(),
+                rest,
+                blob_oid,
+            )?;
+            let mut builder = repo.treebuilder(parent_tree)?;
+            builder.insert(dir_name, new_subtree_oid, 0o040000)?;
+            builder.write()
+        }
+    }
 }
 
 #[cfg(test)]

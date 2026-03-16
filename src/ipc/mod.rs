@@ -28,6 +28,9 @@ pub enum PksCommand {
         session_id: String,
         tool_name: String,
         input_summary: String,
+        outcome: String,
+        file_paths: Vec<String>,
+        decision_note: Option<String>,
     },
 }
 

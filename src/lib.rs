@@ -29,3 +29,4 @@ pub mod git_lfs_sync;
 pub mod storage_policy;
 pub mod tracker;
 pub mod ipc;
+pub mod commands;

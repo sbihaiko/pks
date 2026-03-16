@@ -1,4 +1,3 @@
-use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 use std::env;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc;
@@ -41,60 +40,6 @@ impl RepoWatcher {
             .filter(|p| Self::is_git_repo(p))
             .collect()
     }
-
-    pub fn start_watching(self) -> notify::Result<RecommendedWatcher> {
-        let sender = self.sender.clone();
-        let vaults_dir = self.vaults_dir.clone();
-
-        let mut watcher = notify::recommended_watcher(move |result: notify::Result<Event>| {
-            let Ok(event) = result else {
-                return;
-            };
-            handle_event(&event, &sender, &vaults_dir);
-        })?;
-
-        watcher.watch(&self.vaults_dir, RecursiveMode::NonRecursive)?;
-        Ok(watcher)
-    }
-}
-
-fn handle_event(event: &Event, sender: &mpsc::Sender<RepoEvent>, vaults_dir: &Path) {
-    match event.kind {
-        EventKind::Create(_) => {
-            for path in &event.paths {
-                let candidate = resolve_candidate(path, vaults_dir);
-                let Some(candidate) = candidate else {
-                    continue;
-                };
-                if !RepoWatcher::is_git_repo(&candidate) {
-                    continue;
-                }
-                let _ = sender.send(RepoEvent::Registered(candidate));
-            }
-        }
-        EventKind::Remove(_) => {
-            for path in &event.paths {
-                let candidate = resolve_candidate(path, vaults_dir);
-                let Some(candidate) = candidate else {
-                    continue;
-                };
-                let _ = sender.send(RepoEvent::Purged(candidate));
-            }
-        }
-        _ => {}
-    }
-}
-
-fn resolve_candidate(path: &Path, vaults_dir: &Path) -> Option<PathBuf> {
-    let parent = path.parent()?;
-    if parent == vaults_dir {
-        return Some(path.to_path_buf());
-    }
-    let grandparent = parent.parent()?;
-    if grandparent == vaults_dir {
-        return Some(parent.to_path_buf());
-    }
-    None
 }
 
 #[cfg(test)]

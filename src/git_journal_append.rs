@@ -117,16 +117,52 @@ pub(crate) fn format_log_line(meta: &CommitMeta) -> String {
     format!("- **{}** - `{}` - {}: {}\n", meta.time_hhmm, meta.sha7, meta.author, meta.subject)
 }
 
+#[allow(dead_code)] // used in unit tests
 pub(crate) fn daily_log_path(repo_root: &Path, vault_root: &str, date: &str) -> PathBuf {
     repo_root.join(vault_root).join("90-ai-memory").join(format!("{}_log.md", date))
 }
 
+#[allow(dead_code)] // used in unit tests
 pub(crate) fn append_line_to_file(path: &PathBuf, line: &str) -> Result<(), JournalAppendError> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
     let mut file = OpenOptions::new().create(true).append(true).open(path)?;
     file.write_all(line.as_bytes())?;
+    Ok(())
+}
+
+/// Returns the filename used for the journal entry in the pks-knowledge branch.
+pub(crate) fn branch_log_filename(vault_root: &str, date: &str) -> String {
+    format!("{vault_root}_journal_{date}.md")
+}
+
+/// Reads the current content of a flat file from the pks-knowledge branch, if it exists.
+fn read_log_from_branch(repo_root: &Path, filename: &str) -> Option<String> {
+    use crate::git::bare_commit::PKS_BRANCH;
+    let repo = git2::Repository::open(repo_root).ok()?;
+    let branch = repo.find_branch(PKS_BRANCH, git2::BranchType::Local).ok()?;
+    let commit = branch.get().peel_to_commit().ok()?;
+    let tree = commit.tree().ok()?;
+    let entry = tree.get_name(filename)?;
+    let blob = repo.find_blob(entry.id()).ok()?;
+    std::str::from_utf8(blob.content()).ok().map(|s| s.to_owned())
+}
+
+/// Appends `line` to the daily journal file in the pks-knowledge branch via BareCommit.
+pub(crate) fn append_line_to_branch(
+    repo_root: &Path,
+    vault_root: &str,
+    line: &str,
+    date: &str,
+) -> Result<(), JournalAppendError> {
+    use crate::git::BareCommit;
+    let filename = branch_log_filename(vault_root, date);
+    let bc = BareCommit::new(repo_root);
+    bc.ensure_branch()?;
+    let existing = read_log_from_branch(repo_root, &filename).unwrap_or_default();
+    let new_content = format!("{existing}{line}");
+    bc.write_file(&filename, new_content.as_bytes(), &format!("pks(journal): append commit to {date}"))?;
     Ok(())
 }
 
@@ -154,8 +190,7 @@ pub fn append_commit_to_daily_log(
     }
     let line = format_log_line(&meta);
     let date = current_date_utc();
-    let path = daily_log_path(repo_root, &config.vault_root, &date);
-    append_line_to_file(&path, &line)
+    append_line_to_branch(repo_root, &config.vault_root, &line, &date)
 }
 
 #[cfg(test)]

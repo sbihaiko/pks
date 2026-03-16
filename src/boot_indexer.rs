@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
+use crate::git::RepoIdentity;
 use crate::indexer::pipeline::IndexingPipeline;
 use crate::repo_watcher::RepoWatcher;
 use crate::search::retriever::SearchBackend;
@@ -11,7 +12,7 @@ fn collect_md_entry(path: PathBuf, out: &mut Vec<PathBuf>) {
         walk_md_files(&path, out);
         return;
     }
-    if path.extension().map_or(false, |ext| ext == "md") {
+    if path.extension().is_some_and(|ext| ext == "md") {
         out.push(path);
     }
 }
@@ -58,10 +59,14 @@ pub async fn index_repo(
     pipeline: &mut IndexingPipeline,
     state: &Arc<Mutex<PrevalentState>>,
 ) {
-    let repo_id = repo_path
-        .file_name()
-        .map(|n| n.to_string_lossy().into_owned())
-        .unwrap_or_default();
+    let repo_id = RepoIdentity::from_path(repo_path)
+        .map(|id| id.repo_id)
+        .unwrap_or_else(|_| {
+            repo_path
+                .file_name()
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default()
+        });
     let mut markdown_file_paths = Vec::new();
     walk_md_files(repo_path, &mut markdown_file_paths);
     for file_path in &markdown_file_paths {

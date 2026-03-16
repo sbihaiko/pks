@@ -1,3 +1,7 @@
+mod server;
+
+pub use server::IpcServer;
+
 use serde::{Deserialize, Serialize};
 
 /// Path to the Unix Domain Socket
@@ -55,72 +59,66 @@ pub struct SearchHit {
 pub struct IpcClient;
 
 impl IpcClient {
-    /// Returns true if the daemon socket exists and responds to Ping within 200ms
+    /// Returns true if the daemon at `SOCKET_PATH` responds to Ping within 200ms
     pub async fn is_server_running() -> bool {
+        Self::is_server_running_at(SOCKET_PATH).await
+    }
+
+    /// Returns true if the daemon at `socket_path` responds to Ping within 200ms
+    pub async fn is_server_running_at(socket_path: &str) -> bool {
         use std::time::Duration;
         use tokio::time::timeout;
-        let result = timeout(Duration::from_millis(200), Self::try_ping()).await;
+        let result = timeout(
+            Duration::from_millis(200),
+            Self::try_ping_at(socket_path),
+        )
+        .await;
         matches!(result, Ok(Ok(_)))
     }
 
-    async fn try_ping() -> Result<(), String> {
-        let response = Self::send_command(&PksCommand::Ping).await?;
-        match response {
+    async fn try_ping_at(socket_path: &str) -> Result<(), String> {
+        match Self::send_command_to(&PksCommand::Ping, socket_path).await? {
             PksResponse::Pong { .. } => Ok(()),
             _ => Err("unexpected response to Ping".to_string()),
         }
     }
 
-    /// Send a command and receive a response
+    /// Send a command to the daemon at `SOCKET_PATH`
     pub async fn send_command(cmd: &PksCommand) -> Result<PksResponse, String> {
+        Self::send_command_to(cmd, SOCKET_PATH).await
+    }
+
+    /// Send a command to the daemon at the given `socket_path`
+    pub async fn send_command_to(cmd: &PksCommand, socket_path: &str) -> Result<PksResponse, String> {
         use std::time::Duration;
         use tokio::time::timeout;
-        let fut = Self::do_send(cmd);
-        timeout(Duration::from_millis(5000), fut)
+        timeout(Duration::from_millis(5000), Self::do_send(cmd, socket_path))
             .await
             .map_err(|_| "daemon timeout".to_string())?
     }
 
     #[cfg(unix)]
-    async fn do_send(cmd: &PksCommand) -> Result<PksResponse, String> {
+    async fn do_send(cmd: &PksCommand, socket_path: &str) -> Result<PksResponse, String> {
         use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
         use tokio::net::UnixStream;
-        let mut stream = UnixStream::connect(SOCKET_PATH)
+        let mut stream = UnixStream::connect(socket_path)
             .await
             .map_err(|_| "daemon not running".to_string())?;
         let mut line = serde_json::to_string(cmd)
             .map_err(|e| format!("serialization error: {e}"))?;
         line.push('\n');
-        stream
-            .write_all(line.as_bytes())
-            .await
-            .map_err(|e| format!("write error: {e}"))?;
+        stream.write_all(line.as_bytes()).await.map_err(|e| format!("write error: {e}"))?;
         let mut reader = BufReader::new(stream);
         let mut response_line = String::new();
-        reader
-            .read_line(&mut response_line)
-            .await
-            .map_err(|e| format!("read error: {e}"))?;
+        reader.read_line(&mut response_line).await.map_err(|e| format!("read error: {e}"))?;
         serde_json::from_str(response_line.trim())
             .map_err(|e| format!("deserialization error: {e}"))
     }
 
     #[cfg(not(unix))]
-    async fn do_send(_cmd: &PksCommand) -> Result<PksResponse, String> {
+    async fn do_send(_cmd: &PksCommand, _socket_path: &str) -> Result<PksResponse, String> {
         Err("Unix Domain Sockets are only supported on Unix platforms".to_string())
     }
-}
-
-/// Server stub — full accept loop will be implemented in T5
-pub struct IpcServer {
-    state: std::sync::Arc<std::sync::Mutex<crate::state::PrevalentState>>,
-}
-
-impl IpcServer {
-    pub fn new(state: std::sync::Arc<std::sync::Mutex<crate::state::PrevalentState>>) -> Self {
-        Self { state }
-    }
-    // Full accept_loop() will be implemented in T5
 }
 
 #[cfg(test)]
@@ -144,9 +142,9 @@ mod tests {
             top_n: 5,
         };
         let json = serde_json::to_string(&cmd).expect("serialize Search");
-        assert!(json.contains("hello world"), "query must appear in JSON");
-        assert!(json.contains("my-repo"), "repo_id must appear in JSON");
-        assert!(json.contains("5"), "top_n must appear in JSON");
+        assert!(json.contains("hello world"));
+        assert!(json.contains("my-repo"));
+        assert!(json.contains("5"));
         let back: PksCommand = serde_json::from_str(&json).expect("deserialize Search");
         match back {
             PksCommand::Search { query, repo_id, top_n } => {
@@ -163,16 +161,13 @@ mod tests {
         let json = r#"{"status":"Err","data":{"message":"something went wrong"}}"#;
         let resp: PksResponse = serde_json::from_str(json).expect("deserialize Err response");
         match resp {
-            PksResponse::Err { message } => {
-                assert_eq!(message, "something went wrong");
-            }
+            PksResponse::Err { message } => assert_eq!(message, "something went wrong"),
             _ => panic!("expected Err variant"),
         }
     }
 
     #[tokio::test]
     async fn test_is_server_running_returns_false_when_no_daemon() {
-        // Ensure no daemon is running at the socket path during this test
         let _ = std::fs::remove_file(SOCKET_PATH);
         let running = IpcClient::is_server_running().await;
         assert!(!running, "should return false when socket does not exist");

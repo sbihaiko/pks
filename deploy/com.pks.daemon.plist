@@ -8,11 +8,11 @@
   <key>Label</key>
   <string>com.pks.daemon</string>
 
-  <!-- Command: MCP stdio transport -->
+  <!-- Command: daemon transport -->
   <key>ProgramArguments</key>
   <array>
     <string>/usr/local/bin/pks</string>
-    <string>--stdio</string>
+    <string>--daemon</string>
   </array>
 
   <!-- Working directory must contain .env so dotenvy can discover it -->

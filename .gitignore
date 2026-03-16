@@ -4,3 +4,4 @@
 *.jsonl
 .claude/squad-run-context.md
 **/.DS_Store
+.worktrees/

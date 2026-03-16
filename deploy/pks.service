@@ -19,8 +19,8 @@ Environment="OLLAMA_EMBED_MODEL=nomic-embed-text"
 Environment="PKS_EMBEDDING_PROVIDER=ollama"
 Environment="PKS_LOG_MAX_SIZE=10485760"
 
-# MCP stdio transport
-ExecStart=/usr/local/bin/pks --stdio
+# Daemon transport
+ExecStart=/usr/local/bin/pks --daemon
 
 # Restart policy: always restart, even on clean exit
 Restart=always

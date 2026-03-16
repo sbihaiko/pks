@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "pks-knowledge" ]
+  pull_request:
+    branches: [ "main", "pks-knowledge" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: llvm-tools-preview
+
+    - name: Rust Cache
+      uses: Swatinem/rust-cache@v2
+
+    - name: Install cargo-tarpaulin
+      run: |
+        if ! command -v cargo-tarpaulin &> /dev/null; then
+          cargo install cargo-tarpaulin
+        fi
+
+    - name: Build
+      run: cargo build --verbose
+
+    - name: Run tests
+      run: cargo test --verbose
+
+    - name: Generate coverage
+      run: |
+        mkdir -p ci-dashboard/tmp
+        cargo tarpaulin --out Json --output-dir ci-dashboard/tmp/ --lib --bins --exclude-files tests/*
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: tarpaulin-report
+        path: ci-dashboard/tmp/tarpaulin-report.json

@@ -34,3 +34,4 @@ pub mod daemon;
 pub mod boot_indexer;
 pub mod git;
 pub mod hooks;
+pub mod execute_tool;

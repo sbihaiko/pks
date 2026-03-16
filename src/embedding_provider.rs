@@ -1,5 +1,32 @@
 use serde::Deserialize;
 
+/// Active embedding provider, controlled by `PKS_EMBEDDING_PROVIDER`.
+/// Default is `None` (BM25-only mode — no Ollama required).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum EmbeddingProviderKind {
+    None,
+    Ollama,
+    Mlx,
+}
+
+impl EmbeddingProviderKind {
+    pub fn from_env() -> Self {
+        match std::env::var("PKS_EMBEDDING_PROVIDER")
+            .unwrap_or_default()
+            .to_lowercase()
+            .as_str()
+        {
+            "ollama" => EmbeddingProviderKind::Ollama,
+            "mlx" => EmbeddingProviderKind::Mlx,
+            _ => EmbeddingProviderKind::None,
+        }
+    }
+
+    pub fn is_ollama(&self) -> bool {
+        *self == EmbeddingProviderKind::Ollama
+    }
+}
+
 #[derive(Debug)]
 pub enum EmbeddingError {
     NetworkUnavailable(String),

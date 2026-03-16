@@ -1,3 +1,4 @@
+use crate::execute_tool::{ExecuteParams, ExecuteResponse, run_execute};
 use crate::health::health_handler;
 use rmcp::{
     ServerHandler,
@@ -48,15 +49,18 @@ impl PksHandler {
         Parameters(params): Parameters<SearchKnowledgeVaultParams>,
     ) -> String {
         use crate::search::retriever::SearchBackend;
-        use crate::embedding_provider::{EmbeddingProvider, OllamaProvider};
+        use crate::embedding_provider::{EmbeddingProvider, EmbeddingProviderKind, OllamaProvider};
         use crate::search::hybrid::search_hybrid;
 
         let top_k = params.top_k.unwrap_or(10) as usize;
         let filter: Option<Vec<String>> = params.projects_filter.clone();
         let projects_filter_slice: Option<&[String]> = filter.as_deref();
 
-        let embedder = OllamaProvider::from_env();
-        let query_vector = embedder.embed_text(&params.query).await.unwrap_or_default();
+        let query_vector = if EmbeddingProviderKind::from_env().is_ollama() {
+            OllamaProvider::from_env().embed_text(&params.query).await.unwrap_or_default()
+        } else {
+            vec![]
+        };
 
         let guard = self.state.lock().unwrap();
         let bm25_results_raw = guard.search_index.search(&params.query, top_k * 2, projects_filter_slice)
@@ -84,6 +88,21 @@ impl PksHandler {
         let guard = self.state.lock().unwrap();
         let ids = guard.list_repo_ids();
         serde_json::to_string(&ids).unwrap_or_else(|_| "[]".to_string())
+    }
+
+    #[tool(
+        name = "pks_execute",
+        description = "Execute a shell command in a subprocess sandbox. Returns a concise summary \
+                       of the output (not the raw output) to protect LLM context window. \
+                       Use for high-volume commands like `cargo test`, `npm build`, `grep -r`. \
+                       For short commands (<20 lines), prefer the Bash tool."
+    )]
+    async fn pks_execute(
+        &self,
+        Parameters(params): Parameters<ExecuteParams>,
+    ) -> String {
+        let response: ExecuteResponse = run_execute(params);
+        serde_json::to_string(&response).unwrap_or_else(|_| r#"{"error":"serialization failed"}"#.to_string())
     }
 }
 

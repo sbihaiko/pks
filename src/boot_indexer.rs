@@ -30,19 +30,20 @@ pub async fn ingest_file_chunks(
     pipeline: &mut IndexingPipeline,
     state: &Arc<Mutex<PrevalentState>>,
 ) {
-    use crate::embedding_provider::{EmbeddingProvider, OllamaProvider};
+    use crate::embedding_provider::{EmbeddingProvider, EmbeddingProviderKind, OllamaProvider};
     let Ok(content) = std::fs::read_to_string(file_path) else { return };
     let file_str = file_path.to_string_lossy().into_owned();
     let tagged_chunks = pipeline.process_file_with_dirty_markers(repo_id, &file_str, &content);
-    let embedder = OllamaProvider::from_env();
+    let provider_kind = EmbeddingProviderKind::from_env();
+    let embedder = provider_kind.is_ollama().then(OllamaProvider::from_env);
     let mut results = Vec::new();
     for (chunk, is_dirty) in tagged_chunks {
-        if is_dirty {
-            let vec = embedder.embed_text(&chunk.text).await.ok();
-            results.push((chunk, vec));
+        let vec = if is_dirty {
+            if let Some(ref e) = embedder { e.embed_text(&chunk.text).await.ok() } else { None }
         } else {
-            results.push((chunk, None));
-        }
+            None
+        };
+        results.push((chunk, vec));
     }
     let mut guard = state.lock().unwrap();
     for (chunk, vector) in results {

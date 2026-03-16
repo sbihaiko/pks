@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PKS — Fluxo de Informações</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+
+  header { padding: 24px 32px 0; }
+  header h1 { font-size: 1.4rem; font-weight: 700; color: #f0f6fc; letter-spacing: -0.3px; }
+  header p { color: #7d8590; font-size: 0.85rem; margin-top: 4px; }
+
+  .tabs { display: flex; gap: 4px; padding: 20px 32px 0; border-bottom: 1px solid #21262d; }
+  .tab { padding: 8px 18px; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 0.82rem; font-weight: 500; color: #7d8590; border: 1px solid transparent; border-bottom: none; transition: all 0.15s; }
+  .tab:hover { color: #c9d1d9; }
+  .tab.active { color: #f0f6fc; background: #161b22; border-color: #21262d; position: relative; bottom: -1px; }
+
+  .view { display: none; padding: 28px 32px 40px; }
+  .view.active { display: block; }
+
+  /* ── FLOW VIEW ── */
+  .flow { display: flex; align-items: flex-start; gap: 0; overflow-x: auto; padding-bottom: 12px; }
+  .stage { min-width: 160px; position: relative; }
+  .stage-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #7d8590; margin-bottom: 10px; }
+  .stage-cards { display: flex; flex-direction: column; gap: 8px; }
+  .card {
+    background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+    padding: 10px 12px; font-size: 0.78rem; cursor: pointer; transition: all 0.15s;
+    position: relative;
+  }
+  .card:hover { border-color: #388bfd; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,139,253,0.15); }
+  .card.selected { border-color: #388bfd; background: #1c2433; }
+  .card-icon { font-size: 1.1rem; margin-bottom: 4px; }
+  .card-name { font-weight: 600; color: #f0f6fc; }
+  .card-sub { color: #7d8590; font-size: 0.72rem; margin-top: 2px; }
+
+  .arrow { display: flex; align-items: center; padding: 0 8px; min-width: 40px; padding-top: 28px; }
+  .arrow svg { color: #30363d; }
+
+  .detail-panel {
+    margin-top: 24px; background: #161b22; border: 1px solid #30363d;
+    border-radius: 10px; padding: 20px 24px;
+    min-height: 80px; transition: all 0.2s;
+  }
+  .detail-panel h3 { color: #f0f6fc; font-size: 0.95rem; margin-bottom: 8px; }
+  .detail-panel p { color: #8b949e; font-size: 0.82rem; line-height: 1.6; }
+  .detail-panel .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .tag { background: #21262d; border: 1px solid #30363d; border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; color: #8b949e; }
+  .tag.blue { background: #0d2040; border-color: #1f6feb; color: #79c0ff; }
+  .tag.green { background: #0d2d1a; border-color: #238636; color: #56d364; }
+  .tag.orange { background: #2d1800; border-color: #9e6a03; color: #e3b341; }
+
+  /* ── LAYERS VIEW ── */
+  .layers { display: flex; flex-direction: column; gap: 12px; }
+  .layer {
+    border-radius: 10px; border: 1px solid #30363d; overflow: hidden; cursor: pointer;
+  }
+  .layer-header {
+    display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+    background: #161b22; transition: background 0.15s;
+  }
+  .layer:hover .layer-header { background: #1c2433; }
+  .layer.open .layer-header { background: #1c2433; }
+  .layer-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+  .layer-title { font-weight: 600; font-size: 0.9rem; color: #f0f6fc; flex: 1; }
+  .layer-badge { font-size: 0.72rem; color: #7d8590; }
+  .layer-chevron { color: #7d8590; transition: transform 0.2s; }
+  .layer.open .layer-chevron { transform: rotate(90deg); }
+  .layer-body { display: none; padding: 16px 18px; border-top: 1px solid #21262d; background: #0d1117; }
+  .layer.open .layer-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .comp { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 12px; }
+  .comp-name { font-weight: 600; font-size: 0.8rem; color: #c9d1d9; margin-bottom: 4px; }
+  .comp-desc { font-size: 0.73rem; color: #7d8590; line-height: 1.5; }
+
+  /* ── GAINS VIEW ── */
+  .gains-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .gain-card {
+    background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+    padding: 16px 18px; transition: all 0.15s;
+  }
+  .gain-card:hover { border-color: #388bfd; transform: translateY(-2px); }
+  .gain-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .gain-title { font-weight: 700; font-size: 0.88rem; color: #f0f6fc; margin-bottom: 6px; }
+  .gain-text { font-size: 0.78rem; color: #7d8590; line-height: 1.6; }
+  .gain-metric { margin-top: 10px; font-size: 0.75rem; font-weight: 600; color: #56d364; }
+
+  /* ── CAP VIEW ── */
+  .cap-wrap { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .cap-triangle { flex: 0 0 320px; }
+  .cap-triangle svg { width: 100%; }
+  .cap-desc { flex: 1; min-width: 260px; }
+  .cap-item { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+  .cap-item h4 { font-size: 0.85rem; font-weight: 700; color: #f0f6fc; margin-bottom: 4px; }
+  .cap-item p { font-size: 0.77rem; color: #7d8590; line-height: 1.5; }
+  .cap-item.chosen { border-color: #238636; background: #0d2d1a; }
+  .cap-item.chosen h4::after { content: ' ✓ ESCOLHIDO'; color: #56d364; font-size: 0.7rem; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0d1117; }
+  ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>PKS — Prometheus Knowledge System</h1>
+  <p>Diagrama interativo de fluxo de informações, camadas e ganhos</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('flow')">Fluxo de Dados</div>
+  <div class="tab" onclick="switchTab('layers')">Camadas</div>
+  <div class="tab" onclick="switchTab('gains')">Ganhos</div>
+  <div class="tab" onclick="switchTab('cap')">Posição CAP</div>
+</div>
+
+<!-- ─────────────── FLOW ─────────────── -->
+<div id="view-flow" class="view active">
+  <div class="flow" id="flowDiagram">
+
+    <div class="stage">
+      <div class="stage-label">Entrada</div>
+      <div class="stage-cards">
+        <div class="card" onclick="showDetail('fs-watcher')">
+          <div class="card-icon">👁️</div>
+          <div class="card-name">FS Watcher</div>
+          <div class="card-sub">notify (inotify/kqueue)</div>
+        </div>
+        <div class="card" onclick="showDetail('git-hook')">
+          <div class="card-icon">🔗</div>
+          <div class="card-name">Git Hook</div>
+          <div class="card-sub">post-commit passivo</div>
+        </div>
+        <div class="card" onclick="showDetail('mcp-client')">
+          <div class="card-icon">🤖</div>
+          <div class="card-name">LLM / MCP</div>
+          <div class="card-sub">Claude, Cursor, etc.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="stage">
+      <div class="stage-label">Parsing</div>
+      <div class="stage-cards">
+        <div class="card" onclick="showDetail('chunker')">
+          <div class="card-icon">✂️</div>
+          <div class="card-name">Chunker</div>
+          <div class="card-sub">400 tok max · 80 overlap</div>
+        </div>
+        <div class="card" onclick="showDetail('frontmatter')">
+          <div class="card-icon">📋</div>
+          <div class="card-name">Frontmatter</div>
+          <div class="card-sub">YAML metadata</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="stage">
+      <div class="stage-label">Indexação</div>
+      <div class="stage-cards">
+        <div class="card" onclick="showDetail('tantivy')">
+          <div class="card-icon">⚡</div>
+          <div class="card-name">BM25 (Tantivy)</div>
+          <div class="card-sub">p95 &lt;1ms · zero locks</div>
+        </div>
+        <div class="card" onclick="showDetail('ollama')">
+          <div class="card-icon">🧠</div>
+          <div class="card-name">Embeddings</div>
+          <div class="card-sub">Ollama · opcional (M5+)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="stage">
+      <div class="stage-label">Persistência</div>
+      <div class="stage-cards">
+        <div class="card" onclick="showDetail('snapshot')">
+          <div class="card-icon">💾</div>
+          <div class="card-name">Snapshot</div>
+          <div class="card-sub">bincode segmentado</div>
+        </div>
+        <div class="card" onclick="showDetail('git-journal')">
+          <div class="card-icon">📖</div>
+          <div class="card-name">Git Journal</div>
+          <div class="card-sub">branch pks-knowledge</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="stage">
+      <div class="stage-label">Recuperação</div>
+      <div class="stage-cards">
+        <div class="card" onclick="showDetail('hybrid-search')">
+          <div class="card-icon">🔍</div>
+          <div class="card-name">Hybrid Search</div>
+          <div class="card-sub">BM25 + RRF + cosine</div>
+        </div>
+        <div class="card" onclick="showDetail('pks-execute')">
+          <div class="card-icon">🔧</div>
+          <div class="card-name">pks_execute</div>
+          <div class="card-sub">sandboxed · context-mode</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="stage">
+      <div class="stage-label">Saída</div>
+      <div class="stage-cards">
+        <div class="card" onclick="showDetail('llm-response')">
+          <div class="card-icon">💬</div>
+          <div class="card-name">LLM Response</div>
+          <div class="card-sub">chunks rankeados</div>
+        </div>
+        <div class="card" onclick="showDetail('ctx-mode')">
+          <div class="card-icon">🛡️</div>
+          <div class="card-name">Context-Mode</div>
+          <div class="card-sub">-60% flooding</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel" id="detailPanel">
+    <p style="color:#7d8590">Clique em qualquer componente acima para ver detalhes.</p>
+  </div>
+</div>
+
+<!-- ─────────────── LAYERS ─────────────── -->
+<div id="view-layers" class="view">
+  <div class="layers" id="layersList"></div>
+</div>
+
+<!-- ─────────────── GAINS ─────────────── -->
+<div id="view-gains" class="view">
+  <div class="gains-grid" id="gainsGrid"></div>
+</div>
+
+<!-- ─────────────── CAP ─────────────── -->
+<div id="view-cap" class="view">
+  <div class="cap-wrap">
+    <div class="cap-triangle">
+      <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#30363d"/>
+          </marker>
+        </defs>
+        <!-- triangle -->
+        <polygon points="150,20 20,250 280,250" fill="none" stroke="#30363d" stroke-width="1.5"/>
+        <!-- edges labels -->
+        <text x="70" y="160" fill="#7d8590" font-size="11" text-anchor="middle" transform="rotate(-60,70,160)">Consistency</text>
+        <text x="230" y="160" fill="#7d8590" font-size="11" text-anchor="middle" transform="rotate(60,230,160)">Availability</text>
+        <text x="150" y="268" fill="#7d8590" font-size="11" text-anchor="middle">Partition Tolerance</text>
+
+        <!-- vertices -->
+        <circle cx="150" cy="20" r="8" fill="#21262d" stroke="#388bfd" stroke-width="1.5"/>
+        <text x="150" y="14" fill="#388bfd" font-size="10" text-anchor="middle" font-weight="700">C</text>
+
+        <circle cx="20" cy="250" r="8" fill="#0d2d1a" stroke="#56d364" stroke-width="2"/>
+        <text x="20" y="244" fill="#56d364" font-size="10" text-anchor="middle" font-weight="700">A</text>
+
+        <circle cx="280" cy="250" r="8" fill="#0d2d1a" stroke="#56d364" stroke-width="2"/>
+        <text x="280" y="244" fill="#56d364" font-size="10" text-anchor="middle" font-weight="700">P</text>
+
+        <!-- PKS position dot -->
+        <circle cx="150" cy="240" r="12" fill="#238636" opacity="0.25"/>
+        <circle cx="150" cy="240" r="6" fill="#56d364"/>
+        <text x="150" y="228" fill="#56d364" font-size="10" text-anchor="middle" font-weight="700">PKS</text>
+
+        <!-- legend -->
+        <text x="150" y="20" fill="#c9d1d9" font-size="9" text-anchor="middle" dy="18">Consistency</text>
+        <text x="12" y="270" fill="#c9d1d9" font-size="9" text-anchor="middle">Availability</text>
+        <text x="288" y="270" fill="#c9d1d9" font-size="9" text-anchor="end">Partition Tol.</text>
+      </svg>
+    </div>
+    <div class="cap-desc">
+      <div class="cap-item">
+        <h4>Consistency (C)</h4>
+        <p>Toda leitura retorna o dado mais recente ou um erro. PKS sacrifica consistência forte para não bloquear queries.</p>
+      </div>
+      <div class="cap-item chosen">
+        <h4>Availability (A)</h4>
+        <p>Toda requisição recebe uma resposta (mesmo desatualizada). Queries BM25 nunca bloqueiam — retornam resultados do índice atual.</p>
+      </div>
+      <div class="cap-item chosen">
+        <h4>Partition Tolerance (P)</h4>
+        <p>Sistema continua operando mesmo com partições (ex: Ollama offline). Graceful degradation para modo BM25-only sem quebrar o contrato MCP.</p>
+      </div>
+      <div style="margin-top:14px; padding:12px 14px; background:#0d2d1a; border:1px solid #238636; border-radius:8px; font-size:0.78rem; color:#56d364; line-height:1.6;">
+        <strong>Resultado:</strong> Pequenas defasagens de índice são aceitáveis. Reparos ocorrem assincronamente via pipeline de eventos. Prioridade: estar sempre disponível para o LLM.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const details = {
+  'fs-watcher': {
+    title: '👁️ FS Watcher — notify',
+    text: 'Monitora o sistema de arquivos em tempo real usando inotify (Linux) ou kqueue (macOS). Quando um arquivo .md é salvo ou modificado, dispara automaticamente o pipeline de re-indexação para o vault correspondente.',
+    tags: [{l:'Rust', c:'blue'},{l:'inotify/kqueue',c:''},{l:'Tempo real',c:'green'}]
+  },
+  'git-hook': {
+    title: '🔗 Git Hook — Shadow Journaling (M12)',
+    text: 'Hook post-commit passivo que registra automaticamente sessões LLM no branch pks-knowledge. Não interrompe o fluxo de trabalho — opera em background sem exigir ação do usuário.',
+    tags: [{l:'M12',c:'orange'},{l:'post-commit',c:''},{l:'Passivo',c:'green'}]
+  },
+  'mcp-client': {
+    title: '🤖 MCP Client — Interface com LLM',
+    text: 'Interface principal via stdio MCP server (rmcp SDK). Expõe as tools list_knowledge_vaults e search_knowledge_vault para qualquer LLM compatível (Claude, Cursor, Gemini). IPC Singleton via Unix socket /tmp/pks.sock (M10) coordena múltiplas instâncias.',
+    tags: [{l:'MCP stdio',c:'blue'},{l:'rmcp SDK',c:''},{l:'M10 IPC',c:'orange'}]
+  },
+  'chunker': {
+    title: '✂️ Chunker — Segmentação Semântica',
+    text: 'Divide documentos Markdown por headings (semântico) com sliding window. Parâmetros: máx. 400 tokens, overlap de 80 tokens, mínimo de 100 tokens antes de agrupar. Parser pulldown-cmark é seguro contra ReDoS.',
+    tags: [{l:'400 tok max',c:'blue'},{l:'80 overlap',c:''},{l:'pulldown-cmark',c:'green'}]
+  },
+  'frontmatter': {
+    title: '📋 Frontmatter — Metadados YAML',
+    text: 'Extrai metadados do cabeçalho YAML dos arquivos Markdown: título, tags, autor, data. Esses metadados enriquecem o índice BM25 e permitem filtragem por vault/repo.',
+    tags: [{l:'YAML',c:''},{l:'Metadados',c:'blue'}]
+  },
+  'tantivy': {
+    title: '⚡ BM25 via Tantivy',
+    text: 'Motor de busca textual de alta performance em Rust. Arquitetura NYC-style: single-thread, zero locks, sem race conditions. Latência p95 abaixo de 1ms. Índice flat persistido em snapshots bincode.',
+    tags: [{l:'p95 <1ms',c:'green'},{l:'Zero locks',c:'green'},{l:'Rust',c:'blue'}]
+  },
+  'ollama': {
+    title: '🧠 Embeddings via Ollama — Opcional',
+    text: 'Gera embeddings vetoriais com o modelo nomic-embed-text via Ollama local. Completamente opcional: se Ollama não estiver disponível, PKS opera em modo BM25-only sem degradação funcional. Ativado a partir do milestone M5.',
+    tags: [{l:'M5+',c:'orange'},{l:'nomic-embed-text',c:''},{l:'Opcional',c:'green'}]
+  },
+  'snapshot': {
+    title: '💾 Snapshots Bincode',
+    text: 'Serialização eficiente do estado do índice em formato bincode (Rust). Segmentado por repo em {PKS_VAULTS_DIR}/<repo>/snapshots/<repo_id>.bin. Graceful shutdown serializa filas pendentes em ~/.pks/fila1_drain.jsonl.',
+    tags: [{l:'bincode',c:'blue'},{l:'por repo',c:''},{l:'Graceful shutdown',c:'green'}]
+  },
+  'git-journal': {
+    title: '📖 Git Journal — Event Sourcing',
+    text: 'Usa o branch pks-knowledge como log append-only imutável. Vector clock (repo_id, branch) para rastreabilidade. Git LFS para snapshots vetoriais pesados. Permite replay completo do estado e disaster recovery nativo.',
+    tags: [{l:'Event Sourcing',c:'blue'},{l:'Append-only',c:''},{l:'Vector Clock',c:'orange'},{l:'Git LFS',c:''}]
+  },
+  'hybrid-search': {
+    title: '🔍 Hybrid Search — BM25 + RRF',
+    text: 'Combina resultados BM25 com similaridade coseno (embeddings) via Reciprocal Rank Fusion (RRF). BM25 garante velocidade e precisão lexical; vetores capturam semântica. Disponível apenas quando Ollama está ativo.',
+    tags: [{l:'RRF',c:'blue'},{l:'Cosine similarity',c:''},{l:'Requer Ollama',c:'orange'}]
+  },
+  'pks-execute': {
+    title: '🔧 pks_execute — Execução Sandboxed (M13)',
+    text: 'Nova MCP tool que executa código/comandos em sandbox integrado com context-mode. Resultados volumosos são indexados automaticamente em vez de inundarem o contexto do LLM. Parte da integração M13.',
+    tags: [{l:'M13',c:'orange'},{l:'Sandboxed',c:'green'},{l:'context-mode',c:'blue'}]
+  },
+  'llm-response': {
+    title: '💬 Resposta ao LLM — Chunks Rankeados',
+    text: 'Retorna para o LLM os chunks mais relevantes ordenados por score (BM25 ou híbrido). Cada chunk inclui: texto, path do arquivo, score, e metadados do frontmatter para rastreabilidade.',
+    tags: [{l:'Chunks rankeados',c:'blue'},{l:'Metadados',c:''}]
+  },
+  'ctx-mode': {
+    title: '🛡️ Context-Mode — Proteção de Contexto',
+    text: 'Integração com o plugin context-mode para evitar flooding do contexto do LLM em outputs volumosos. Reduz consumo de tokens em mais de 60% em outputs grandes. Indexação automática de resultados de execução.',
+    tags: [{l:'-60% tokens',c:'green'},{l:'Auto-index',c:'blue'},{l:'M13',c:'orange'}]
+  }
+};
+
+const layers = [
+  {
+    num: '1', color: '#388bfd', bg: '#0d2040', title: 'I/O & Protocolo',
+    badge: 'Camada externa',
+    comps: [
+      {name:'MCP stdio server', desc:'Interface com LLMs via rmcp SDK. Protocolo universal para tools.'},
+      {name:'IPC Singleton (M10)', desc:'Unix socket /tmp/pks.sock para coordenar múltiplos IDEs e worktrees.'},
+      {name:'CLI (pks doctor/init)', desc:'Zero-config onboarding (M14) e diagnósticos de saúde.'},
+    ]
+  },
+  {
+    num: '2', color: '#e3b341', bg: '#2d1800', title: 'API & Comandos MCP',
+    badge: 'Interface de tools',
+    comps: [
+      {name:'list_knowledge_vaults', desc:'Lista vaults indexados e metadados de status.'},
+      {name:'search_knowledge_vault', desc:'Busca híbrida com parâmetros de filtro por vault.'},
+      {name:'pks_execute (M13)', desc:'Execução sandboxed integrada ao context-mode.'},
+    ]
+  },
+  {
+    num: '3', color: '#f778ba', bg: '#2d0f22', title: 'Engine RAG',
+    badge: 'Core de busca',
+    comps: [
+      {name:'BM25 / Tantivy', desc:'p95 <1ms, NYC-style single-thread, zero locks.'},
+      {name:'Embeddings (Ollama)', desc:'nomic-embed-text, opcional, ativa busca semântica.'},
+      {name:'Hybrid RRF', desc:'Reciprocal Rank Fusion combina BM25 + cosine.'},
+      {name:'Chunker semântico', desc:'400 tok, 80 overlap, heading-aware.'},
+    ]
+  },
+  {
+    num: '4', color: '#56d364', bg: '#0d2d1a', title: 'Persistência',
+    badge: 'Durabilidade & replay',
+    comps: [
+      {name:'Snapshots bincode', desc:'Estado serializado por repo em {PKS_VAULTS_DIR}.'},
+      {name:'Git Journal', desc:'Branch pks-knowledge append-only com vector clock.'},
+      {name:'Drain queue', desc:'~/.pks/fila1_drain.jsonl para graceful shutdown.'},
+      {name:'Git LFS', desc:'Snapshots vetoriais pesados no LFS para disaster recovery.'},
+    ]
+  },
+  {
+    num: '5', color: '#7d8590', bg: '#161b22', title: 'Operação & Observabilidade',
+    badge: 'Infraestrutura',
+    comps: [
+      {name:'Daemon fork (M10)', desc:'Processo singleton em background, RAM compartilhada.'},
+      {name:'FS Watcher (notify)', desc:'Re-indexação automática ao salvar arquivos.'},
+      {name:'Shadow journaling (M12)', desc:'Git hook post-commit passivo para sessões LLM.'},
+      {name:'Logs estruturados JSON', desc:'Health check, pks doctor, observabilidade.'},
+    ]
+  },
+];
+
+const gains = [
+  {icon:'⚡', title:'Busca em <1ms', text:'Engine BM25 via Tantivy com arquitetura NYC-style (single-thread, zero locks). Latência p95 abaixo de 1ms para qualquer query.', metric:'p95 < 1ms'},
+  {icon:'🔒', title:'100% Local / Air-Gapped', text:'Zero dependências de APIs externas. Todos os dados ficam no disco local. Ollama é opcional e também roda localmente.', metric:'Zero cloud dependency'},
+  {icon:'🛡️', title:'-60% Context Flooding', text:'Integração com context-mode via pks_execute. Outputs volumosos são indexados no sandbox em vez de inundarem o contexto do LLM.', metric:'>60% token savings'},
+  {icon:'🧠', title:'Busca Híbrida (BM25 + Semântica)', text:'Quando Ollama está disponível, combina precisão lexical do BM25 com compreensão semântica dos embeddings via RRF.', metric:'Dual-mode retrieval'},
+  {icon:'🔄', title:'Graceful Degradation', text:'BM25-only funciona 100% sem Ollama. Nenhuma feature quebra — apenas upgrades progressivos quando mais recursos estão disponíveis.', metric:'Zero breaking changes'},
+  {icon:'📖', title:'Event Sourcing via Git', text:'Branch pks-knowledge como log imutável append-only. Vector clock rastreia versões por (repo_id, branch). Replay completo do estado a qualquer momento.', metric:'Full audit trail'},
+  {icon:'🏠', title:'Multi-Worktree Aware (M11)', text:'RepoId unificado via git rev-parse --git-common-dir. Suporte nativo a múltiplos worktrees do mesmo repositório sem conflitos de índice.', metric:'M11 milestone'},
+  {icon:'🚀', title:'Zero-Config Onboarding (M14)', text:'pks init detecta automaticamente vaults em VSCodeProjects/ e configura tudo. Sem edição manual de configs para começar a usar.', metric:'M14 milestone'},
+  {icon:'💡', title:'RAM Compartilhada (M10)', text:'Daemon singleton via IPC Unix socket. Múltiplos IDEs e worktrees compartilham um único processo, reduzindo consumo de memória.', metric:'1 processo para N clientes'},
+];
+
+// ── Detail panel ──
+function showDetail(id) {
+  const d = details[id];
+  if (!d) return;
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  const p = document.getElementById('detailPanel');
+  p.innerHTML = `
+    <h3>${d.title}</h3>
+    <p>${d.text}</p>
+    <div class="tags">${d.tags.map(t => `<span class="tag ${t.c}">${t.l}</span>`).join('')}</div>
+  `;
+}
+
+// ── Tabs ──
+function switchTab(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── Render layers ──
+const ll = document.getElementById('layersList');
+layers.forEach((l, i) => {
+  const el = document.createElement('div');
+  el.className = 'layer';
+  el.innerHTML = `
+    <div class="layer-header" onclick="toggleLayer(this)">
+      <div class="layer-num" style="background:${l.bg};border:1px solid ${l.color};color:${l.color}">${l.num}</div>
+      <div class="layer-title">${l.title}</div>
+      <div class="layer-badge">${l.badge}</div>
+      <svg class="layer-chevron" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.749.749 0 01-1.275-.326.749.749 0 01.215-.734L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    </div>
+    <div class="layer-body">
+      ${l.comps.map(c => `<div class="comp"><div class="comp-name">${c.name}</div><div class="comp-desc">${c.desc}</div></div>`).join('')}
+    </div>
+  `;
+  ll.appendChild(el);
+});
+
+function toggleLayer(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ── Render gains ──
+const gg = document.getElementById('gainsGrid');
+gains.forEach(g => {
+  const el = document.createElement('div');
+  el.className = 'gain-card';
+  el.innerHTML = `
+    <div class="gain-icon">${g.icon}</div>
+    <div class="gain-title">${g.title}</div>
+    <div class="gain-text">${g.text}</div>
+    <div class="gain-metric">${g.metric}</div>
+  `;
+  gg.appendChild(el);
+});
+</script>
+</body>
+</html>

@@ -28,6 +28,11 @@ async fn main() {
         return;
     }
 
+    if args.contains(&"--daemon".to_string()) {
+        run_daemon_server().await;
+        return;
+    }
+
     let state = Arc::new(Mutex::new(PrevalentState::default()));
     let port = McpServer::port_from_env();
     let server = McpServer::new(port);
@@ -151,6 +156,26 @@ async fn run_stdio_server() {
             let _ = server.waiting().await;
         }
     }
+}
+
+async fn run_daemon_server() {
+    tracing::info!("PKS Daemon starting in --daemon mode...");
+    // TODO T5: implement full daemon with IPC socket
+    // For now, run the HTTP server as before
+    let state = Arc::new(Mutex::new(PrevalentState::default()));
+    let port = McpServer::port_from_env();
+    let server = McpServer::new(port);
+    let ct = server.cancellation_token();
+    index_vaults_on_boot(Arc::clone(&state)).await;
+    let state_for_shutdown = Arc::clone(&state);
+    tokio::spawn(async move {
+        tokio::signal::ctrl_c().await.ok();
+        ct.cancel();
+    });
+    let run_handle = tokio::spawn(server.run(Arc::clone(&state)));
+    let _ = run_handle.await;
+    let guard = state_for_shutdown.lock().unwrap();
+    let _ = guard.save_all_snapshots();
 }
 
 async fn index_vaults_on_boot(state: Arc<Mutex<PrevalentState>>) {

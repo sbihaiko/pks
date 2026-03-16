@@ -102,47 +102,6 @@ pub fn get_repo_head_info(repo_path: &Path) -> Option<(CommitSha, Branch)> {
     Some((sha, branch))
 }
 
-fn send_ref_changes(
-    event: notify::Event,
-    event_tx: &mpsc::Sender<RefChange>,
-    repo_path: &PathBuf,
-) {
-    use notify::EventKind;
-    if !matches!(event.kind, EventKind::Modify(_) | EventKind::Create(_)) {
-        return;
-    }
-    for path in &event.paths {
-        if let Some(branch) = path.file_name() {
-            let _ = event_tx.send(RefChange {
-                repo_path: repo_path.clone(),
-                branch: branch.to_string_lossy().into_owned(),
-            });
-        }
-    }
-}
-
-pub fn watch_git_refs(
-    repo_path: &Path,
-    event_tx: mpsc::Sender<RefChange>,
-) -> notify::Result<notify::RecommendedWatcher> {
-    use notify::{Event, Watcher};
-    let refs_path = repo_path.join(".git/refs/heads");
-    let repo_path_owned = repo_path.to_path_buf();
-    let mut watcher = notify::recommended_watcher(move |res: notify::Result<Event>| {
-        if let Ok(event) = res {
-            send_ref_changes(event, &event_tx, &repo_path_owned);
-        }
-    })?;
-    watcher.watch(&refs_path, notify::RecursiveMode::NonRecursive)?;
-    Ok(watcher)
-}
-
-#[derive(Debug)]
-pub struct RefChange {
-    pub repo_path: PathBuf,
-    pub branch: String,
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

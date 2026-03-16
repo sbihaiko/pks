@@ -1,0 +1,44 @@
+[Unit]
+Description=PKS (Prometheus Knowledge System) MCP Daemon
+Documentation=https://github.com/anelilsedaux/WellzestaNotion
+After=network.target
+
+[Service]
+Type=simple
+
+# Working directory must contain .env so dotenvy can discover it
+WorkingDirectory=/opt/pks
+
+# Load env vars from file (overrides inline Environment= entries)
+EnvironmentFile=-/opt/pks/.env
+
+# Inline defaults — overridden by .env if that file exists
+Environment="PKS_VAULTS_DIR=/home/%u/VSCodeProjects"
+Environment="OLLAMA_BASE_URL=http://localhost:11434"
+Environment="OLLAMA_EMBED_MODEL=nomic-embed-text"
+Environment="PKS_EMBEDDING_PROVIDER=ollama"
+Environment="PKS_LOG_MAX_SIZE=10485760"
+
+# MCP stdio transport
+ExecStart=/usr/local/bin/pks --stdio
+
+# Restart policy: always restart, even on clean exit
+Restart=always
+RestartSec=10
+
+# Graceful shutdown: allow 30 s for SIGTERM before SIGKILL
+TimeoutStopSec=30
+KillMode=mixed
+KillSignal=SIGTERM
+
+# Logging: redirect to per-user log directory via StandardOutput
+StandardOutput=append:/home/%u/.pks/logs/pks.stdout.log
+StandardError=append:/home/%u/.pks/logs/pks.stderr.log
+
+# Basic sandboxing (tighten as needed)
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/home/%u/.pks /home/%u/VSCodeProjects /opt/pks
+
+[Install]
+WantedBy=multi-user.target

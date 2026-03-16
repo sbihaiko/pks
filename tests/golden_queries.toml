@@ -1,0 +1,124 @@
+[[queries]]
+query = "sleep quality melatonin circadian rhythm bedtime"
+expected_top3 = ["sleep_hygiene", "stress_management", "mindfulness"]
+score_floor = 0.1
+
+[[queries]]
+query = "mindfulness meditation anxiety stress reduction breathing"
+expected_top3 = ["mindfulness", "stress_management", "mental_health"]
+score_floor = 0.1
+
+[[queries]]
+query = "aerobic exercise cardiovascular physical activity fitness"
+expected_top3 = ["physical_activity", "energy_management", "healthy_aging"]
+score_floor = 0.1
+
+[[queries]]
+query = "nutrition protein vitamins dietary fiber healthy eating"
+expected_top3 = ["nutrition_basics", "nutrition_labels", "healthy_aging"]
+score_floor = 0.1
+
+[[queries]]
+query = "hydration water intake electrolytes dehydration thirst"
+expected_top3 = ["hydration", "physical_activity", "nutrition_basics"]
+score_floor = 0.1
+
+[[queries]]
+query = "BM25 inverted index full text search token ranking retrieval"
+expected_top3 = ["database_indexing", "knowledge_management", "software_architecture"]
+score_floor = 0.1
+
+[[queries]]
+query = "hexagonal architecture ports adapters dependency inversion domain"
+expected_top3 = ["software_architecture", "api_design", "technical_debt"]
+score_floor = 0.1
+
+[[queries]]
+query = "test driven development red green refactor unit tests"
+expected_top3 = ["tdd_practices", "code_review", "cicd_pipelines"]
+score_floor = 0.1
+
+[[queries]]
+query = "extract method refactoring guard clauses cyclomatic complexity"
+expected_top3 = ["refactoring_techniques", "technical_debt", "tdd_practices"]
+score_floor = 0.1
+
+[[queries]]
+query = "continuous integration deployment pipeline test pyramid staging"
+expected_top3 = ["cicd_pipelines", "code_review", "tdd_practices"]
+score_floor = 0.1
+
+[[queries]]
+query = "concurrency async await mutex channel tokio threads"
+expected_top3 = ["concurrency_patterns", "software_architecture", "observability"]
+score_floor = 0.1
+
+[[queries]]
+query = "spaced repetition flashcard retrieval practice memory retention"
+expected_top3 = ["study_techniques", "learning_strategies", "habit_formation"]
+score_floor = 0.1
+
+[[queries]]
+query = "peer review double blind manuscript journal submission revision"
+expected_top3 = ["peer_review_process", "academic_writing", "literature_review"]
+score_floor = 0.1
+
+[[queries]]
+query = "thesis dissertation supervisor writing chapters methodology"
+expected_top3 = ["thesis_writing", "academic_writing", "research_methodology"]
+score_floor = 0.1
+
+[[queries]]
+query = "statistical hypothesis p-value confidence interval effect size"
+expected_top3 = ["statistical_analysis", "experimental_design", "research_methodology"]
+score_floor = 0.1
+
+[[queries]]
+query = "habit loop cue routine reward implementation intention stacking"
+expected_top3 = ["habit_formation", "goal_setting", "energy_management"]
+score_floor = 0.1
+
+[[queries]]
+query = "time blocking deep work calendar weekly review prioritization"
+expected_top3 = ["time_management", "focus_techniques", "project_planning"]
+score_floor = 0.1
+
+[[queries]]
+query = "OKR SMART goals objectives key results quarterly planning"
+expected_top3 = ["goal_setting", "project_planning", "retrospectives"]
+score_floor = 0.1
+
+[[queries]]
+query = "lacto fermentation sauerkraut brine Lactobacillus lactic acid"
+expected_top3 = ["fermentation_basics", "food_preservation", "food_safety"]
+score_floor = 0.1
+
+[[queries]]
+query = "batch cooking sheet pan components grains proteins weeknight"
+expected_top3 = ["batch_cooking", "meal_planning", "kitchen_organization"]
+score_floor = 0.1
+
+[[queries]]
+query = "knife chef blade julienne rocking motion cutting board honing"
+expected_top3 = ["knife_skills", "kitchen_organization", "batch_cooking"]
+score_floor = 0.1
+
+[[queries]]
+query = "seasonal produce farmers market spring summer vegetables local"
+expected_top3 = ["seasonal_eating", "meal_planning", "food_preservation"]
+score_floor = 0.1
+
+[[queries]]
+query = "food safety temperature danger zone Salmonella cross contamination"
+expected_top3 = ["food_safety", "food_preservation", "nutrition_labels"]
+score_floor = 0.1
+
+[[queries]]
+query = "observability tracing logging metrics distributed systems spans"
+expected_top3 = ["observability", "cicd_pipelines", "software_architecture"]
+score_floor = 0.1
+
+[[queries]]
+query = "decision making cognitive bias pre mortem sunk cost reversible"
+expected_top3 = ["decision_making", "retrospectives", "goal_setting"]
+score_floor = 0.1

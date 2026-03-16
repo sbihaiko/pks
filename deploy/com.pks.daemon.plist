@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+  <!-- Service identity -->
+  <key>Label</key>
+  <string>com.pks.daemon</string>
+
+  <!-- Command: MCP stdio transport -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/pks</string>
+    <string>--stdio</string>
+  </array>
+
+  <!-- Working directory must contain .env so dotenvy can discover it -->
+  <key>WorkingDirectory</key>
+  <string>/Users/bihaiko/VSCodeProjects/WellzestaNotion/pks</string>
+
+  <!-- Environment variables -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PKS_VAULTS_DIR</key>
+    <string>/Users/bihaiko/VSCodeProjects</string>
+    <key>OLLAMA_BASE_URL</key>
+    <string>http://localhost:11434</string>
+    <key>OLLAMA_EMBED_MODEL</key>
+    <string>nomic-embed-text</string>
+    <key>PKS_EMBEDDING_PROVIDER</key>
+    <string>ollama</string>
+    <key>PKS_LOG_MAX_SIZE</key>
+    <string>10485760</string>
+  </dict>
+
+  <!-- Lifecycle: start on boot and restart on crash -->
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+
+  <!-- Graceful shutdown: allow 30 s for SIGTERM before SIGKILL -->
+  <key>ExitTimeout</key>
+  <integer>30</integer>
+
+  <!-- Log output -->
+  <key>StandardOutPath</key>
+  <string>/Users/bihaiko/.pks/logs/pks.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/bihaiko/.pks/logs/pks.stderr.log</string>
+
+  <!-- Throttle rapid restarts to avoid tight crash loops -->
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+
+</dict>
+</plist>

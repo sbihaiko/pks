@@ -1,0 +1,324 @@
+{
+  "plugin_root": "/Users/bihaiko/.claude/plugins/cache/dev-squad-marketplace/dev-squad/0.1.25",
+  "files": [
+    {
+      "path": "README.md",
+      "lines": 95,
+      "tokens_est": 552,
+      "exports": []
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "lines": 16,
+      "tokens_est": 54,
+      "exports": []
+    },
+    {
+      "path": "agents/squad-actor.md",
+      "lines": 91,
+      "tokens_est": 736,
+      "exports": []
+    },
+    {
+      "path": "agents/squad-critic.md",
+      "lines": 117,
+      "tokens_est": 842,
+      "exports": []
+    },
+    {
+      "path": "commands/squad-config.md",
+      "lines": 96,
+      "tokens_est": 1260,
+      "exports": []
+    },
+    {
+      "path": "commands/squad-guardrails.md",
+      "lines": 100,
+      "tokens_est": 601,
+      "exports": []
+    },
+    {
+      "path": "commands/squad.md",
+      "lines": 201,
+      "tokens_est": 1626,
+      "exports": []
+    },
+    {
+      "path": "hooks/hooks.json",
+      "lines": 116,
+      "tokens_est": 301,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/block-questions.sh",
+      "lines": 35,
+      "tokens_est": 230,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/check-conditions.py",
+      "lines": 194,
+      "tokens_est": 887,
+      "exports": [
+        "check_failing_tests",
+        "check_uncommitted",
+        "count_todos_in_file",
+        "check_pending_docs",
+        "check_untracked",
+        "check_critical_conditions",
+        "get_squad_step",
+        "build_block_directive",
+        "main"
+      ]
+    },
+    {
+      "path": "hooks/scripts/check-file-size.sh",
+      "lines": 72,
+      "tokens_est": 362,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/check-no-mocks.sh",
+      "lines": 109,
+      "tokens_est": 484,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/post-compact-resume.sh",
+      "lines": 89,
+      "tokens_est": 604,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/pre-compact.sh",
+      "lines": 11,
+      "tokens_est": 62,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/remind-progress.sh",
+      "lines": 62,
+      "tokens_est": 352,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/stop-auto-continue.sh",
+      "lines": 4,
+      "tokens_est": 20,
+      "exports": []
+    },
+    {
+      "path": "hooks/scripts/user-prompt-submit.sh",
+      "lines": 30,
+      "tokens_est": 175,
+      "exports": []
+    },
+    {
+      "path": "scripts/build-manifest.py",
+      "lines": 119,
+      "tokens_est": 484,
+      "exports": [
+        "get_plugin_root",
+        "_extract_py_exports",
+        "_extract_sh_exports",
+        "extract_exports",
+        "estimate_tokens",
+        "scan_file",
+        "build_manifest",
+        "write_manifest",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/bump-version.sh",
+      "lines": 46,
+      "tokens_est": 237,
+      "exports": []
+    },
+    {
+      "path": "scripts/check-update.sh",
+      "lines": 24,
+      "tokens_est": 161,
+      "exports": []
+    },
+    {
+      "path": "scripts/health-check.py",
+      "lines": 125,
+      "tokens_est": 531,
+      "exports": [
+        "_count_blocking",
+        "_count_advisory",
+        "_load_report_formatter",
+        "format_report",
+        "check_hook_stdin",
+        "_parse_args",
+        "_run_checks",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/health_functions.py",
+      "lines": 138,
+      "tokens_est": 600,
+      "exports": [
+        "_find_func_starts",
+        "_find_py_func_end",
+        "_find_brace_func_end",
+        "extract_functions",
+        "count_complexity",
+        "count_nesting"
+      ]
+    },
+    {
+      "path": "scripts/health_risk.py",
+      "lines": 135,
+      "tokens_est": 568,
+      "exports": [
+        "get_modified_files",
+        "get_all_source_files",
+        "_check_file_size",
+        "_check_abs_paths",
+        "_check_markers",
+        "_check_function",
+        "analyze_file",
+        "run_risk_analysis"
+      ]
+    },
+    {
+      "path": "scripts/health_settings.py",
+      "lines": 65,
+      "tokens_est": 232,
+      "exports": [
+        "_parse_raw_settings",
+        "load_settings"
+      ]
+    },
+    {
+      "path": "scripts/health_tests.py",
+      "lines": 182,
+      "tokens_est": 831,
+      "exports": [
+        "detect_stack",
+        "_parse_test_counts",
+        "run_tests",
+        "_parse_lcov",
+        "_parse_go_coverage",
+        "_parse_json_coverage",
+        "get_coverage"
+      ]
+    },
+    {
+      "path": "scripts/install-hooks.sh",
+      "lines": 36,
+      "tokens_est": 149,
+      "exports": []
+    },
+    {
+      "path": "scripts/parse-settings.sh",
+      "lines": 100,
+      "tokens_est": 407,
+      "exports": [
+        "get_default",
+        "emit_defaults",
+        "is_known_key",
+        "strip_outer_quotes"
+      ]
+    },
+    {
+      "path": "scripts/report-formatter.py",
+      "lines": 200,
+      "tokens_est": 941,
+      "exports": [
+        "set_color",
+        "_c",
+        "_status_color",
+        "_header",
+        "_table",
+        "_section",
+        "format_actor_summary",
+        "format_critic_verdict",
+        "_append_verdict",
+        "_format_risk_section",
+        "_format_test_section",
+        "format_health_check",
+        "format_flow_status",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/write-run-context.sh",
+      "lines": 183,
+      "tokens_est": 886,
+      "exports": [
+        "read_existing_frontmatter",
+        "read_existing_section"
+      ]
+    },
+    {
+      "path": "skills/orchestration/SKILL.md",
+      "lines": 110,
+      "tokens_est": 898,
+      "exports": []
+    },
+    {
+      "path": "skills/orchestration/references/actor-critic-execution.md",
+      "lines": 159,
+      "tokens_est": 1206,
+      "exports": []
+    },
+    {
+      "path": "skills/orchestration/references/convergence.md",
+      "lines": 85,
+      "tokens_est": 664,
+      "exports": []
+    },
+    {
+      "path": "skills/orchestration/references/lite-task-spec.md",
+      "lines": 91,
+      "tokens_est": 303,
+      "exports": []
+    },
+    {
+      "path": "skills/orchestration/references/resume-protocol.md",
+      "lines": 33,
+      "tokens_est": 277,
+      "exports": []
+    },
+    {
+      "path": "skills/orchestration/references/scout-template.md",
+      "lines": 34,
+      "tokens_est": 197,
+      "exports": []
+    },
+    {
+      "path": "skills/orchestration/references/task-decomposition.md",
+      "lines": 28,
+      "tokens_est": 294,
+      "exports": []
+    },
+    {
+      "path": "skills/orchestration/references/verbose-protocol.md",
+      "lines": 51,
+      "tokens_est": 377,
+      "exports": []
+    },
+    {
+      "path": "skills/workflow-patterns/SKILL.md",
+      "lines": 70,
+      "tokens_est": 498,
+      "exports": []
+    },
+    {
+      "path": "skills/workflow-patterns/references/anti-hallucination.md",
+      "lines": 43,
+      "tokens_est": 235,
+      "exports": []
+    },
+    {
+      "path": "skills/workflow-patterns/references/dependency-remapping.md",
+      "lines": 42,
+      "tokens_est": 243,
+      "exports": []
+    }
+  ]
+}

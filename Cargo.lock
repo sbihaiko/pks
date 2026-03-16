@@ -1508,11 +1508,13 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "bincode",
+ "chrono",
  "ctrlc",
  "dotenvy",
  "fs2",
  "git2",
  "pulldown-cmark",
+ "regex-lite",
  "reqwest",
  "rmcp",
  "schemars",
@@ -1527,6 +1529,7 @@ dependencies = [
  "tracing",
  "tracing-appender",
  "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]
@@ -1740,6 +1743,12 @@ dependencies = [
  "memchr",
  "regex-syntax",
 ]
+
+[[package]]
+name = "regex-lite"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cab834c73d247e67f4fae452806d17d3c7501756d98c8808d7c9c7aa7d18f973"
 
 [[package]]
 name = "regex-syntax"

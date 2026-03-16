@@ -1,0 +1,25 @@
+{
+  "project_name": "PKS",
+  "project_type": "rust",
+  "project_subtitle": "CI Dashboard",
+  "test_directories": {
+    "backend": [
+      "src",
+      "tests"
+    ]
+  },
+  "source_directories": [
+    {
+      "path": "src",
+      "type": "backend"
+    }
+  ],
+  "max_workers": 8,
+  "github_repo": "sbihaiko/pks",
+  "environments": [
+    {
+      "name": "Local",
+      "url": "http://localhost:8080"
+    }
+  ]
+}

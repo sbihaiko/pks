@@ -32,3 +32,4 @@ pub mod ipc;
 pub mod commands;
 pub mod daemon;
 pub mod boot_indexer;
+pub mod git;

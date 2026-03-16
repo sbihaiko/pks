@@ -1,3 +1,4 @@
+pub mod init;
 mod status;
 mod validate;
 
@@ -5,7 +6,7 @@ use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
 pub enum CliCommand {
-    Init { path: PathBuf },
+    Init { path: PathBuf, force: bool },
     Doctor { path: PathBuf },
     HookPostCommit { path: PathBuf, sha: String, branch: String },
     Status { port: u16 },
@@ -17,8 +18,10 @@ pub enum CliCommand {
 pub fn parse_args(args: &[String]) -> CliCommand {
     match args.get(1).map(|s| s.as_str()) {
         Some("init") => {
-            let path = args.get(2).map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
-            CliCommand::Init { path }
+            let force = args.iter().any(|a| a == "--force");
+            let path = args.iter().skip(2).find(|a| !a.starts_with("--"))
+                .map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
+            CliCommand::Init { path, force }
         }
         Some("doctor") => {
             let path = args.get(2).map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
@@ -50,7 +53,7 @@ pub fn parse_args(args: &[String]) -> CliCommand {
 
 pub async fn run_command(cmd: CliCommand) -> i32 {
     match cmd {
-        CliCommand::Init { path } => run_init(&path),
+        CliCommand::Init { path, force } => run_init(&path, force),
         CliCommand::Doctor { path } => run_doctor(&path),
         CliCommand::HookPostCommit { path, sha, branch } => run_hook_post_commit(&path, &sha, &branch),
         CliCommand::Status { port } => status::run_status(port).await,
@@ -64,33 +67,17 @@ pub async fn run_command(cmd: CliCommand) -> i32 {
     }
 }
 
-fn run_init_post_steps(path: &Path) {
-    use crate::vault_init::{add_to_git_exclude, install_post_commit_hook};
-    if let Err(e) = add_to_git_exclude(path) {
-        eprintln!("pks init warning: could not update .git/info/exclude: {e}");
+fn run_init(path: &Path, force: bool) -> i32 {
+    use crate::cli::init::{InitCommand, InitError};
+    let cmd = InitCommand::new(path.to_path_buf(), force);
+    match cmd.run() {
+        Ok(()) => 0,
+        Err(InitError::AlreadyInitialized) => {
+            eprintln!("⚠ PKS já inicializado em {}\n  Use --force para sobrescrever a configuração existente.", path.display());
+            1
+        }
+        Err(e) => { eprintln!("✗ Erro: {e}"); 1 }
     }
-    if let Err(e) = install_post_commit_hook(path) {
-        eprintln!("pks init warning: could not install post-commit hook: {e}");
-    }
-    if let Err(e) = crate::git_branch::create_pks_branch_and_worktree(path) {
-        eprintln!("pks init warning: could not set up pks-knowledge branch: {e}");
-    }
-}
-
-fn run_init(path: &Path) -> i32 {
-    use crate::vault_init::init_vault;
-    let result = match init_vault(path) {
-        Ok(r) => r,
-        Err(e) => { eprintln!("pks init error: {e}"); return 1; }
-    };
-    if result.was_idempotent {
-        println!("pks init: vault already initialized (idempotent).");
-        return 0;
-    }
-    println!("pks init: created {} directories.", result.dirs_created.len());
-    run_init_post_steps(path);
-    println!("pks init: done.");
-    0
 }
 
 fn run_doctor(path: &Path) -> i32 {

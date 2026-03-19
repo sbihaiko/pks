@@ -18,8 +18,12 @@ prometheus/
 # PKS project config (contains machine-specific paths)
 .pks/
 
-# AI session data
+# AI session data & agent toolkits
 .claude/
+.agent/
+
+# CI dashboard (internal tooling)
+ci-dashboard/
 
 # Worktrees
 .worktrees/

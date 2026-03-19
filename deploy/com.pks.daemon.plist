@@ -16,14 +16,16 @@
   </array>
 
   <!-- Working directory must contain .env so dotenvy can discover it -->
+  <!-- Edit: set to the directory containing your .env file -->
   <key>WorkingDirectory</key>
-  <string>/Users/bihaiko/VSCodeProjects/WellzestaNotion/pks</string>
+  <string>/Users/YOUR_USER/path/to/pks</string>
 
   <!-- Environment variables -->
   <key>EnvironmentVariables</key>
   <dict>
+    <!-- Edit: root directory containing your Git repos -->
     <key>PKS_VAULTS_DIR</key>
-    <string>/Users/bihaiko/VSCodeProjects</string>
+    <string>/Users/YOUR_USER/Projects</string>
     <key>OLLAMA_BASE_URL</key>
     <string>http://localhost:11434</string>
     <key>OLLAMA_EMBED_MODEL</key>
@@ -45,10 +47,11 @@
   <integer>30</integer>
 
   <!-- Log output -->
+  <!-- Edit: adjust log paths to your home directory -->
   <key>StandardOutPath</key>
-  <string>/Users/bihaiko/.pks/logs/pks.stdout.log</string>
+  <string>/Users/YOUR_USER/.pks/logs/pks.stdout.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/bihaiko/.pks/logs/pks.stderr.log</string>
+  <string>/Users/YOUR_USER/.pks/logs/pks.stderr.log</string>
 
   <!-- Throttle rapid restarts to avoid tight crash loops -->
   <key>ThrottleInterval</key>

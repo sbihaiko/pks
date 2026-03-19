@@ -31,8 +31,10 @@ async fn main() {
     }
 
     if args.contains(&"--daemon".to_string()) {
-        run_daemon_server().await;
-        return;
+        #[cfg(unix)]
+        { run_daemon_server().await; return; }
+        #[cfg(not(unix))]
+        { eprintln!("--daemon mode is not supported on Windows. Use --stdio for MCP."); return; }
     }
 
     run_http_server().await;
@@ -88,6 +90,7 @@ async fn run_stdio_server() {
     }
 }
 
+#[cfg(unix)]
 async fn run_daemon_server() {
     let pid_path = pks::daemon::pid_path();
     let lock_file = match pks::daemon::acquire_pid_lock(&pid_path) {

@@ -14,6 +14,11 @@ async fn main() {
 
     let args: Vec<String> = env::args().collect();
 
+    if args.contains(&"--help".to_string()) || args.contains(&"-h".to_string()) {
+        eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh> [path] [--stdio|--daemon]");
+        return;
+    }
+
     if args.len() > 1 && !args[1].starts_with('-') {
         let cmd = pks::cli::parse_args(&args);
         let exit_code = pks::cli::run_command(cmd).await;
@@ -70,6 +75,7 @@ async fn run_stdio_server() {
     let state = Arc::new(Mutex::new(PrevalentState::default()));
     let state_for_indexing = Arc::clone(&state);
     tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(2)).await;
         index_vaults_on_boot(state_for_indexing).await;
     });
     let handler = pks::mcp_server::PksHandler::new(state);

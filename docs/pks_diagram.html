@@ -9,290 +9,293 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:         #04081a;
-  --bg-1:       #070d22;
-  --bg-2:       #0b1530;
-  --bg-3:       #10203e;
-  --border:     rgba(255,255,255,0.06);
-  --mint:       #00e5b5;
-  --mint-2:     #00b48c;
-  --mint-glow:  rgba(0,229,181,0.12);
-  --purple:     #7c3aed;
-  --purple-2:   #a855f7;
-  --blue:       #3b82f6;
-  --green:      #22c55e;
-  --yellow:     #eab308;
-  --orange:     #f97316;
-  --pink:       #ec4899;
-  --red:        #ef4444;
-  --text-1:     #eaf4ff;
-  --text-2:     #7a94b4;
-  --text-3:     #3a4f68;
-  --ff-d: 'Syne', sans-serif;
-  --ff-m: 'JetBrains Mono', monospace;
-  --ff-b: 'DM Sans', sans-serif;
-  --r: 12px;
+  --bg:        #04081a; --bg-1:#070d22; --bg-2:#0b1530; --bg-3:#10203e;
+  --border:    rgba(255,255,255,0.06);
+  --mint:      #00e5b5; --mint-2:#00b48c; --mint-glow:rgba(0,229,181,0.12);
+  --purple:    #7c3aed; --purple-2:#a855f7;
+  --blue:      #3b82f6; --green:#22c55e; --yellow:#eab308;
+  --orange:    #f97316; --pink:#ec4899; --red:#ef4444;
+  --text-1:    #eaf4ff; --text-2:#7a94b4; --text-3:#3a4f68;
+  --ff-d:'Syne',sans-serif; --ff-m:'JetBrains Mono',monospace; --ff-b:'DM Sans',sans-serif;
+  --r:12px;
 }
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
-html { scroll-behavior:smooth }
-body {
-  background:var(--bg); color:var(--text-1);
-  font-family:var(--ff-b); min-height:100vh; overflow-x:hidden;
-}
-body::before {
-  content:''; position:fixed; inset:0;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text-1);font-family:var(--ff-b);min-height:100vh;overflow-x:hidden}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:
-    radial-gradient(ellipse 80% 50% at 10% 20%, rgba(0,229,181,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 60% at 90% 80%, rgba(124,58,237,0.05) 0%, transparent 60%);
-  pointer-events:none; z-index:0;
+    radial-gradient(ellipse 80% 50% at 10% 20%,rgba(0,229,181,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 60% at 90% 80%,rgba(124,58,237,0.05) 0%,transparent 60%);
 }
 
 /* ── HEADER ── */
-header {
-  position:sticky; top:0; z-index:100;
-  background:rgba(4,8,26,0.92); backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:60px;
+header{
+  position:sticky;top:0;z-index:100;background:rgba(4,8,26,0.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;height:60px;
 }
-.logo { display:flex; align-items:center; gap:10px; font-family:var(--ff-d); font-weight:800; font-size:15px; letter-spacing:0.04em; }
-.logo-mark {
-  width:28px; height:28px;
-  background:linear-gradient(135deg, var(--mint) 0%, var(--purple-2) 100%);
-  border-radius:6px; display:grid; place-items:center; font-size:13px; font-weight:800; color:#fff;
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--ff-d);font-weight:800;font-size:15px;letter-spacing:0.04em}
+.logo-mark{
+  width:28px;height:28px;border-radius:6px;display:grid;place-items:center;
+  font-size:13px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,var(--mint) 0%,var(--purple-2) 100%);
 }
-.logo-sub { color:var(--text-2); font-family:var(--ff-m); font-size:11px; font-weight:300; letter-spacing:0.06em }
-nav { display:flex; gap:2px }
-nav button {
-  background:none; border:none; cursor:pointer;
-  font-family:var(--ff-m); font-size:11px; font-weight:500;
-  color:var(--text-2); letter-spacing:0.06em;
-  padding:8px 14px; border-radius:8px; transition:all .2s; text-transform:uppercase;
+.logo-sub{color:var(--text-2);font-family:var(--ff-m);font-size:11px;font-weight:300;letter-spacing:0.06em}
+nav{display:flex;gap:2px}
+nav button{
+  background:none;border:none;cursor:pointer;font-family:var(--ff-m);font-size:11px;font-weight:500;
+  color:var(--text-2);letter-spacing:0.06em;padding:8px 14px;border-radius:8px;
+  transition:all .2s;text-transform:uppercase;
 }
-nav button:hover { color:var(--text-1); background:var(--bg-2) }
-nav button.active { color:var(--mint); background:var(--mint-glow) }
-.header-badge { display:flex; align-items:center; gap:8px; font-family:var(--ff-m); font-size:11px; color:var(--text-3) }
-.pulse {
-  width:8px; height:8px; border-radius:50%; background:var(--green);
-  box-shadow:0 0 0 0 rgba(34,197,94,0.4); animation:pulse 2s infinite;
+nav button:hover{color:var(--text-1);background:var(--bg-2)}
+nav button.active{color:var(--mint);background:var(--mint-glow)}
+.header-badge{display:flex;align-items:center;gap:8px;font-family:var(--ff-m);font-size:11px;color:var(--text-3)}
+.pulse{
+  width:8px;height:8px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 0 rgba(34,197,94,0.4);animation:pulse 2s infinite;
 }
-@keyframes pulse {
-  0%   { box-shadow:0 0 0 0 rgba(34,197,94,0.5) }
-  70%  { box-shadow:0 0 0 8px rgba(34,197,94,0) }
-  100% { box-shadow:0 0 0 0 rgba(34,197,94,0) }
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}
+  70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
 }
 
 /* ── PANELS ── */
-main { position:relative; z-index:1; padding:40px 32px 80px }
-.panel { display:none }
-.panel.active { display:block }
+main{position:relative;z-index:1;padding:40px 32px 80px}
+.panel{display:none}.panel.active{display:block}
+.section-title{
+  font-family:var(--ff-d);font-size:13px;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--text-2);margin-bottom:24px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
-.section-title {
-  font-family:var(--ff-d); font-size:13px; font-weight:700;
-  letter-spacing:0.12em; text-transform:uppercase;
-  color:var(--text-2); margin-bottom:24px;
-  display:flex; align-items:center; gap:12px;
+/* ── OVERVIEW ── */
+.hero{
+  display:grid;grid-template-columns:auto 1fr;gap:48px;
+  align-items:center;margin-bottom:52px;
 }
-.section-title::after { content:''; flex:1; height:1px; background:var(--border) }
+@media(max-width:600px){.hero{grid-template-columns:1fr}}
+.big-ring{position:relative;width:180px;height:180px;flex-shrink:0}
+.big-ring svg{transform:rotate(-90deg)}
+.big-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.big-pct{font-family:var(--ff-m);font-size:42px;font-weight:700;color:var(--mint);line-height:1}
+.big-lbl{font-family:var(--ff-m);font-size:9px;color:var(--text-2);letter-spacing:0.1em;text-transform:uppercase;margin-top:3px}
+.hero-right{display:flex;flex-direction:column;gap:12px}
+.hero-title{
+  font-family:var(--ff-d);font-size:32px;font-weight:800;line-height:1.1;letter-spacing:-0.02em;
+  background:linear-gradient(135deg,#fff 0%,var(--mint) 50%,var(--purple-2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-family:var(--ff-m);font-size:12px;color:var(--text-2)}
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.stat{
+  display:flex;flex-direction:column;gap:2px;
+  padding:10px 18px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);min-width:80px;
+}
+.stat-val{font-family:var(--ff-m);font-size:22px;font-weight:700;color:var(--text-1)}
+.stat-lbl{font-family:var(--ff-m);font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:0.07em}
+.phase-divider{
+  display:flex;align-items:center;gap:12px;margin:36px 0 16px;
+  font-family:var(--ff-m);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+}
+.phase-divider::before,.phase-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.phase-badge{
+  padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.06em;
+  white-space:nowrap;
+}
+.gauges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:14px}
+.gauge-card{
+  background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px 16px 16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;
+}
+.gauge-card:hover{
+  border-color:var(--c,var(--mint));background:var(--bg-2);
+  transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+.gauge-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% -20%,var(--c-glow,var(--mint-glow)),transparent);
+  opacity:0;transition:opacity .25s;
+}
+.gauge-card:hover::before{opacity:1}
+.gauge-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.gauge-id{
+  font-family:var(--ff-m);font-size:11px;font-weight:700;letter-spacing:0.06em;
+  padding:3px 8px;border-radius:5px;
+  background:var(--c-bg,rgba(0,229,181,0.1));color:var(--c,var(--mint));
+}
+.gauge-phase{
+  font-family:var(--ff-m);font-size:9px;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--text-3);background:var(--bg-3);padding:2px 6px;border-radius:4px;
+}
+.gauge-ring{display:flex;justify-content:center;margin-bottom:12px}
+.gauge-ring svg{overflow:visible}
+.ring-track{fill:none;stroke:var(--bg-3);stroke-width:5}
+.ring-fill{
+  fill:none;stroke:var(--c,var(--mint));stroke-width:5;stroke-linecap:round;
+  transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1);
+}
+.ring-pct{font-family:var(--ff-m);font-size:18px;font-weight:700;fill:var(--text-1);text-anchor:middle;dominant-baseline:central}
+.gauge-name{font-family:var(--ff-d);font-size:12px;font-weight:700;color:var(--text-1);margin-bottom:3px;line-height:1.3}
+.gauge-tasks{font-family:var(--ff-m);font-size:10px;color:var(--text-2)}
+.gauge-tasks span{color:var(--c,var(--mint))}
+.gauge-status{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-family:var(--ff-m);font-size:10px;text-transform:uppercase;letter-spacing:0.05em}
+.gauge-dot{width:5px;height:5px;border-radius:50%;background:var(--c,var(--mint))}
 
-/* ── FLOW PANEL ── */
-.flow-stages {
-  display:flex; align-items:flex-start; gap:0;
-  overflow-x:auto; padding-bottom:12px; margin-bottom:24px;
+/* impl modules (same as ci modules) */
+.impl-mod{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px}
+.impl-mod-header{
+  display:flex;align-items:center;gap:14px;padding:13px 20px;cursor:pointer;
+  transition:background .15s;user-select:none;
 }
-.stage { min-width:160px; position:relative }
-.stage-label {
-  font-family:var(--ff-m); font-size:10px; text-transform:uppercase;
-  letter-spacing:0.08em; color:var(--text-3); margin-bottom:10px;
+.impl-mod-header:hover{background:var(--bg-2)}
+.impl-badge{
+  font-family:var(--ff-m);font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;flex-shrink:0;
+  background:var(--mc-bg,var(--mint-glow));color:var(--mc,var(--mint));
 }
-.stage-cards { display:flex; flex-direction:column; gap:8px }
-.flow-card {
-  background:var(--bg-1); border:1px solid var(--border); border-radius:var(--r);
-  padding:10px 12px; cursor:pointer; transition:all .15s; position:relative;
+.impl-mod-info{flex:1}
+.impl-mod-name{font-family:var(--ff-d);font-size:13px;font-weight:700;color:var(--text-1)}
+.impl-mod-meta{font-family:var(--ff-m);font-size:10px;color:var(--text-2);margin-top:2px}
+.impl-mod-stat{font-family:var(--ff-m);font-size:11px;font-weight:700;flex-shrink:0}
+.impl-chevron{font-size:11px;color:var(--text-3);transition:transform .2s;flex-shrink:0;margin-left:6px}
+.impl-mod.open .impl-chevron{transform:rotate(180deg)}
+.impl-body{display:none;border-top:1px solid var(--border);padding:14px 20px}
+.impl-mod.open .impl-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:5px}
+.task-item{
+  display:flex;align-items:flex-start;gap:8px;padding:7px 10px;
+  background:var(--bg-2);border-radius:6px;font-family:var(--ff-m);font-size:10px;
 }
-.flow-card:hover { border-color:var(--mint); transform:translateY(-1px); box-shadow:0 4px 12px var(--mint-glow) }
-.flow-card.selected { border-color:var(--mint); background:var(--bg-2) }
-.card-icon { font-size:1.1rem; margin-bottom:4px }
-.card-name { font-family:var(--ff-d); font-weight:700; color:var(--text-1); font-size:0.8rem }
-.card-sub { color:var(--text-2); font-family:var(--ff-m); font-size:0.7rem; margin-top:2px }
-.stage-arrow { display:flex; align-items:center; padding:0 8px; min-width:40px; padding-top:28px; color:var(--text-3) }
-.detail-panel {
-  background:var(--bg-1); border:1px solid var(--border); border-radius:var(--r);
-  padding:20px 24px; min-height:80px; transition:all .2s;
+.task-chk{
+  width:14px;height:14px;border-radius:3px;flex-shrink:0;margin-top:2px;
+  display:grid;place-items:center;font-size:8px;font-weight:700;
 }
-.detail-panel h3 { font-family:var(--ff-d); color:var(--text-1); font-size:0.95rem; margin-bottom:8px }
-.detail-panel p { color:var(--text-2); font-family:var(--ff-m); font-size:0.79rem; line-height:1.6 }
-.detail-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px }
-.dtag {
-  border-radius:20px; padding:2px 10px; font-family:var(--ff-m); font-size:0.7rem;
-  background:var(--bg-2); border:1px solid var(--border); color:var(--text-2);
-}
-.dtag.blue   { background:rgba(59,130,246,0.1);  border-color:var(--blue);   color:#79c0ff }
-.dtag.green  { background:rgba(34,197,94,0.1);   border-color:var(--green);  color:#56d364 }
-.dtag.orange { background:rgba(249,115,22,0.1);  border-color:var(--orange); color:#e3b341 }
+.task-chk.done{background:var(--mc,var(--mint));color:#000}
+.task-chk.todo{background:var(--bg-3);border:1px solid var(--border);color:var(--text-3)}
+.task-text{color:var(--text-2);line-height:1.4;flex:1}
+.task-item[data-done="false"] .task-text{color:var(--text-3)}
 
-/* ── LAYERS PANEL ── */
-.arch-wrapper { display:flex; flex-direction:column; gap:8px }
-.arch-tier {
-  background:var(--bg-1); border:1px solid var(--border); border-radius:var(--r);
-  overflow:hidden; transition:border-color .2s;
-}
-.arch-tier:hover { border-color:var(--tc,var(--mint)) }
-.arch-tier-header {
-  display:flex; align-items:center; gap:16px;
-  padding:14px 24px; background:var(--bg-2);
-  border-bottom:1px solid var(--border); cursor:pointer; user-select:none;
-}
-.tier-num {
-  font-family:var(--ff-m); font-size:10px; font-weight:700;
-  width:26px; height:26px; border-radius:6px; display:grid; place-items:center; flex-shrink:0;
-  background:var(--tc-bg,var(--mint-glow)); color:var(--tc,var(--mint));
-}
-.tier-name { font-family:var(--ff-d); font-size:14px; font-weight:700; color:var(--text-1) }
-.tier-sub { font-family:var(--ff-m); font-size:11px; color:var(--text-2); margin-left:auto }
-.tier-chevron { color:var(--text-3); transition:transform .2s; flex-shrink:0; margin-left:8px; font-size:12px }
-.arch-tier.open .tier-chevron { transform:rotate(180deg) }
-.arch-body { display:none; padding:16px 20px }
-.arch-tier.open .arch-body { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px }
-.arch-node {
-  background:var(--bg-2); border:1px solid var(--border); border-radius:var(--r);
-  padding:12px; transition:all .2s;
-}
-.arch-node:hover { border-color:var(--nc,var(--mint)); background:var(--bg-3) }
-.arch-node-name { font-family:var(--ff-d); font-weight:700; font-size:0.8rem; color:var(--text-1); margin-bottom:4px }
-.arch-node-desc { font-family:var(--ff-m); font-size:0.73rem; color:var(--text-2); line-height:1.5 }
+/* ── FLOW ── */
+.flow-stages{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding-bottom:12px;margin-bottom:24px}
+.stage{min-width:160px}
+.stage-label{font-family:var(--ff-m);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:10px}
+.stage-cards{display:flex;flex-direction:column;gap:8px}
+.flow-card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;cursor:pointer;transition:all .15s}
+.flow-card:hover{border-color:var(--mint);transform:translateY(-1px);box-shadow:0 4px 12px var(--mint-glow)}
+.flow-card.selected{border-color:var(--mint);background:var(--bg-2)}
+.card-icon{font-size:1.1rem;margin-bottom:4px}
+.card-name{font-family:var(--ff-d);font-weight:700;color:var(--text-1);font-size:0.8rem}
+.card-sub{color:var(--text-2);font-family:var(--ff-m);font-size:0.7rem;margin-top:2px}
+.stage-arrow{display:flex;align-items:center;padding:0 8px;min-width:40px;padding-top:28px;color:var(--text-3)}
+.detail-panel{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px;min-height:80px}
+.detail-panel h3{font-family:var(--ff-d);color:var(--text-1);font-size:0.95rem;margin-bottom:8px}
+.detail-panel p{color:var(--text-2);font-family:var(--ff-m);font-size:0.79rem;line-height:1.6}
+.detail-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.dtag{border-radius:20px;padding:2px 10px;font-family:var(--ff-m);font-size:0.7rem;background:var(--bg-2);border:1px solid var(--border);color:var(--text-2)}
+.dtag.blue{background:rgba(59,130,246,0.1);border-color:var(--blue);color:#79c0ff}
+.dtag.green{background:rgba(34,197,94,0.1);border-color:var(--green);color:#56d364}
+.dtag.orange{background:rgba(249,115,22,0.1);border-color:var(--orange);color:#e3b341}
 
-/* ── GAINS PANEL ── */
-.gains-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px }
-.gain-card {
-  background:var(--bg-1); border:1px solid var(--border); border-radius:var(--r);
-  padding:16px 18px; transition:all .15s;
+/* ── LAYERS ── */
+.arch-wrapper{display:flex;flex-direction:column;gap:8px}
+.arch-tier{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.arch-tier:hover{border-color:var(--tc,var(--mint))}
+.arch-tier-header{
+  display:flex;align-items:center;gap:16px;padding:14px 24px;
+  background:var(--bg-2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;
 }
-.gain-card:hover { border-color:var(--mint); transform:translateY(-2px); box-shadow:0 8px 24px var(--mint-glow) }
-.gain-icon { font-size:1.5rem; margin-bottom:8px }
-.gain-title { font-family:var(--ff-d); font-weight:700; font-size:0.88rem; color:var(--text-1); margin-bottom:6px }
-.gain-text { font-size:0.78rem; color:var(--text-2); line-height:1.6 }
-.gain-metric { margin-top:10px; font-family:var(--ff-m); font-size:0.75rem; font-weight:600; color:var(--mint) }
+.tier-num{
+  font-family:var(--ff-m);font-size:10px;font-weight:700;width:26px;height:26px;
+  border-radius:6px;display:grid;place-items:center;flex-shrink:0;
+  background:var(--tc-bg,var(--mint-glow));color:var(--tc,var(--mint));
+}
+.tier-name{font-family:var(--ff-d);font-size:14px;font-weight:700;color:var(--text-1)}
+.tier-sub{font-family:var(--ff-m);font-size:11px;color:var(--text-2);margin-left:auto}
+.tier-chevron{color:var(--text-3);transition:transform .2s;flex-shrink:0;margin-left:8px;font-size:12px}
+.arch-tier.open .tier-chevron{transform:rotate(180deg)}
+.arch-body{display:none;padding:16px 20px}
+.arch-tier.open .arch-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.arch-node{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:12px;transition:all .2s}
+.arch-node:hover{border-color:var(--nc,var(--mint));background:var(--bg-3)}
+.arch-node-name{font-family:var(--ff-d);font-weight:700;font-size:0.8rem;color:var(--text-1);margin-bottom:4px}
+.arch-node-desc{font-family:var(--ff-m);font-size:0.73rem;color:var(--text-2);line-height:1.5}
 
-/* ── CAP PANEL ── */
-.cap-wrap { display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start }
-.cap-triangle { flex:0 0 320px }
-.cap-triangle svg { width:100% }
-.cap-desc { flex:1; min-width:260px }
-.cap-item {
-  background:var(--bg-1); border:1px solid var(--border);
-  border-radius:var(--r); padding:14px 16px; margin-bottom:10px;
-}
-.cap-item h4 { font-family:var(--ff-d); font-size:0.85rem; font-weight:700; color:var(--text-1); margin-bottom:4px }
-.cap-item p { font-size:0.77rem; color:var(--text-2); line-height:1.5 }
-.cap-item.chosen { border-color:var(--green); background:rgba(34,197,94,0.05) }
-.cap-item.chosen h4::after { content:' ✓ ESCOLHIDO'; color:var(--green); font-size:0.7rem }
+/* ── GAINS ── */
+.gains-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.gain-card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;transition:all .15s}
+.gain-card:hover{border-color:var(--mint);transform:translateY(-2px);box-shadow:0 8px 24px var(--mint-glow)}
+.gain-icon{font-size:1.5rem;margin-bottom:8px}
+.gain-title{font-family:var(--ff-d);font-weight:700;font-size:0.88rem;color:var(--text-1);margin-bottom:6px}
+.gain-text{font-size:0.78rem;color:var(--text-2);line-height:1.6}
+.gain-metric{margin-top:10px;font-family:var(--ff-m);font-size:0.75rem;font-weight:600;color:var(--mint)}
 
-/* ── CI PANEL ── */
-.ci-hero {
-  display:grid; grid-template-columns:auto 1fr; gap:40px;
-  align-items:center; margin-bottom:40px;
-}
-.ci-big-ring { position:relative; width:160px; height:160px; flex-shrink:0 }
-.ci-big-ring svg { transform:rotate(-90deg) }
-.ci-ring-center {
-  position:absolute; inset:0;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-}
-.ci-pct { font-family:var(--ff-m); font-size:36px; font-weight:700; color:var(--mint); line-height:1 }
-.ci-pct-lbl { font-family:var(--ff-m); font-size:9px; color:var(--text-2); letter-spacing:0.1em; text-transform:uppercase; margin-top:3px }
-.ci-hero-right { display:flex; flex-direction:column; gap:12px }
-.ci-hero-title {
-  font-family:var(--ff-d); font-size:28px; font-weight:800; line-height:1.1; letter-spacing:-0.02em;
-  background:linear-gradient(135deg, #fff 0%, var(--mint) 60%, var(--purple-2) 100%);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-}
-.ci-hero-sub { font-family:var(--ff-m); font-size:12px; color:var(--text-2) }
-.ci-stat-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:4px }
-.ci-stat {
-  display:flex; flex-direction:column; gap:2px;
-  padding:10px 18px; background:var(--bg-2); border:1px solid var(--border); border-radius:var(--r);
-  min-width:80px;
-}
-.ci-stat-val { font-family:var(--ff-m); font-size:22px; font-weight:700 }
-.ci-stat-lbl { font-family:var(--ff-m); font-size:10px; color:var(--text-2); text-transform:uppercase; letter-spacing:0.07em }
-.ci-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:32px }
-@media(max-width:700px) { .ci-grid { grid-template-columns:1fr } .ci-hero { grid-template-columns:1fr } }
-.ci-box {
-  background:var(--bg-1); border:1px solid var(--border); border-radius:var(--r); padding:20px 24px;
-}
-.ci-box-title { font-family:var(--ff-d); font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-2); margin-bottom:16px }
-.cov-item { margin-bottom:14px }
-.cov-label { display:flex; justify-content:space-between; font-family:var(--ff-m); font-size:11px; color:var(--text-2); margin-bottom:5px }
-.cov-track { height:8px; background:var(--bg-3); border-radius:4px; overflow:hidden }
-.cov-fill { height:100%; border-radius:4px; transition:width 1.2s cubic-bezier(.4,0,.2,1) }
-.sparkline-wrap { height:72px; position:relative }
-.fail-item {
-  display:flex; align-items:flex-start; gap:10px;
-  padding:9px 12px; background:rgba(239,68,68,0.05);
-  border:1px solid rgba(239,68,68,0.2); border-radius:8px; margin-bottom:8px;
-  font-family:var(--ff-m); font-size:11px;
-}
-.fail-dot { width:6px; height:6px; border-radius:50%; background:var(--red); flex-shrink:0; margin-top:4px }
-.fail-name { color:var(--text-1); line-height:1.5 }
-.ci-run-card { background:var(--bg-2); border-radius:8px; padding:12px 14px; font-family:var(--ff-m); font-size:11px }
-.ci-run-title { color:var(--text-1); margin-bottom:8px; line-height:1.4 }
-.ci-run-meta { display:flex; gap:10px; flex-wrap:wrap; align-items:center }
-.ci-badge {
-  padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; text-transform:uppercase;
-}
-.ci-badge.in-progress { background:rgba(234,179,8,0.15); color:var(--yellow); border:1px solid rgba(234,179,8,0.3) }
-.ci-badge.success     { background:rgba(34,197,94,0.15);  color:var(--green);  border:1px solid rgba(34,197,94,0.3)  }
-.ci-badge.failure     { background:rgba(239,68,68,0.15);  color:var(--red);    border:1px solid rgba(239,68,68,0.3)  }
-.ci-run-date { color:var(--text-3) }
+/* ── CAP ── */
+.cap-wrap{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.cap-triangle{flex:0 0 320px}.cap-triangle svg{width:100%}
+.cap-desc{flex:1;min-width:260px}
+.cap-item{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.cap-item h4{font-family:var(--ff-d);font-size:0.85rem;font-weight:700;color:var(--text-1);margin-bottom:4px}
+.cap-item p{font-size:0.77rem;color:var(--text-2);line-height:1.5}
+.cap-item.chosen{border-color:var(--green);background:rgba(34,197,94,0.05)}
+.cap-item.chosen h4::after{content:' ✓ ESCOLHIDO';color:var(--green);font-size:0.7rem}
 
-/* Test modules */
-.mod-section {
-  background:var(--bg-1); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:8px;
-}
-.mod-header {
-  display:flex; align-items:center; gap:14px; padding:13px 20px;
-  cursor:pointer; transition:background .15s; user-select:none;
-}
-.mod-header:hover { background:var(--bg-2) }
-.mod-badge {
-  font-family:var(--ff-m); font-size:10px; font-weight:700;
-  padding:3px 8px; border-radius:5px; flex-shrink:0;
-  background:var(--mc-bg,var(--mint-glow)); color:var(--mc,var(--mint));
-}
-.mod-info { flex:1 }
-.mod-name { font-family:var(--ff-d); font-size:13px; font-weight:700; color:var(--text-1) }
-.mod-meta { font-family:var(--ff-m); font-size:10px; color:var(--text-2); margin-top:2px }
-.mod-status { font-family:var(--ff-m); font-size:11px; font-weight:700; flex-shrink:0 }
-.mod-chevron { font-size:11px; color:var(--text-3); transition:transform .2s; flex-shrink:0; margin-left:6px }
-.mod-section.open .mod-chevron { transform:rotate(180deg) }
-.mod-body { display:none; border-top:1px solid var(--border); padding:14px 20px }
-.mod-section.open .mod-body { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:5px }
-.test-item {
-  display:flex; align-items:flex-start; gap:8px;
-  padding:7px 10px; background:var(--bg-2); border-radius:6px;
-  font-family:var(--ff-m); font-size:10px;
-}
-.test-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; margin-top:4px }
-.test-dot.passed  { background:var(--green)  }
-.test-dot.failed  { background:var(--red)    }
-.test-dot.skipped { background:var(--yellow) }
-.test-name { color:var(--text-2); line-height:1.4; flex:1 }
-.test-item[data-s="failed"]  .test-name { color:var(--red)    }
-.test-item[data-s="skipped"] .test-name { color:var(--yellow) }
+/* ── CI ── */
+.ci-hero{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;margin-bottom:40px}
+.ci-big-ring{position:relative;width:160px;height:160px;flex-shrink:0}
+.ci-big-ring svg{transform:rotate(-90deg)}
+.ci-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ci-pct{font-family:var(--ff-m);font-size:36px;font-weight:700;color:var(--mint);line-height:1}
+.ci-pct-lbl{font-family:var(--ff-m);font-size:9px;color:var(--text-2);letter-spacing:0.1em;text-transform:uppercase;margin-top:3px}
+.ci-hero-right{display:flex;flex-direction:column;gap:12px}
+.ci-hero-title{font-family:var(--ff-d);font-size:28px;font-weight:800;line-height:1.1;letter-spacing:-0.02em;background:linear-gradient(135deg,#fff 0%,var(--mint) 60%,var(--purple-2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ci-hero-sub{font-family:var(--ff-m);font-size:12px;color:var(--text-2)}
+.ci-stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.ci-stat{display:flex;flex-direction:column;gap:2px;padding:10px 18px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);min-width:80px}
+.ci-stat-val{font-family:var(--ff-m);font-size:22px;font-weight:700}
+.ci-stat-lbl{font-family:var(--ff-m);font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:0.07em}
+.ci-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
+@media(max-width:700px){.ci-grid,.ci-hero{grid-template-columns:1fr}}
+.ci-box{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px}
+.ci-box-title{font-family:var(--ff-d);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-2);margin-bottom:16px}
+.cov-item{margin-bottom:14px}
+.cov-label{display:flex;justify-content:space-between;font-family:var(--ff-m);font-size:11px;color:var(--text-2);margin-bottom:5px}
+.cov-track{height:8px;background:var(--bg-3);border-radius:4px;overflow:hidden}
+.cov-fill{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.sparkline-wrap{height:72px}
+.fail-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px;margin-bottom:8px;font-family:var(--ff-m);font-size:11px}
+.fail-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px}
+.fail-name{color:var(--text-1);line-height:1.5}
+.ci-run-card{background:var(--bg-2);border-radius:8px;padding:12px 14px;font-family:var(--ff-m);font-size:11px}
+.ci-run-title{color:var(--text-1);margin-bottom:8px;line-height:1.4}
+.ci-run-meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ci-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
+.ci-badge.in-progress{background:rgba(234,179,8,0.15);color:var(--yellow);border:1px solid rgba(234,179,8,0.3)}
+.ci-badge.success{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
+.ci-run-date{color:var(--text-3)}
+.mod-section{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px}
+.mod-header{display:flex;align-items:center;gap:14px;padding:13px 20px;cursor:pointer;transition:background .15s;user-select:none}
+.mod-header:hover{background:var(--bg-2)}
+.mod-badge{font-family:var(--ff-m);font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;flex-shrink:0;background:var(--mc-bg,var(--mint-glow));color:var(--mc,var(--mint))}
+.mod-info{flex:1}
+.mod-name{font-family:var(--ff-d);font-size:13px;font-weight:700;color:var(--text-1)}
+.mod-meta{font-family:var(--ff-m);font-size:10px;color:var(--text-2);margin-top:2px}
+.mod-status{font-family:var(--ff-m);font-size:11px;font-weight:700;flex-shrink:0}
+.mod-chevron{font-size:11px;color:var(--text-3);transition:transform .2s;flex-shrink:0;margin-left:6px}
+.mod-section.open .mod-chevron{transform:rotate(180deg)}
+.mod-body{display:none;border-top:1px solid var(--border);padding:14px 20px}
+.mod-section.open .mod-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:5px}
+.test-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--bg-2);border-radius:6px;font-family:var(--ff-m);font-size:10px}
+.test-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.test-dot.passed{background:var(--green)}.test-dot.failed{background:var(--red)}.test-dot.skipped{background:var(--yellow)}
+.test-name{color:var(--text-2);line-height:1.4;flex:1}
+.test-item[data-s="failed"] .test-name{color:var(--red)}
+.test-item[data-s="skipped"] .test-name{color:var(--yellow)}
 
-/* TOOLTIP */
-.tooltip {
-  position:fixed; z-index:200;
-  background:var(--bg-3); border:1px solid var(--border); border-radius:8px;
-  padding:8px 12px; font-family:var(--ff-m); font-size:11px; color:var(--text-1);
-  pointer-events:none; opacity:0; transition:opacity .15s; max-width:220px; line-height:1.5;
-}
-.tooltip.show { opacity:1 }
-
-::-webkit-scrollbar { width:6px; height:6px }
-::-webkit-scrollbar-track { background:var(--bg) }
-::-webkit-scrollbar-thumb { background:var(--bg-3); border-radius:3px }
-::-webkit-scrollbar-thumb:hover { background:var(--text-3) }
+.tooltip{position:fixed;z-index:200;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:var(--ff-m);font-size:11px;color:var(--text-1);pointer-events:none;opacity:0;transition:opacity .15s;max-width:220px;line-height:1.5}
+.tooltip.show{opacity:1}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg-3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--text-3)}
 </style>
 </head>
 <body>
@@ -306,7 +309,8 @@ main { position:relative; z-index:1; padding:40px 32px 80px }
     </div>
   </div>
   <nav id="nav">
-    <button data-panel="flow"   class="active">Fluxo</button>
+    <button data-panel="overview" class="active">Implementação</button>
+    <button data-panel="flow">Fluxo</button>
     <button data-panel="layers">Camadas</button>
     <button data-panel="gains">Ganhos</button>
     <button data-panel="cap">CAP</button>
@@ -320,8 +324,49 @@ main { position:relative; z-index:1; padding:40px 32px 80px }
 
 <main>
 
-<!-- ═══ FLOW ═══════════════════════════════════════════ -->
-<div id="flow" class="panel active">
+<!-- ═══ OVERVIEW / IMPLEMENTAÇÃO ══════════════════════ -->
+<div id="overview" class="panel active">
+  <div class="hero">
+    <div class="big-ring">
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <circle cx="90" cy="90" r="72" fill="none" stroke="var(--bg-3)" stroke-width="10"/>
+        <circle id="bigFill" cx="90" cy="90" r="72" fill="none"
+          stroke="url(#bigGrad)" stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="452.4" stroke-dashoffset="452.4"/>
+        <defs>
+          <linearGradient id="bigGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#00e5b5"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="big-ring-center">
+        <div class="big-pct" id="bigPct">0%</div>
+        <div class="big-lbl">conclusão</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-title">Implementação<br>do Projeto</div>
+      <div class="hero-sub">PKS · M1 → M14 · v1 + v2 · Rust</div>
+      <div class="stat-row">
+        <div class="stat"><div class="stat-val" id="sTotalTasks">—</div><div class="stat-lbl">tasks totais</div></div>
+        <div class="stat"><div class="stat-val" id="sDoneTasks">—</div><div class="stat-lbl">concluídas</div></div>
+        <div class="stat"><div class="stat-val">14</div><div class="stat-lbl">milestones</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--yellow)">1</div><div class="stat-lbl">em andamento</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gauges-grid" id="gaugesGrid"></div>
+
+  <div style="margin-top:48px">
+    <div class="section-title">detalhe por milestone</div>
+    <div id="implModules"></div>
+  </div>
+</div>
+
+<!-- ═══ FLOW ══════════════════════════════════════════ -->
+<div id="flow" class="panel">
   <div class="section-title">fluxo de dados — pipeline de informações</div>
   <div class="flow-stages" id="flowStages"></div>
   <div class="detail-panel" id="detailPanel">
@@ -329,57 +374,43 @@ main { position:relative; z-index:1; padding:40px 32px 80px }
   </div>
 </div>
 
-<!-- ═══ LAYERS ════════════════════════════════════════= -->
+<!-- ═══ LAYERS ═════════════════════════════════════════ -->
 <div id="layers" class="panel">
   <div class="section-title">camadas de arquitetura</div>
   <div class="arch-wrapper" id="layersList"></div>
 </div>
 
-<!-- ═══ GAINS ════════════════════════════════════════= -->
+<!-- ═══ GAINS ══════════════════════════════════════════ -->
 <div id="gains" class="panel">
   <div class="section-title">ganhos e diferenciais</div>
   <div class="gains-grid" id="gainsGrid"></div>
 </div>
 
-<!-- ═══ CAP ═══════════════════════════════════════════ -->
+<!-- ═══ CAP ════════════════════════════════════════════ -->
 <div id="cap" class="panel">
   <div class="section-title">posição cap theorem</div>
   <div class="cap-wrap">
     <div class="cap-triangle">
       <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L6,3 z" fill="rgba(255,255,255,0.15)"/>
-          </marker>
-        </defs>
         <polygon points="150,20 20,250 280,250" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
-        <text x="70" y="160" fill="var(--text-3)" font-size="11" text-anchor="middle" transform="rotate(-60,70,160)">Consistency</text>
+        <text x="70"  y="160" fill="var(--text-3)" font-size="11" text-anchor="middle" transform="rotate(-60,70,160)">Consistency</text>
         <text x="230" y="160" fill="var(--text-3)" font-size="11" text-anchor="middle" transform="rotate(60,230,160)">Availability</text>
         <text x="150" y="268" fill="var(--text-3)" font-size="11" text-anchor="middle">Partition Tolerance</text>
-        <circle cx="150" cy="20"  r="8" fill="var(--bg-2)" stroke="var(--blue)" stroke-width="1.5"/>
-        <text x="150" y="14" fill="var(--blue)" font-size="10" text-anchor="middle" font-weight="700">C</text>
+        <circle cx="150" cy="20"  r="8" fill="var(--bg-2)" stroke="var(--blue)"  stroke-width="1.5"/>
+        <text   x="150" y="14"   fill="var(--blue)"  font-size="10" text-anchor="middle" font-weight="700">C</text>
         <circle cx="20"  cy="250" r="8" fill="rgba(34,197,94,0.1)" stroke="var(--green)" stroke-width="2"/>
-        <text x="20"  y="244" fill="var(--green)" font-size="10" text-anchor="middle" font-weight="700">A</text>
+        <text   x="20"  y="244"  fill="var(--green)" font-size="10" text-anchor="middle" font-weight="700">A</text>
         <circle cx="280" cy="250" r="8" fill="rgba(34,197,94,0.1)" stroke="var(--green)" stroke-width="2"/>
-        <text x="280" y="244" fill="var(--green)" font-size="10" text-anchor="middle" font-weight="700">P</text>
+        <text   x="280" y="244"  fill="var(--green)" font-size="10" text-anchor="middle" font-weight="700">P</text>
         <circle cx="150" cy="240" r="12" fill="rgba(34,197,94,0.2)"/>
         <circle cx="150" cy="240" r="6"  fill="var(--mint)"/>
-        <text x="150" y="228" fill="var(--mint)" font-size="10" text-anchor="middle" font-weight="700">PKS</text>
+        <text   x="150" y="228"  fill="var(--mint)"  font-size="10" text-anchor="middle" font-weight="700">PKS</text>
       </svg>
     </div>
     <div class="cap-desc">
-      <div class="cap-item">
-        <h4>Consistency (C)</h4>
-        <p>Toda leitura retorna o dado mais recente ou um erro. PKS sacrifica consistência forte para não bloquear queries.</p>
-      </div>
-      <div class="cap-item chosen">
-        <h4>Availability (A)</h4>
-        <p>Toda requisição recebe uma resposta (mesmo desatualizada). Queries BM25 nunca bloqueiam — retornam resultados do índice atual.</p>
-      </div>
-      <div class="cap-item chosen">
-        <h4>Partition Tolerance (P)</h4>
-        <p>Sistema continua operando mesmo com partições (ex: Ollama offline). Graceful degradation para modo BM25-only sem quebrar o contrato MCP.</p>
-      </div>
+      <div class="cap-item"><h4>Consistency (C)</h4><p>Toda leitura retorna o dado mais recente ou um erro. PKS sacrifica consistência forte para não bloquear queries.</p></div>
+      <div class="cap-item chosen"><h4>Availability (A)</h4><p>Toda requisição recebe uma resposta (mesmo desatualizada). Queries BM25 nunca bloqueiam — retornam resultados do índice atual.</p></div>
+      <div class="cap-item chosen"><h4>Partition Tolerance (P)</h4><p>Sistema continua operando mesmo com partições (ex: Ollama offline). Graceful degradation para modo BM25-only sem quebrar o contrato MCP.</p></div>
       <div style="margin-top:14px;padding:12px 14px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);border-radius:var(--r);font-size:0.78rem;color:var(--mint);line-height:1.6;font-family:var(--ff-m)">
         <strong>Resultado AP:</strong> Pequenas defasagens de índice são aceitáveis. Reparos ocorrem assincronamente via pipeline de eventos. Prioridade: estar sempre disponível para o LLM.
       </div>
@@ -387,7 +418,7 @@ main { position:relative; z-index:1; padding:40px 32px 80px }
   </div>
 </div>
 
-<!-- ═══ CI ══════════════════════════════════════════════ -->
+<!-- ═══ CI ═══════════════════════════════════════════== -->
 <div id="ci" class="panel">
   <div class="ci-hero">
     <div class="ci-big-ring">
@@ -398,62 +429,41 @@ main { position:relative; z-index:1; padding:40px 32px 80px }
           stroke-dasharray="402.1" stroke-dashoffset="402.1"/>
         <defs>
           <linearGradient id="ciGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stop-color="#00e5b5"/>
+            <stop offset="0%" stop-color="#00e5b5"/>
             <stop offset="100%" stop-color="#22c55e"/>
           </linearGradient>
         </defs>
       </svg>
-      <div class="ci-ring-center">
-        <div class="ci-pct" id="ciPct">0%</div>
-        <div class="ci-pct-lbl">pass rate</div>
-      </div>
+      <div class="ci-ring-center"><div class="ci-pct" id="ciPct">0%</div><div class="ci-pct-lbl">pass rate</div></div>
     </div>
     <div class="ci-hero-right">
       <div class="ci-hero-title">Test Suite<br>PKS · Rust</div>
       <div class="ci-hero-sub">branch main · cargo test · última execução 16/03</div>
       <div class="ci-stat-row">
-        <div class="ci-stat">
-          <div class="ci-stat-val" style="color:var(--text-1)">177</div>
-          <div class="ci-stat-lbl">total</div>
-        </div>
-        <div class="ci-stat">
-          <div class="ci-stat-val" style="color:var(--green)">173</div>
-          <div class="ci-stat-lbl">passed</div>
-        </div>
-        <div class="ci-stat">
-          <div class="ci-stat-val" style="color:var(--red)">3</div>
-          <div class="ci-stat-lbl">failed</div>
-        </div>
-        <div class="ci-stat">
-          <div class="ci-stat-val" style="color:var(--yellow)">1</div>
-          <div class="ci-stat-lbl">skipped</div>
-        </div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--text-1)">177</div><div class="ci-stat-lbl">total</div></div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--green)">173</div><div class="ci-stat-lbl">passed</div></div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--red)">3</div><div class="ci-stat-lbl">failed</div></div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--yellow)">1</div><div class="ci-stat-lbl">skipped</div></div>
       </div>
     </div>
   </div>
-
   <div class="ci-grid">
-    <!-- Cobertura -->
     <div class="ci-box">
       <div class="ci-box-title">Cobertura de Código</div>
       <div class="cov-item">
-        <div class="cov-label"><span>Backend (Rust)</span><span class="cov-val" style="color:var(--mint)">48.5%</span></div>
+        <div class="cov-label"><span>Backend (Rust)</span><span style="color:var(--mint)">48.5%</span></div>
         <div class="cov-track"><div class="cov-fill" style="width:0%;background:linear-gradient(90deg,var(--mint),var(--mint-2))" data-w="48.5%"></div></div>
       </div>
       <div class="cov-item">
-        <div class="cov-label"><span>Frontend</span><span class="cov-val" style="color:var(--text-3)">0%</span></div>
+        <div class="cov-label"><span>Frontend</span><span style="color:var(--text-3)">0%</span></div>
         <div class="cov-track"><div class="cov-fill" style="width:0%;background:var(--text-3)" data-w="0%"></div></div>
       </div>
       <div class="cov-item">
-        <div class="cov-label"><span>Gateway</span><span class="cov-val" style="color:var(--text-3)">0%</span></div>
+        <div class="cov-label"><span>Gateway</span><span style="color:var(--text-3)">0%</span></div>
         <div class="cov-track"><div class="cov-fill" style="width:0%;background:var(--text-3)" data-w="0%"></div></div>
       </div>
-      <div style="margin-top:14px;font-family:var(--ff-m);font-size:10px;color:var(--text-3)">
-        Relatório: coverage/backend_html/index.html
-      </div>
+      <div style="margin-top:14px;font-family:var(--ff-m);font-size:10px;color:var(--text-3)">Relatório: coverage/backend_html/index.html</div>
     </div>
-
-    <!-- Último CI run -->
     <div class="ci-box">
       <div class="ci-box-title">Último CI Run</div>
       <div class="ci-run-card">
@@ -466,22 +476,16 @@ main { position:relative; z-index:1; padding:40px 32px 80px }
       </div>
       <div style="margin-top:16px">
         <div class="ci-box-title" style="margin-bottom:12px">Histórico de Execuções</div>
-        <div class="sparkline-wrap">
-          <svg id="sparklineSvg" class="sparkline-svg" viewBox="0 0 300 72" preserveAspectRatio="none"></svg>
-        </div>
+        <div class="sparkline-wrap"><svg id="sparklineSvg" width="100%" height="72" viewBox="0 0 300 72" preserveAspectRatio="none"></svg></div>
       </div>
     </div>
   </div>
-
-  <!-- Testes falhando -->
   <div class="section-title" style="margin-bottom:16px">testes falhando</div>
   <div style="margin-bottom:32px">
     <div class="fail-item"><div class="fail-dot"></div><div class="fail-name">journal_fswatcher_smoke_log_file_is_valid_markdown</div></div>
     <div class="fail-item"><div class="fail-dot"></div><div class="fail-name">journal_e2e_creates_log_file</div></div>
     <div class="fail-item"><div class="fail-dot"></div><div class="fail-name">journal_e2e_two_commits_append_in_order</div></div>
   </div>
-
-  <!-- Módulos de testes -->
   <div class="section-title">detalhe por módulo</div>
   <div id="testModules"></div>
 </div>
@@ -490,498 +494,579 @@ main { position:relative; z-index:1; padding:40px 32px 80px }
 <div class="tooltip" id="tooltip"></div>
 
 <script>
-/* ── FLOW DATA ── */
-const flowStages = [
+/* ═══════════════════════════════════════════════════════
+   MILESTONE DATA — extraído de docs/v1/plan/ e docs/v2/
+   ═══════════════════════════════════════════════════════ */
+const MILESTONES = [
   {
-    label:'Entrada', cards:[
-      {id:'fs-watcher', icon:'👁️', name:'Directory Scanner', sub:'RepoWatcher (std::fs)'},
-      {id:'git-hook',   icon:'🔗', name:'Git Hook',          sub:'post-commit passivo'},
-      {id:'mcp-client', icon:'🤖', name:'LLM / MCP',         sub:'SSE/HTTP, stdio, IPC'},
+    id:'M1', name:'Engine Rustica', phase:'Fase A', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:6, total:6, priority:'BLOQUEANTE', status:'CONCLUÍDO',
+    color:'#00e5b5', color2:'#00b48c', bgColor:'rgba(0,229,181,0.1)',
+    effort:'~3d', desc:'MCP stdio, Chunker Markdown heading-aware, BM25 Tantivy, FS-as-Config, multi-repo, golden dataset.',
+    tasks:[
+      {id:'T1.1',name:'Estrutura Cargo + Rust toolchain configurado',done:true},
+      {id:'T1.2',name:'Chunker Markdown heading-aware (pulldown-cmark)',done:true},
+      {id:'T1.3',name:'BM25 engine via Tantivy (p95 < 1ms)',done:true},
+      {id:'T1.4',name:'FS Watcher + scan multi-repo (PKS_VAULTS_DIR)',done:true},
+      {id:'T1.5',name:'MCP server stdio + tools list_knowledge_vaults / search_knowledge_vault',done:true},
+      {id:'T1.6',name:'Testes unitários + golden dataset 50 notas',done:true},
     ]
   },
   {
-    label:'Parsing', cards:[
-      {id:'chunker',     icon:'✂️', name:'Chunker',     sub:'400 tok · 80 overlap'},
-      {id:'frontmatter', icon:'📋', name:'Frontmatter', sub:'YAML metadata'},
+    id:'M2', name:'Pipeline NYC-Style', phase:'Fase A', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:4, total:4, priority:'ALTA', status:'CONCLUÍDO',
+    color:'#3b82f6', color2:'#2563eb', bgColor:'rgba(59,130,246,0.1)',
+    effort:'~2d', desc:'Double-buffered pipeline, NYC single-thread (zero locks), debounce, FIFO com backpressure.',
+    tasks:[
+      {id:'T2.1',name:'FIFO pipeline (fila1/fila2) com serialização',done:true},
+      {id:'T2.2',name:'NYC-style single-thread (zero locks, determinístico)',done:true},
+      {id:'T2.3',name:'Debounce com janela configurável (PKS_DEBOUNCE_WINDOW_MS)',done:true},
+      {id:'T2.4',name:'Backpressure + throttle (PKS_FILA1_MAX / PKS_FILA2_MAX)',done:true},
     ]
   },
   {
-    label:'Indexação', cards:[
-      {id:'tantivy', icon:'⚡', name:'BM25 (Tantivy)', sub:'p95 <1ms · zero locks'},
-      {id:'ollama',  icon:'🧠', name:'Embeddings',     sub:'Ollama · opcional (M5+)'},
+    id:'M3', name:'Persistência & Resiliência', phase:'Fase A', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:4, total:4, priority:'BLOQUEANTE', status:'CONCLUÍDO',
+    color:'#7c3aed', color2:'#a855f7', bgColor:'rgba(124,58,237,0.1)',
+    effort:'~3d', desc:'Snapshots bincode, Event Sourcing, Vector Clock por (repo_id, branch), recovery + replay.',
+    tasks:[
+      {id:'T3.1',name:'Snapshots bincode segmentados por repo (Magic Version Header)',done:true},
+      {id:'T3.2',name:'Event Sourcing + Vector Clock (repo_id, branch)',done:true},
+      {id:'T3.3',name:'Gestão manual de memória (load/unload por repo)',done:true},
+      {id:'T3.4',name:'Recovery: rebuild index + replay completo',done:true},
     ]
   },
   {
-    label:'Persistência', cards:[
-      {id:'snapshot',    icon:'💾', name:'Snapshot',    sub:'bincode segmentado'},
-      {id:'git-journal', icon:'📖', name:'Git Journal', sub:'branch pks-knowledge'},
+    id:'M4', name:'Git Journaling & Vaults', phase:'Fase B', phaseColor:'#3b82f6', phaseBg:'rgba(59,130,246,0.1)',
+    done:7, total:7, priority:'BLOQUEANTE', status:'CONCLUÍDO',
+    color:'#22c55e', color2:'#16a34a', bgColor:'rgba(34,197,94,0.1)',
+    effort:'~5d', desc:'Vault structure por projeto, branch pks-knowledge, post-commit hooks, conflict resolver, remote repos.',
+    tasks:[
+      {id:'T4.1',name:'Vault structure: prometheus/ por projeto',done:true},
+      {id:'T4.2',name:'Branch pks-knowledge (órfã, append-only)',done:true},
+      {id:'T4.3',name:'Git worktree: clone + branch safe',done:true},
+      {id:'T4.4',name:'Transação prevalente + post-commit hooks',done:true},
+      {id:'T4.5',name:'Conflict resolver (merge markers — human wins)',done:true},
+      {id:'T4.6',name:'Remote repos: clone + poll (PKS_REMOTE_POLL_INTERVAL)',done:true},
+      {id:'T4.7',name:'Memória reflexiva global (90-ai-memory/)',done:true},
     ]
   },
   {
-    label:'Recuperação', cards:[
-      {id:'hybrid-search', icon:'🔍', name:'Hybrid Search', sub:'BM25 + RRF + cosine'},
-      {id:'pks-execute',   icon:'🔧', name:'pks_execute',   sub:'sandboxed · context-mode'},
+    id:'M5', name:'Embeddings Vetoriais', phase:'Fase C', phaseColor:'#ec4899', phaseBg:'rgba(236,72,153,0.1)',
+    done:4, total:4, priority:'ALTA', status:'CONCLUÍDO',
+    color:'#ec4899', color2:'#db2777', bgColor:'rgba(236,72,153,0.1)',
+    effort:'~4d', desc:'EmbeddingProvider trait, Ollama nomic-embed-text, Hybrid RRF, LRU Manager + hibernação de repos.',
+    tasks:[
+      {id:'T5.1',name:'EmbeddingProvider trait + Ollama adapter',done:true},
+      {id:'T5.2',name:'Geração de embeddings (nomic-embed-text via Ollama)',done:true},
+      {id:'T5.3',name:'Hybrid RRF: BM25 + cosine similarity fusão',done:true},
+      {id:'T5.4',name:'LRU Manager + hibernação de repos inativos',done:true},
     ]
   },
   {
-    label:'Saída', cards:[
-      {id:'llm-response', icon:'💬', name:'LLM Response',  sub:'chunks rankeados'},
-      {id:'ctx-mode',     icon:'🛡️', name:'Context-Mode',  sub:'-60% flooding'},
+    id:'M6', name:'Maturação & Operação', phase:'Fase C', phaseColor:'#ec4899', phaseBg:'rgba(236,72,153,0.1)',
+    done:6, total:6, priority:'ALTA', status:'CONCLUÍDO',
+    color:'#f97316', color2:'#ea580c', bgColor:'rgba(249,115,22,0.1)',
+    effort:'~4d', desc:'Logs JSON estruturados, health check, pks doctor/validate, graceful shutdown, Git LFS, auth localhost.',
+    tasks:[
+      {id:'T6.1',name:'Logs estruturados JSON com rotação (PKS_LOG_MAX_SIZE)',done:true},
+      {id:'T6.2',name:'Health check + métricas de observabilidade',done:true},
+      {id:'T6.3',name:'pks status + pks validate (diagnósticos)',done:true},
+      {id:'T6.4',name:'Graceful shutdown + drain fila1 (fila1_drain.jsonl)',done:true},
+      {id:'T6.5',name:'Git LFS sync + disaster recovery',done:true},
+      {id:'T6.6',name:'Auth localhost-only + sanitização MCP',done:true},
+    ]
+  },
+  {
+    id:'M7', name:'Trackers & Expansão', phase:'Fase C', phaseColor:'#ec4899', phaseBg:'rgba(236,72,153,0.1)',
+    done:4, total:6, priority:'MÉDIA', status:'EM ANDAMENTO',
+    color:'#eab308', color2:'#ca8a04', bgColor:'rgba(234,179,8,0.1)',
+    effort:'~5d', desc:'Import/Export Notion, Sync Queue, Sanitizer, Storage Policy. CLI commands pks import/export e Jira pendentes.',
+    tasks:[
+      {id:'T7.1',name:'tracker::import — Notion client + routing',done:true},
+      {id:'T7.2',name:'tracker::export — frontmatter + detecção de colisão',done:true},
+      {id:'T7.3',name:'tracker::sync_queue — fila append-only',done:true},
+      {id:'T7.4',name:'tracker::sanitizer — remove scripts, limite de tamanho',done:true},
+      {id:'T7.5',name:'CLI commands: pks import / pks export',done:false},
+      {id:'T7.6',name:'Integração Jira + Linear (post-Fase C)',done:false},
+    ]
+  },
+  {
+    id:'M8', name:'Shadow Journal Passivo v1', phase:'Fase B+', phaseColor:'#22c55e', phaseBg:'rgba(34,197,94,0.1)',
+    done:3, total:3, priority:'ALTA', status:'CONCLUÍDO',
+    color:'#22c55e', color2:'#16a34a', bgColor:'rgba(34,197,94,0.1)',
+    effort:'~2d', desc:'Hook post-commit básico, journal entries em Markdown, FSWatcher para git_journal_date.',
+    tasks:[
+      {id:'T8.1',name:'post-commit hook básico + skips pks-knowledge branch',done:true},
+      {id:'T8.2',name:'Journal entries Markdown (git_journal_append)',done:true},
+      {id:'T8.3',name:'git_journal_date: timestamps UTC + HHMM',done:true},
+    ]
+  },
+  {
+    id:'M9', name:'Instalador Multiplataforma', phase:'Fase D', phaseColor:'#7a94b4', phaseBg:'rgba(122,148,180,0.1)',
+    done:4, total:4, priority:'MÉDIA', status:'CONCLUÍDO',
+    color:'#7a94b4', color2:'#5a74a4', bgColor:'rgba(122,148,180,0.1)',
+    effort:'~2d', desc:'pks doctor + diagnósticos de saúde, deploy files macOS/Linux, workflow /pks-install.',
+    tasks:[
+      {id:'T9.1',name:'pks doctor: hooks, excludes, vault health',done:true},
+      {id:'T9.2',name:'Deploy macOS: pks.plist (launchd)',done:true},
+      {id:'T9.3',name:'Deploy Linux: pks.service (systemd)',done:true},
+      {id:'T9.4',name:'Workflow /pks-install (slash command)',done:true},
+    ]
+  },
+  /* ── V2 ── */
+  {
+    id:'M10', name:'Singleton Daemon + IPC', phase:'V2', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:7, total:7, priority:'BLOQUEANTE V2', status:'CONCLUÍDO',
+    color:'#00e5b5', color2:'#00b48c', bgColor:'rgba(0,229,181,0.1)',
+    effort:'~8d', desc:'Unix socket IPC, PID lockfile, auto-spawn daemon, pks refresh, elimina instâncias BM25 redundantes.',
+    tasks:[
+      {id:'T10.1',name:'IpcClient + IpcServer (Unix Domain Socket /tmp/pks.sock)',done:true},
+      {id:'T10.2',name:'PID lockfile /tmp/pks.pid (previne múltiplos daemons)',done:true},
+      {id:'T10.3',name:'Auto-spawn daemon com exponential backoff',done:true},
+      {id:'T10.4',name:'Subcomando pks refresh (scan explícito)',done:true},
+      {id:'T10.5',name:'Migração MCP client --stdio para IPC (RAM: 1 índice)',done:true},
+      {id:'T10.6',name:'Deploy files: pks.plist (macOS) + pks.service (Linux)',done:true},
+      {id:'T10.7',name:'Testes de integração IPC singleton',done:true},
+    ]
+  },
+  {
+    id:'M11', name:'RepoId + Bare Commits', phase:'V2', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:6, total:6, priority:'ALTA V2', status:'CONCLUÍDO',
+    color:'#3b82f6', color2:'#2563eb', bgColor:'rgba(59,130,246,0.1)',
+    effort:'~5d', desc:'RepoIdentity via git-common-dir, BareCommit sem dirty tree, suporte multi-worktree.',
+    tasks:[
+      {id:'T11.1',name:'RepoIdentity struct (git rev-parse --git-common-dir)',done:true},
+      {id:'T11.2',name:'BareCommit via git2 plumbing (sem checkout)',done:true},
+      {id:'T11.3',name:'PrevalentState → HashMap<RepoId, RepoIndex>',done:true},
+      {id:'T11.4',name:'Múltiplas worktrees → mesmo RepoId (sem conflitos)',done:true},
+      {id:'T11.5',name:'Git Journal usa BareCommit (não suja working tree)',done:true},
+      {id:'T11.6',name:'Testes: repo_identity + bare_commit',done:true},
+    ]
+  },
+  {
+    id:'M12', name:'Shadow Journaling Passivo', phase:'V2', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:7, total:7, priority:'ALTA V2', status:'CONCLUÍDO',
+    color:'#7c3aed', color2:'#a855f7', bgColor:'rgba(124,58,237,0.1)',
+    effort:'~4d', desc:'JournalEntry, ShadowJournalHook zero-I/O, flush via BareCommit, secrets redaction, fallback offline.',
+    tasks:[
+      {id:'T12.1',name:'JournalEntry struct (timestamps, tool, outcome, paths)',done:true},
+      {id:'T12.2',name:'ShadowJournalHook: acumula eventos zero-I/O em memória',done:true},
+      {id:'T12.3',name:'Flush para pks-knowledge via BareCommit ao fim da sessão',done:true},
+      {id:'T12.4',name:'Redaction de secrets (regex — API keys, tokens)',done:true},
+      {id:'T12.5',name:'Variáveis PKS_SHADOW_JOURNAL + PKS_JOURNAL_* controles',done:true},
+      {id:'T12.6',name:'Fallback ~/.pks/pending_journals/ (daemon offline)',done:true},
+      {id:'T12.7',name:'Testes E2E: shadow journal end-to-end',done:true},
+    ]
+  },
+  {
+    id:'M13', name:'Ollama Opcional + pks_execute', phase:'V2', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:8, total:8, priority:'ALTA V2', status:'CONCLUÍDO',
+    color:'#ec4899', color2:'#db2777', bgColor:'rgba(236,72,153,0.1)',
+    effort:'~8d', desc:'PKS_EMBEDDING_PROVIDER=none padrão, BM25-only 100% funcional, pks_execute sandbox + context-mode.',
+    tasks:[
+      {id:'T13.1',name:'PKS_EMBEDDING_PROVIDER env var (none / ollama / mlx)',done:true},
+      {id:'T13.2',name:'Modo BM25-only 100% funcional sem Ollama instalado',done:true},
+      {id:'T13.3',name:'Graceful degradation: embedding: Option<Vec<f32>> = None',done:true},
+      {id:'T13.4',name:'pks_execute sandbox: captura stdout+stderr isolado',done:true},
+      {id:'T13.5',name:'Context-mode: indexa output completo, retorna top-N chunks',done:true},
+      {id:'T13.6',name:'Timeout configurável + PKS_EXECUTE_TOP_N',done:true},
+      {id:'T13.7',name:'Ferramenta pks_execute registrada no MCP server',done:true},
+      {id:'T13.8',name:'Testes de integração pks_execute (sandbox + resumo)',done:true},
+    ]
+  },
+  {
+    id:'M14', name:'Zero-Config Onboarding', phase:'V2', phaseColor:'#00e5b5', phaseBg:'rgba(0,229,181,0.1)',
+    done:8, total:8, priority:'MÉDIA V2', status:'CONCLUÍDO',
+    color:'#22c55e', color2:'#16a34a', bgColor:'rgba(34,197,94,0.1)',
+    effort:'~3d', desc:'pks init em <30s: detecta git root, gera config.toml, cria branch, registra daemon, indexa.',
+    tasks:[
+      {id:'T14.1',name:'pks init detecta git root (git rev-parse --show-toplevel)',done:true},
+      {id:'T14.2',name:'Gera .pks/config.toml com valores inferidos',done:true},
+      {id:'T14.3',name:'Cria branch pks-knowledge órfã (idempotente)',done:true},
+      {id:'T14.4',name:'Registra repo no daemon via IPC (PksCommand::RegisterRepo)',done:true},
+      {id:'T14.5',name:'Indexação inicial com resumo de chunks',done:true},
+      {id:'T14.6',name:'Dispara pks refresh ao final do bootstrap',done:true},
+      {id:'T14.7',name:'Slash command /pks-init (.agent/workflows/pks-init.md)',done:true},
+      {id:'T14.8',name:'Testes E2E init: is_initialized + idempotência + --force',done:true},
     ]
   },
 ];
 
-const details = {
-  'fs-watcher':    { title:'👁️ Directory Scanner — RepoWatcher',        text:'Realiza o rastreamento de diretórios no sistema de arquivos para identificar vaults Git. No estado atual, as atualizações ocorrem durante o boot ou via comando de refresh manual, sem monitoramento contínuo via notify.', tags:[{l:'Rust',c:'blue'},{l:'std::fs',c:''},{l:'Manual/Boot',c:'orange'}] },
-  'git-hook':      { title:'🔗 Git Hook — Shadow Journaling (M12)',      text:'Hook post-commit passivo que registra automaticamente sessões LLM no branch pks-knowledge. Não interrompe o fluxo de trabalho — opera em background sem exigir ação do usuário.', tags:[{l:'M12',c:'orange'},{l:'post-commit',c:''},{l:'Passivo',c:'green'}] },
-  'mcp-client':    { title:'🤖 MCP Client — Interface Universal',         text:'Expõe tools como search_knowledge_vault e list_knowledge_vaults. Suporta transporte via SSE/HTTP (padrão), stdio (flag --stdio) e IPC Unix Socket (daemon em /tmp/pks.sock) para integração com múltiplas IDEs.', tags:[{l:'SSE/HTTP',c:'green'},{l:'stdio',c:'blue'},{l:'IPC Socket',c:'orange'}] },
-  'chunker':       { title:'✂️ Chunker — Segmentação Semântica',          text:'Divide documentos Markdown por headings (semântico) com sliding window. Parâmetros: máx. 400 tokens, overlap de 80 tokens, mínimo de 100 tokens antes de agrupar. Parser pulldown-cmark é seguro contra ReDoS.', tags:[{l:'400 tok max',c:'blue'},{l:'80 overlap',c:''},{l:'pulldown-cmark',c:'green'}] },
-  'frontmatter':   { title:'📋 Heading Hierarchy — Metadados',            text:'Extrai a hierarquia de títulos (# ## ###) para contextualizar os chunks. A extração de metadados YAML Frontmatter está planejada, mas no estado atual o foco é a estrutura semântica do Markdown.', tags:[{l:'Markdown',c:''},{l:'Heading Aware',c:'blue'}] },
-  'tantivy':       { title:'⚡ BM25 via Tantivy',                         text:'Motor de busca textual de alta performance em Rust. Utiliza arquitetura sincronizada via Mutex (PrevalentState), garantindo consistência. Latência p95 extremamente baixa para buscas lexicais.', tags:[{l:'BM25',c:'green'},{l:'Synchronized',c:'orange'},{l:'Rust',c:'blue'}] },
-  'ollama':        { title:'🧠 Embeddings via Ollama — Opcional',         text:'Gera embeddings vetoriais com o modelo nomic-embed-text via Ollama local. Completamente opcional: se Ollama não estiver disponível, PKS opera em modo BM25-only sem degradação funcional. Ativado a partir do milestone M5.', tags:[{l:'M5+',c:'orange'},{l:'nomic-embed-text',c:''},{l:'Opcional',c:'green'}] },
-  'snapshot':      { title:'💾 Snapshots (MVP)',                          text:'Serialização do estado do índice em formato bincode. No estado atual, implementa um mapeamento simplificado de chunks. Segmentado por repo em {PKS_VAULTS_DIR}/<repo>/snapshots/.', tags:[{l:'bincode',c:'blue'},{l:'Simplified MVP',c:'orange'}] },
-  'git-journal':   { title:'📖 Git Journal — Event Sourcing',             text:'Usa o branch pks-knowledge como log append-only imutável. Vector clock (repo_id, branch) para rastreabilidade. Git LFS para snapshots vetoriais pesados. Permite replay completo do estado e disaster recovery nativo.', tags:[{l:'Event Sourcing',c:'blue'},{l:'Append-only',c:''},{l:'Vector Clock',c:'orange'},{l:'Git LFS',c:''}] },
-  'hybrid-search': { title:'🔍 Hybrid Search — BM25 + RRF',              text:'Combina resultados BM25 com similaridade coseno (embeddings) via Reciprocal Rank Fusion (RRF). BM25 garante velocidade e precisão lexical; vetores capturam semântica. Disponível apenas quando Ollama está ativo.', tags:[{l:'RRF',c:'blue'},{l:'Cosine similarity',c:''},{l:'Requer Ollama',c:'orange'}] },
-  'pks-execute':   { title:'🔧 pks_execute — Execução Sandboxed (M13)',   text:'Nova MCP tool que executa código/comandos em sandbox integrado com context-mode. Resultados volumosos são indexados automaticamente em vez de inundarem o contexto do LLM. Parte da integração M13.', tags:[{l:'M13',c:'orange'},{l:'Sandboxed',c:'green'},{l:'context-mode',c:'blue'}] },
-  'llm-response':  { title:'💬 Resposta ao LLM — Chunks Rankeados',       text:'Retorna para o LLM os chunks mais relevantes ordenados por score (BM25 ou híbrido). Cada chunk inclui: texto, path do arquivo, score, e metadados do frontmatter para rastreabilidade.', tags:[{l:'Chunks rankeados',c:'blue'},{l:'Metadados',c:''}] },
-  'ctx-mode':      { title:'🛡️ Context-Mode — Proteção de Contexto',      text:'Integração com o plugin context-mode para evitar flooding do contexto do LLM em outputs volumosos. Reduz consumo de tokens em mais de 60% em outputs grandes. Indexação automática de resultados de execução.', tags:[{l:'-60% tokens',c:'green'},{l:'Auto-index',c:'blue'},{l:'M13',c:'orange'}] },
+/* ── FLOW DATA ── */
+const flowStages=[
+  {label:'Entrada',cards:[
+    {id:'fs-watcher',icon:'👁️',name:'Directory Scanner',sub:'RepoWatcher (std::fs)'},
+    {id:'git-hook',  icon:'🔗',name:'Git Hook',         sub:'post-commit passivo'},
+    {id:'mcp-client',icon:'🤖',name:'LLM / MCP',        sub:'SSE/HTTP, stdio, IPC'},
+  ]},
+  {label:'Parsing',cards:[
+    {id:'chunker',    icon:'✂️',name:'Chunker',    sub:'400 tok · 80 overlap'},
+    {id:'frontmatter',icon:'📋',name:'Frontmatter',sub:'YAML metadata'},
+  ]},
+  {label:'Indexação',cards:[
+    {id:'tantivy',icon:'⚡',name:'BM25 (Tantivy)',sub:'p95 <1ms · zero locks'},
+    {id:'ollama', icon:'🧠',name:'Embeddings',    sub:'Ollama · opcional (M5+)'},
+  ]},
+  {label:'Persistência',cards:[
+    {id:'snapshot',   icon:'💾',name:'Snapshot',   sub:'bincode segmentado'},
+    {id:'git-journal',icon:'📖',name:'Git Journal',sub:'branch pks-knowledge'},
+  ]},
+  {label:'Recuperação',cards:[
+    {id:'hybrid-search',icon:'🔍',name:'Hybrid Search',sub:'BM25 + RRF + cosine'},
+    {id:'pks-execute', icon:'🔧',name:'pks_execute', sub:'sandboxed · context-mode'},
+  ]},
+  {label:'Saída',cards:[
+    {id:'llm-response',icon:'💬',name:'LLM Response', sub:'chunks rankeados'},
+    {id:'ctx-mode',    icon:'🛡️',name:'Context-Mode', sub:'-60% flooding'},
+  ]},
+];
+const details={
+  'fs-watcher':   {title:'👁️ Directory Scanner',text:'Rastreamento de diretórios para identificar vaults Git. Atualizações ocorrem no boot ou via pks refresh manual.',tags:[{l:'Rust',c:'blue'},{l:'std::fs',c:''},{l:'Manual/Boot',c:'orange'}]},
+  'git-hook':     {title:'🔗 Git Hook — Shadow Journaling (M12)',text:'Hook post-commit passivo que registra sessões LLM na branch pks-knowledge. Opera em background sem intervenção.',tags:[{l:'M12',c:'orange'},{l:'post-commit',c:''},{l:'Passivo',c:'green'}]},
+  'mcp-client':   {title:'🤖 MCP Client — Interface Universal',text:'Expõe tools search_knowledge_vault e list_knowledge_vaults. Suporta SSE/HTTP, stdio e IPC Unix Socket.',tags:[{l:'SSE/HTTP',c:'green'},{l:'stdio',c:'blue'},{l:'IPC Socket',c:'orange'}]},
+  'chunker':      {title:'✂️ Chunker Semântico',text:'Divide documentos Markdown por headings com sliding window. 400 tokens max, 80 tokens overlap, 100 tokens mínimo.',tags:[{l:'400 tok',c:'blue'},{l:'80 overlap',c:''},{l:'pulldown-cmark',c:'green'}]},
+  'frontmatter':  {title:'📋 Heading Hierarchy',text:'Extrai hierarquia de títulos (# ## ###) para contextualizar chunks. YAML Frontmatter planejado.',tags:[{l:'Markdown',c:''},{l:'Heading Aware',c:'blue'}]},
+  'tantivy':      {title:'⚡ BM25 via Tantivy',text:'Motor de busca textual de alta performance em Rust. Arquitetura sincronizada via Mutex. Latência p95 < 1ms.',tags:[{l:'BM25',c:'green'},{l:'Tantivy',c:'blue'},{l:'p95<1ms',c:'orange'}]},
+  'ollama':       {title:'🧠 Embeddings via Ollama',text:'Embeddings vetoriais com nomic-embed-text. Completamente opcional — PKS opera em BM25-only sem Ollama.',tags:[{l:'M5+',c:'orange'},{l:'nomic-embed-text',c:''},{l:'Opcional',c:'green'}]},
+  'snapshot':     {title:'💾 Snapshots (bincode)',text:'Serialização do estado do índice em bincode por repo. PKS_VAULTS_DIR/<repo>/snapshots/.',tags:[{l:'bincode',c:'blue'},{l:'segmentado',c:'orange'}]},
+  'git-journal':  {title:'📖 Git Journal — Event Sourcing',text:'Branch pks-knowledge como log append-only imutável. Vector clock por (repo_id, branch). Git LFS para snapshots pesados.',tags:[{l:'Event Sourcing',c:'blue'},{l:'Append-only',c:''},{l:'Vector Clock',c:'orange'}]},
+  'hybrid-search':{title:'🔍 Hybrid Search — BM25 + RRF',text:'Combina BM25 com cosine similarity via Reciprocal Rank Fusion. Disponível apenas com Ollama ativo.',tags:[{l:'RRF',c:'blue'},{l:'Cosine',c:''},{l:'Requer Ollama',c:'orange'}]},
+  'pks-execute':  {title:'🔧 pks_execute — Sandboxed (M13)',text:'MCP tool que executa código em sandbox. Outputs indexados automaticamente. Reduz contexto LLM em >60%.',tags:[{l:'M13',c:'orange'},{l:'Sandboxed',c:'green'},{l:'context-mode',c:'blue'}]},
+  'llm-response': {title:'💬 Resposta ao LLM',text:'Chunks mais relevantes ordenados por score (BM25 ou híbrido). Inclui path, score e metadados de rastreabilidade.',tags:[{l:'Chunks rankeados',c:'blue'},{l:'Metadados',c:''}]},
+  'ctx-mode':     {title:'🛡️ Context-Mode',text:'Protege contexto LLM de flooding. Reduz consumo de tokens em >60% para outputs grandes. Integração pks_execute.',tags:[{l:'-60% tokens',c:'green'},{l:'Auto-index',c:'blue'},{l:'M13',c:'orange'}]},
 };
 
 /* ── LAYERS DATA ── */
-const layers = [
-  {
-    num:'1', color:'#3b82f6', colorBg:'rgba(59,130,246,0.08)', title:'I/O & Protocolo', sub:'Camada externa',
-    comps:[
-      {name:'MCP stdio server',    desc:'Interface com LLMs via rmcp SDK. Protocolo universal para tools.'},
-      {name:'IPC Singleton (M10)', desc:'Unix socket /tmp/pks.sock para coordenar múltiplos IDEs e worktrees.'},
-      {name:'CLI (pks doctor/init)',desc:'Zero-config onboarding (M14) e diagnósticos de saúde.'},
-    ]
-  },
-  {
-    num:'2', color:'#eab308', colorBg:'rgba(234,179,8,0.08)', title:'API & Comandos MCP', sub:'Interface de tools',
-    comps:[
-      {name:'list_knowledge_vaults',  desc:'Lista vaults indexados e metadados de status.'},
-      {name:'search_knowledge_vault', desc:'Busca híbrida com parâmetros de filtro por vault.'},
-      {name:'pks_execute (M13)',       desc:'Execução sandboxed integrada ao context-mode.'},
-    ]
-  },
-  {
-    num:'3', color:'#ec4899', colorBg:'rgba(236,72,153,0.08)', title:'Engine RAG', sub:'Core de busca',
-    comps:[
-      {name:'BM25 / Tantivy',     desc:'p95 <1ms, NYC-style single-thread, zero locks.'},
-      {name:'Embeddings (Ollama)', desc:'nomic-embed-text, opcional, ativa busca semântica.'},
-      {name:'Hybrid RRF',          desc:'Reciprocal Rank Fusion combina BM25 + cosine.'},
-      {name:'Chunker semântico',   desc:'400 tok, 80 overlap, heading-aware.'},
-    ]
-  },
-  {
-    num:'4', color:'#22c55e', colorBg:'rgba(34,197,94,0.08)', title:'Persistência', sub:'Durabilidade & replay',
-    comps:[
-      {name:'Snapshots bincode', desc:'Estado serializado por repo em {PKS_VAULTS_DIR}.'},
-      {name:'Git Journal',       desc:'Branch pks-knowledge append-only com vector clock.'},
-      {name:'Drain queue',       desc:'~/.pks/fila1_drain.jsonl para graceful shutdown.'},
-      {name:'Git LFS',           desc:'Snapshots vetoriais pesados no LFS para disaster recovery.'},
-    ]
-  },
-  {
-    num:'5', color:'#7a94b4', colorBg:'rgba(122,148,180,0.08)', title:'Operação & Observabilidade', sub:'Infraestrutura',
-    comps:[
-      {name:'Daemon fork (M10)',      desc:'Processo singleton em background, RAM compartilhada.'},
-      {name:'FS Watcher (notify)',    desc:'Re-indexação automática ao salvar arquivos.'},
-      {name:'Shadow journaling (M12)',desc:'Git hook post-commit passivo para sessões LLM.'},
-      {name:'Logs estruturados JSON', desc:'Health check, pks doctor, observabilidade.'},
-    ]
-  },
+const layers=[
+  {num:'1',color:'#3b82f6',colorBg:'rgba(59,130,246,0.08)',title:'I/O & Protocolo',sub:'Camada externa',comps:[
+    {name:'MCP stdio server',desc:'Interface com LLMs via rmcp SDK. Protocolo universal para tools.'},
+    {name:'IPC Singleton (M10)',desc:'Unix socket /tmp/pks.sock para múltiplos IDEs e worktrees.'},
+    {name:'CLI (pks doctor/init)',desc:'Zero-config onboarding (M14) e diagnósticos de saúde.'},
+  ]},
+  {num:'2',color:'#eab308',colorBg:'rgba(234,179,8,0.08)',title:'API & Comandos MCP',sub:'Interface de tools',comps:[
+    {name:'list_knowledge_vaults',desc:'Lista vaults indexados e metadados de status.'},
+    {name:'search_knowledge_vault',desc:'Busca híbrida com parâmetros de filtro por vault.'},
+    {name:'pks_execute (M13)',desc:'Execução sandboxed integrada ao context-mode.'},
+  ]},
+  {num:'3',color:'#ec4899',colorBg:'rgba(236,72,153,0.08)',title:'Engine RAG',sub:'Core de busca',comps:[
+    {name:'BM25 / Tantivy',desc:'p95 <1ms, NYC-style single-thread, zero locks.'},
+    {name:'Embeddings (Ollama)',desc:'nomic-embed-text, opcional, ativa busca semântica.'},
+    {name:'Hybrid RRF',desc:'Reciprocal Rank Fusion: BM25 + cosine.'},
+    {name:'Chunker semântico',desc:'400 tok, 80 overlap, heading-aware.'},
+  ]},
+  {num:'4',color:'#22c55e',colorBg:'rgba(34,197,94,0.08)',title:'Persistência',sub:'Durabilidade & replay',comps:[
+    {name:'Snapshots bincode',desc:'Estado serializado por repo em PKS_VAULTS_DIR.'},
+    {name:'Git Journal',desc:'Branch pks-knowledge append-only com vector clock.'},
+    {name:'Drain queue',desc:'~/.pks/fila1_drain.jsonl para graceful shutdown.'},
+    {name:'Git LFS',desc:'Snapshots vetoriais pesados para disaster recovery.'},
+  ]},
+  {num:'5',color:'#7a94b4',colorBg:'rgba(122,148,180,0.08)',title:'Operação & Observabilidade',sub:'Infraestrutura',comps:[
+    {name:'Daemon fork (M10)',desc:'Processo singleton em background, RAM compartilhada.'},
+    {name:'FS Watcher (notify)',desc:'Re-indexação automática ao salvar arquivos.'},
+    {name:'Shadow journaling (M12)',desc:'Git hook post-commit passivo para sessões LLM.'},
+    {name:'Logs estruturados JSON',desc:'Health check, pks doctor, observabilidade.'},
+  ]},
 ];
 
 /* ── GAINS DATA ── */
-const gains = [
-  {icon:'⚡', title:'Busca em <1ms',             text:'Engine BM25 via Tantivy com arquitetura NYC-style (single-thread, zero locks). Latência p95 abaixo de 1ms para qualquer query.',                                               metric:'p95 < 1ms'},
-  {icon:'🔒', title:'100% Local / Air-Gapped',   text:'Zero dependências de APIs externas. Todos os dados ficam no disco local. Ollama é opcional e também roda localmente.',                                                          metric:'Zero cloud dependency'},
-  {icon:'🛡️', title:'-60% Context Flooding',     text:'Integração com context-mode via pks_execute. Outputs volumosos são indexados no sandbox em vez de inundarem o contexto do LLM.',                                               metric:'>60% token savings'},
-  {icon:'🧠', title:'Busca Híbrida (BM25 + Sem.)',text:'Quando Ollama está disponível, combina precisão lexical do BM25 com compreensão semântica dos embeddings via RRF.',                                                            metric:'Dual-mode retrieval'},
-  {icon:'🔄', title:'Graceful Degradation',       text:'BM25-only funciona 100% sem Ollama. Nenhuma feature quebra — apenas upgrades progressivos quando mais recursos estão disponíveis.',                                            metric:'Zero breaking changes'},
-  {icon:'📖', title:'Event Sourcing via Git',     text:'Branch pks-knowledge como log imutável append-only. Vector clock rastreia versões por (repo_id, branch). Replay completo do estado a qualquer momento.',                       metric:'Full audit trail'},
-  {icon:'🏠', title:'Multi-Worktree Aware (M11)', text:'RepoId unificado via git rev-parse --git-common-dir. Suporte nativo a múltiplos worktrees do mesmo repositório sem conflitos de índice.',                                       metric:'M11 milestone'},
-  {icon:'🚀', title:'Zero-Config Onboarding',     text:'pks init detecta automaticamente vaults em VSCodeProjects/ e configura tudo em menos de 30s. Sem edição manual de configs para começar a usar.',                               metric:'M14 — < 30s'},
-  {icon:'💡', title:'RAM Compartilhada (M10)',    text:'Daemon singleton via IPC Unix socket. Múltiplos IDEs e worktrees compartilham um único processo, reduzindo consumo de memória.',                                                metric:'1 processo para N clientes'},
+const gains=[
+  {icon:'⚡',title:'Busca em <1ms',text:'Engine BM25 via Tantivy com arquitetura NYC-style (single-thread, zero locks). Latência p95 abaixo de 1ms para qualquer query.',metric:'p95 < 1ms'},
+  {icon:'🔒',title:'100% Local / Air-Gapped',text:'Zero dependências de APIs externas. Todos os dados ficam no disco local. Ollama é opcional e também roda localmente.',metric:'Zero cloud dependency'},
+  {icon:'🛡️',title:'-60% Context Flooding',text:'Integração com context-mode via pks_execute. Outputs volumosos são indexados no sandbox em vez de inundarem o contexto.',metric:'>60% token savings'},
+  {icon:'🧠',title:'Busca Híbrida (BM25 + Semântica)',text:'Quando Ollama está disponível, combina precisão lexical do BM25 com compreensão semântica via RRF.',metric:'Dual-mode retrieval'},
+  {icon:'🔄',title:'Graceful Degradation',text:'BM25-only funciona 100% sem Ollama. Nenhuma feature quebra — apenas upgrades progressivos.',metric:'Zero breaking changes'},
+  {icon:'📖',title:'Event Sourcing via Git',text:'Branch pks-knowledge como log imutável append-only. Vector clock por (repo_id, branch). Replay completo.',metric:'Full audit trail'},
+  {icon:'🏠',title:'Multi-Worktree Aware (M11)',text:'RepoId unificado via git rev-parse --git-common-dir. Suporte nativo a múltiplas worktrees sem conflitos.',metric:'M11 milestone'},
+  {icon:'🚀',title:'Zero-Config Onboarding',text:'pks init detecta automaticamente vaults e configura tudo em <30s. Sem edição manual.',metric:'M14 — < 30s'},
+  {icon:'💡',title:'RAM Compartilhada (M10)',text:'Daemon singleton via IPC Unix socket. Múltiplos IDEs compartilham um único processo.',metric:'1 processo para N clientes'},
 ];
 
 /* ── CI TEST MODULES ── */
-const testModules = [
-  {
-    id:'CLI', name:'CLI & Comandos', color:'#3b82f6', colorBg:'rgba(59,130,246,0.1)',
-    tests:[
-      {n:'cli::tests::parse_doctor_command',passed:true},{n:'cli::tests::parse_daemon_not_in_parse_args',passed:true},
-      {n:'cli::tests::parse_hook_post_commit',passed:true},{n:'cli::tests::parse_init_command',passed:true},
-      {n:'cli::tests::parse_refresh_with_dry_run_flag',passed:true},{n:'cli::tests::parse_refresh_without_dry_run',passed:true},
-      {n:'cli::tests::parse_status_uses_default_port_3030',passed:true},{n:'cli::tests::parse_status_accepts_custom_port',passed:true},
-      {n:'cli::tests::parse_unknown_returns_unknown_variant',passed:true},{n:'cli::tests::parse_validate_accepts_explicit_path',passed:true},
-      {n:'cli::tests::parse_validate_uses_current_dir_as_default',passed:true},{n:'cli::tests::run_unknown_returns_exit_code_1',passed:true},
-      {n:'cli::init::tests::is_initialized_false_before_init',passed:true},{n:'cli::init::tests::generate_config_creates_valid_toml',passed:true},
-      {n:'cli::init::tests::init_command_errors_if_not_git_repo',passed:true},{n:'cli::init::tests::init_command_creates_config_and_branch',passed:true},
-      {n:'cli::init::tests::init_command_is_idempotent_with_force',passed:true},{n:'cli::validate::tests::collect_md_files_finds_only_md_files',passed:true},
-      {n:'cli::validate::tests::run_validate_returns_one_when_no_snapshot',passed:true},{n:'cli::status::tests::run_status_returns_one_when_daemon_unreachable',passed:true},
-    ]
-  },
-  {
-    id:'CORE', name:'Core — Conflict, Daemon, Doctor, Execute', color:'#00e5b5', colorBg:'rgba(0,229,181,0.1)',
-    tests:[
-      {n:'conflict_resolver::tests::human_wins_by_default',passed:true},{n:'conflict_resolver::tests::merge_markers_detected_and_resolved',passed:true},
-      {n:'conflict_resolver::tests::no_conflict_markers_returns_content_unchanged_via_has_merge_markers',passed:true},
-      {n:'conflict_resolver::tests::strip_conflict_markers_keeps_ours_side',passed:true},
-      {n:'daemon::tests::pid_path_is_absolute',passed:true},{n:'daemon::tests::acquire_pid_lock_fails_when_already_locked',passed:true},
-      {n:'daemon::tests::acquire_pid_lock_succeeds_on_fresh_file',passed:true},
-      {n:'doctor::tests::report_exit_code_is_one_when_errors',passed:true},{n:'doctor::tests::report_exit_code_is_zero_when_all_ok',passed:true},
-      {n:'doctor::tests::doctor_detects_missing_hook_and_installs',passed:true},{n:'doctor::tests::doctor_reports_missing_exclude_and_repairs',passed:true},
-      {n:'execute_tool::tests::extract_terms_returns_meaningful_words',passed:true},{n:'execute_tool::tests::summary_truncates_large_output',passed:true},
-      {n:'execute_tool::tests::run_execute_captures_stderr',passed:true},{n:'execute_tool::tests::run_execute_echo_returns_summary',passed:true},
-      {n:'commands::refresh::tests::test_refresh_run_no_vaults_dir',passed:true},{n:'commands::refresh::tests::test_refresh_dry_run_flag',passed:true},
-      {n:'commands::refresh::tests::test_refresh_dry_run_with_repos',passed:true},{n:'commands::refresh::tests::test_refresh_with_repos',passed:true},
-    ]
-  },
-  {
-    id:'EMBED', name:'Embedding & FIFO', color:'#a855f7', colorBg:'rgba(168,85,247,0.1)',
-    tests:[
-      {n:'embedding_provider::tests::embedding_error_display_is_descriptive',passed:true},
-      {n:'embedding_provider::tests::from_env_reads_custom_vars',passed:true},
-      {n:'embedding_provider::tests::from_env_uses_defaults_when_vars_absent',passed:true},
-      {n:'fifo_embedder::tests::drain_debt_file_absent_file_is_noop',passed:true},
-      {n:'fifo_embedder::tests::drain_debt_file_reingests_and_removes_file',passed:true},
-      {n:'fifo_embedder::tests::enqueue_chunk_increments_backlog_depth',passed:true},
-      {n:'fifo_embedder::tests::from_env_creates_with_defaults',passed:true},
-      {n:'fifo_embedder::tests::from_env_reads_custom_vars',passed:true},
-      {n:'fifo_embedder::tests::ollama_state_has_five_distinct_variants',passed:true},
-      {n:'fifo_embedder::tests::serialize_overflow_creates_file_and_empties_backlog',passed:true},
-    ]
-  },
-  {
-    id:'GIT', name:'Git — Commits, Journal, LFS, Branch', color:'#f97316', colorBg:'rgba(249,115,22,0.1)',
-    tests:[
-      {n:'git::bare_commit::tests::ensure_branch_is_idempotent',passed:true},{n:'git::bare_commit::tests::ensure_branch_creates_pks_knowledge',passed:true},
-      {n:'git::bare_commit::tests::write_file_content_readable_from_branch',passed:true},{n:'git::bare_commit::tests::write_file_does_not_dirty_working_tree',passed:true},
-      {n:'git::repo_identity::tests::from_path_returns_err_on_non_git_dir',passed:true},{n:'git::repo_identity::tests::from_path_returns_ok_on_git_repo',passed:true},
-      {n:'git::repo_identity::tests::is_same_repo_false_for_different_repos',passed:true},{n:'git::repo_identity::tests::is_same_repo_false_for_non_git_dir',passed:true},
-      {n:'git::repo_identity::tests::is_same_repo_true_for_same_path',passed:true},
-      {n:'git_branch::tests::worktree_exists_returns_false_when_no_prometheus_dir',passed:true},
-      {n:'git_branch::tests::branch_exists_returns_false_for_nonexistent',passed:true},{n:'git_branch::tests::get_head_sha_returns_none_for_non_git',passed:true},
-      {n:'git_journal::tests::get_changed_md_files_returns_empty_for_invalid_repo',passed:true},
-      {n:'git_journal::tests::notify_commit_detects_rebase_on_sha_change',passed:true},{n:'git_journal::tests::notify_commit_enqueues_transaction',passed:true},
-      {n:'git_journal_append::tests::append_commit_skips_pks_knowledge_branch',passed:true},{n:'git_journal_append::tests::conventional_prefix_accepted_with_scope',passed:true},
-      {n:'git_journal_append::tests::append_commit_skips_when_disabled',passed:true},{n:'git_journal_append::tests::append_line_to_file_creates_parent_dirs',passed:true},
-      {n:'git_journal_append::tests::daily_log_path_uses_vault_root',passed:true},{n:'git_journal_append::tests::ignored_author_is_skipped',passed:true},
-      {n:'git_journal_append::tests::log_line_format_is_correct',passed:true},{n:'git_journal_append::tests::non_conventional_prefix_rejected',passed:true},
-      {n:'git_journal_append::tests::min_words_filter_works',passed:true},{n:'git_journal_append::tests::pks_knowledge_branch_is_skipped',passed:true},
-      {n:'git_journal_append::tests::journal_config_defaults_when_env_absent',passed:true},
-      {n:'git_journal_date::tests::current_date_utc_returns_valid_format',passed:true},{n:'git_journal_date::tests::unix_timestamp_1430_gives_correct_hhmm',passed:true},
-      {n:'git_journal_date::tests::unix_timestamp_midnight_gives_0000',passed:true},
-      {n:'git_lfs_sync::tests::local_store_load_missing_repo_returns_error',passed:true},{n:'git_lfs_sync::tests::local_store_sync_is_equivalent_to_save',passed:true},
-      {n:'git_lfs_sync::tests::local_store_save_and_load_roundtrip',passed:true},
-    ]
-  },
-  {
-    id:'HOOKS', name:'Hooks — Journal Entry, Shadow Journal', color:'#ec4899', colorBg:'rgba(236,72,153,0.1)',
-    tests:[
-      {n:'hooks::journal_entry::tests::redact_secrets_leaves_normal_text',passed:true},
-      {n:'hooks::journal_entry::tests::truncate_long_string_appends_ellipsis',passed:true},
-      {n:'hooks::journal_entry::tests::redact_secrets_removes_api_keys',passed:true},
-      {n:'hooks::journal_entry::tests::truncate_short_string_unchanged',passed:true},
-      {n:'hooks::shadow_journal::tests::disabled_hook_does_not_accumulate',passed:true},
-      {n:'hooks::shadow_journal::tests::max_entries_drops_excess',passed:true},
-      {n:'hooks::shadow_journal::tests::record_event_zero_io',passed:true},
-      {n:'hooks::shadow_journal::tests::render_contains_required_sections',passed:true},
-    ]
-  },
-  {
-    id:'IDX', name:'Indexer — Dirty Tracker, Pipeline', color:'#eab308', colorBg:'rgba(234,179,8,0.1)',
-    tests:[
-      {n:'indexer::dirty_tracker::tests::multiple_paragraphs_split_correctly',passed:true},
-      {n:'indexer::dirty_tracker::tests::same_paragraph_produces_same_hash',passed:true},
-      {n:'indexer::dirty_tracker::tests::paragraph_hash_changes_when_content_changes',passed:true},
-      {n:'indexer::pipeline::tests::new_file_all_chunks_are_dirty',passed:true},
-      {n:'indexer::pipeline::tests::unchanged_file_has_no_dirty_chunks',passed:true},
-      {n:'indexer::pipeline::tests::editing_one_paragraph_marks_only_affected_chunks_as_dirty',passed:true},
-    ]
-  },
-  {
-    id:'IPC', name:'IPC, LRU, Memory, Observability', color:'#22c55e', colorBg:'rgba(34,197,94,0.1)',
-    tests:[
-      {n:'ipc::tests::test_is_server_running_returns_false_when_no_daemon',passed:true},
-      {n:'ipc::tests::test_pks_command_ping_serializes_correctly',passed:true},
-      {n:'ipc::tests::test_pks_response_err_deserializes',passed:true},
-      {n:'ipc::tests::test_pks_command_search_serializes',passed:true},
-      {n:'lru_manager::tests::active_repo_not_hibernated',passed:true},{n:'lru_manager::tests::from_env_reads_defaults',passed:true},
-      {n:'lru_manager::tests::hibernate_detects_inactive_repos',passed:true},{n:'lru_manager::tests::lru_evicts_least_recently_used_repo',passed:true},
-      {n:'lru_manager::tests::register_and_record_query_updates_status',passed:true},
-      {n:'memory_manager::tests::collect_md_skips_hidden_dirs',passed:true},{n:'memory_manager::tests::unload_repo_deletes_snapshot',passed:true},
-      {n:'memory_manager::tests::load_repo_indexes_md_files',passed:true},
-      {n:'memory_writer::tests::file_rel_path_uses_date',passed:true},{n:'memory_writer::tests::render_includes_all_sections',passed:true},
-      {n:'memory_writer::tests::render_includes_yaml_frontmatter',passed:true},{n:'memory_writer::tests::render_with_empty_decisions_shows_placeholder',passed:true},
-      {n:'observability::tests::log_config_default_max_size_is_50mb',passed:true},
-      {n:'observability::tests::parse_max_size_bytes_returns_default_for_empty_input',passed:true},
-      {n:'observability::tests::parse_max_size_bytes_returns_default_for_invalid_input',passed:true},
-      {n:'observability::tests::parse_max_size_bytes_returns_parsed_value_for_valid_input',passed:true},
-      {n:'observability::tests::pks_logs_dir_ends_with_pks_logs_suffix',passed:true},
-    ]
-  },
-  {
-    id:'SYS', name:'Recovery, Remote, Snapshot, State, Storage', color:'#7a94b4', colorBg:'rgba(122,148,180,0.1)',
-    tests:[
-      {n:'recovery::tests::recover_repo_absent_snapshot_triggers_rebuild',passed:true},{n:'recovery::tests::rebuild_from_head_indexes_md_files',passed:true},
-      {n:'recovery::tests::handle_rebase_clears_clock_and_rebuilds',passed:true},{n:'recovery::tests::delete_snapshots_then_recover_produces_equivalent_index',passed:true},
-      {n:'remote_sync::tests::clone_remote_repo_returns_ok_if_dest_exists',passed:true},{n:'remote_sync::tests::poll_interval_defaults_to_300s',passed:true},
-      {n:'remote_sync::tests::poll_interval_reads_from_env',passed:true},{n:'remote_sync::tests::fetch_non_existent_repo_returns_err',passed:true},
-      {n:'repo_watcher::tests::is_git_repo_detects_dot_git_directory',passed:true},{n:'repo_watcher::tests::scan_existing_repos_finds_git_dirs',passed:true},
-      {n:'repo_watcher::tests::vaults_dir_from_env_falls_back_to_home',passed:true},
-      {n:'snapshot::tests::compact_chunk_records_removes_duplicate_hashes',passed:true},{n:'snapshot::tests::version_mismatch_returns_error_without_panicking',passed:true},
-      {n:'snapshot::tests::write_then_read_produces_identical_snapshot_data',passed:true},
-      {n:'state::tests::vector_clock_is_potential_rebase_on_sha_change',passed:true},{n:'state::tests::vector_clock_remove_repo_clears_all_branches',passed:true},
-      {n:'state::tests::vector_clock_three_repos_multiple_branches_deterministic',passed:true},{n:'state::tests::vector_clock_update_and_get',passed:true},
-      {n:'storage_policy::tests::content_type_from_tags_defaults_to_unknown',passed:true},{n:'storage_policy::tests::content_type_from_tags_detects_tracker',passed:true},
-      {n:'storage_policy::tests::default_policy_stores_ai_summaries',passed:true},{n:'storage_policy::tests::default_policy_stores_tracker_imports',passed:true},
-      {n:'storage_policy::tests::oversized_content_is_rejected',passed:true},{n:'storage_policy::tests::should_store_respects_size_limit',passed:true},
-    ]
-  },
-  {
-    id:'TRK', name:'Tracker — Export, Import, Sanitizer', color:'#a855f7', colorBg:'rgba(168,85,247,0.1)',
-    tests:[
-      {n:'tracker::export::tests::detect_collision_empty_remote_passes',passed:true},{n:'tracker::export::tests::detect_collision_newer_remote_fails',passed:true},
-      {n:'tracker::export::tests::detect_collision_older_remote_passes',passed:true},{n:'tracker::export::tests::inject_sync_fields_adds_and_replaces',passed:true},
-      {n:'tracker::export::tests::parse_frontmatter_missing_delimiter_fails',passed:true},{n:'tracker::export::tests::parse_frontmatter_extracts_fields_and_body',passed:true},
-      {n:'tracker::export::tests::resolve_tracker_from_frontmatter_notion',passed:true},{n:'tracker::export::tests::resolve_tracker_missing_fails',passed:true},
-      {n:'tracker::export::tests::export_returns_file_not_found_for_missing_path',passed:true},{n:'tracker::export::tests::resolve_tracker_override_wins',passed:true},
-      {n:'tracker::import::routing::tests::dest_dir_from_routing_reads_custom_dir',passed:true},
-      {n:'tracker::import::routing::tests::file_rel_path_for_replaces_spaces',passed:true},
-      {n:'tracker::import::routing::tests::file_rel_path_for_uses_custom_dest_dir',passed:true},
-      {n:'tracker::import::routing::tests::file_rel_path_for_sanitizes_slashes',passed:true},
-      {n:'tracker::import::routing::tests::synced_at_now_produces_iso8601_format',passed:true},
-      {n:'tracker::import::routing::tests::dest_dir_from_routing_returns_default_when_no_file',passed:true},
-      {n:'tracker::import::tests::import_tracker_page_requires_notion_token',passed:null},
-      {n:'tracker::import::tests::build_frontmatter_contains_required_fields',passed:true},
-      {n:'tracker::import::tests::build_frontmatter_ends_with_double_newline',passed:true},
-      {n:'tracker::import::tests::notion_token_returns_no_token_when_unset',passed:true},
-      {n:'tracker::sanitizer::tests::max_import_size_bytes_returns_one_mb_default',passed:true},
-      {n:'tracker::sanitizer::tests::sanitize_preserves_code_blocks',passed:true},
-      {n:'tracker::sanitizer::tests::sanitize_preserves_markdown_links',passed:true},
-      {n:'tracker::sanitizer::tests::sanitize_removes_javascript_links',passed:true},
-      {n:'tracker::sanitizer::tests::sanitize_removes_script_tags',passed:true},
-      {n:'tracker::sanitizer::tests::sanitize_with_limit_truncates_oversized_content',passed:true},
-      {n:'tracker::sanitizer::tests::sanitize_removes_inline_html',passed:true},
-    ]
-  },
-  {
-    id:'VAULT', name:'Vault Init', color:'#00e5b5', colorBg:'rgba(0,229,181,0.1)',
-    tests:[
-      {n:'vault_init::tests::init_vault_fails_on_non_git_dir',passed:true},
-      {n:'vault_init::tests::add_to_git_exclude_is_idempotent',passed:true},
-      {n:'vault_init::tests::init_vault_is_idempotent',passed:true},
-      {n:'vault_init::tests::init_vault_creates_all_prometheus_dirs',passed:true},
-      {n:'vault_init::tests::init_vault_zettelkasten_structure_also_indexes',passed:true},
-    ]
-  },
-  {
-    id:'E2E', name:'E2E — Journal FSWatcher', color:'#ef4444', colorBg:'rgba(239,68,68,0.1)',
-    tests:[
-      {n:'journal_e2e_skips_pks_knowledge_branch',passed:true},
-      {n:'journal_e2e_skips_non_conventional_subject',passed:true},
-      {n:'journal_fswatcher_smoke_log_file_is_valid_markdown',passed:false},
-      {n:'journal_e2e_creates_log_file',passed:false},
-      {n:'journal_e2e_two_commits_append_in_order',passed:false},
-    ]
-  },
+const testModules=[
+  {id:'CLI',name:'CLI & Comandos',color:'#3b82f6',colorBg:'rgba(59,130,246,0.1)',tests:[
+    {n:'cli::tests::parse_doctor_command',passed:true},{n:'cli::tests::parse_daemon_not_in_parse_args',passed:true},{n:'cli::tests::parse_hook_post_commit',passed:true},{n:'cli::tests::parse_init_command',passed:true},{n:'cli::tests::parse_refresh_with_dry_run_flag',passed:true},{n:'cli::tests::parse_refresh_without_dry_run',passed:true},{n:'cli::tests::parse_status_uses_default_port_3030',passed:true},{n:'cli::tests::parse_status_accepts_custom_port',passed:true},{n:'cli::tests::parse_unknown_returns_unknown_variant',passed:true},{n:'cli::tests::parse_validate_accepts_explicit_path',passed:true},{n:'cli::tests::parse_validate_uses_current_dir_as_default',passed:true},{n:'cli::tests::run_unknown_returns_exit_code_1',passed:true},{n:'cli::init::tests::is_initialized_false_before_init',passed:true},{n:'cli::init::tests::generate_config_creates_valid_toml',passed:true},{n:'cli::init::tests::init_command_errors_if_not_git_repo',passed:true},{n:'cli::init::tests::init_command_creates_config_and_branch',passed:true},{n:'cli::init::tests::init_command_is_idempotent_with_force',passed:true},{n:'cli::validate::tests::collect_md_files_finds_only_md_files',passed:true},{n:'cli::validate::tests::run_validate_returns_one_when_no_snapshot',passed:true},{n:'cli::status::tests::run_status_returns_one_when_daemon_unreachable',passed:true},
+  ]},
+  {id:'CORE',name:'Core — Conflict, Daemon, Doctor, Execute',color:'#00e5b5',colorBg:'rgba(0,229,181,0.1)',tests:[
+    {n:'conflict_resolver::tests::human_wins_by_default',passed:true},{n:'conflict_resolver::tests::merge_markers_detected_and_resolved',passed:true},{n:'conflict_resolver::tests::no_conflict_markers_returns_content_unchanged_via_has_merge_markers',passed:true},{n:'conflict_resolver::tests::strip_conflict_markers_keeps_ours_side',passed:true},{n:'daemon::tests::pid_path_is_absolute',passed:true},{n:'daemon::tests::acquire_pid_lock_fails_when_already_locked',passed:true},{n:'daemon::tests::acquire_pid_lock_succeeds_on_fresh_file',passed:true},{n:'doctor::tests::report_exit_code_is_one_when_errors',passed:true},{n:'doctor::tests::report_exit_code_is_zero_when_all_ok',passed:true},{n:'doctor::tests::doctor_detects_missing_hook_and_installs',passed:true},{n:'doctor::tests::doctor_reports_missing_exclude_and_repairs',passed:true},{n:'execute_tool::tests::extract_terms_returns_meaningful_words',passed:true},{n:'execute_tool::tests::summary_truncates_large_output',passed:true},{n:'execute_tool::tests::run_execute_captures_stderr',passed:true},{n:'execute_tool::tests::run_execute_echo_returns_summary',passed:true},{n:'commands::refresh::tests::test_refresh_run_no_vaults_dir',passed:true},{n:'commands::refresh::tests::test_refresh_dry_run_flag',passed:true},{n:'commands::refresh::tests::test_refresh_dry_run_with_repos',passed:true},{n:'commands::refresh::tests::test_refresh_with_repos',passed:true},
+  ]},
+  {id:'EMBED',name:'Embedding & FIFO',color:'#a855f7',colorBg:'rgba(168,85,247,0.1)',tests:[
+    {n:'embedding_provider::tests::embedding_error_display_is_descriptive',passed:true},{n:'embedding_provider::tests::from_env_reads_custom_vars',passed:true},{n:'embedding_provider::tests::from_env_uses_defaults_when_vars_absent',passed:true},{n:'fifo_embedder::tests::drain_debt_file_absent_file_is_noop',passed:true},{n:'fifo_embedder::tests::drain_debt_file_reingests_and_removes_file',passed:true},{n:'fifo_embedder::tests::enqueue_chunk_increments_backlog_depth',passed:true},{n:'fifo_embedder::tests::from_env_creates_with_defaults',passed:true},{n:'fifo_embedder::tests::from_env_reads_custom_vars',passed:true},{n:'fifo_embedder::tests::ollama_state_has_five_distinct_variants',passed:true},{n:'fifo_embedder::tests::serialize_overflow_creates_file_and_empties_backlog',passed:true},
+  ]},
+  {id:'GIT',name:'Git — Commits, Journal, LFS, Branch',color:'#f97316',colorBg:'rgba(249,115,22,0.1)',tests:[
+    {n:'git::bare_commit::tests::ensure_branch_is_idempotent',passed:true},{n:'git::bare_commit::tests::ensure_branch_creates_pks_knowledge',passed:true},{n:'git::bare_commit::tests::write_file_content_readable_from_branch',passed:true},{n:'git::bare_commit::tests::write_file_does_not_dirty_working_tree',passed:true},{n:'git::repo_identity::tests::from_path_returns_err_on_non_git_dir',passed:true},{n:'git::repo_identity::tests::from_path_returns_ok_on_git_repo',passed:true},{n:'git::repo_identity::tests::is_same_repo_false_for_different_repos',passed:true},{n:'git::repo_identity::tests::is_same_repo_false_for_non_git_dir',passed:true},{n:'git::repo_identity::tests::is_same_repo_true_for_same_path',passed:true},{n:'git_branch::tests::worktree_exists_returns_false_when_no_prometheus_dir',passed:true},{n:'git_branch::tests::branch_exists_returns_false_for_nonexistent',passed:true},{n:'git_branch::tests::get_head_sha_returns_none_for_non_git',passed:true},{n:'git_journal::tests::get_changed_md_files_returns_empty_for_invalid_repo',passed:true},{n:'git_journal::tests::notify_commit_detects_rebase_on_sha_change',passed:true},{n:'git_journal::tests::notify_commit_enqueues_transaction',passed:true},{n:'git_journal_append::tests::append_commit_skips_pks_knowledge_branch',passed:true},{n:'git_journal_append::tests::conventional_prefix_accepted_with_scope',passed:true},{n:'git_journal_append::tests::append_commit_skips_when_disabled',passed:true},{n:'git_journal_append::tests::append_line_to_file_creates_parent_dirs',passed:true},{n:'git_journal_append::tests::daily_log_path_uses_vault_root',passed:true},{n:'git_journal_append::tests::ignored_author_is_skipped',passed:true},{n:'git_journal_append::tests::log_line_format_is_correct',passed:true},{n:'git_journal_append::tests::non_conventional_prefix_rejected',passed:true},{n:'git_journal_append::tests::min_words_filter_works',passed:true},{n:'git_journal_append::tests::pks_knowledge_branch_is_skipped',passed:true},{n:'git_journal_append::tests::journal_config_defaults_when_env_absent',passed:true},{n:'git_journal_date::tests::current_date_utc_returns_valid_format',passed:true},{n:'git_journal_date::tests::unix_timestamp_1430_gives_correct_hhmm',passed:true},{n:'git_journal_date::tests::unix_timestamp_midnight_gives_0000',passed:true},{n:'git_lfs_sync::tests::local_store_load_missing_repo_returns_error',passed:true},{n:'git_lfs_sync::tests::local_store_sync_is_equivalent_to_save',passed:true},{n:'git_lfs_sync::tests::local_store_save_and_load_roundtrip',passed:true},
+  ]},
+  {id:'HOOKS',name:'Hooks — Journal Entry, Shadow Journal',color:'#ec4899',colorBg:'rgba(236,72,153,0.1)',tests:[
+    {n:'hooks::journal_entry::tests::redact_secrets_leaves_normal_text',passed:true},{n:'hooks::journal_entry::tests::truncate_long_string_appends_ellipsis',passed:true},{n:'hooks::journal_entry::tests::redact_secrets_removes_api_keys',passed:true},{n:'hooks::journal_entry::tests::truncate_short_string_unchanged',passed:true},{n:'hooks::shadow_journal::tests::disabled_hook_does_not_accumulate',passed:true},{n:'hooks::shadow_journal::tests::max_entries_drops_excess',passed:true},{n:'hooks::shadow_journal::tests::record_event_zero_io',passed:true},{n:'hooks::shadow_journal::tests::render_contains_required_sections',passed:true},
+  ]},
+  {id:'IDX',name:'Indexer — Dirty Tracker, Pipeline',color:'#eab308',colorBg:'rgba(234,179,8,0.1)',tests:[
+    {n:'indexer::dirty_tracker::tests::multiple_paragraphs_split_correctly',passed:true},{n:'indexer::dirty_tracker::tests::same_paragraph_produces_same_hash',passed:true},{n:'indexer::dirty_tracker::tests::paragraph_hash_changes_when_content_changes',passed:true},{n:'indexer::pipeline::tests::new_file_all_chunks_are_dirty',passed:true},{n:'indexer::pipeline::tests::unchanged_file_has_no_dirty_chunks',passed:true},{n:'indexer::pipeline::tests::editing_one_paragraph_marks_only_affected_chunks_as_dirty',passed:true},
+  ]},
+  {id:'SYS',name:'IPC, LRU, Memory, Obs, Recovery, Snapshot, State, Storage',color:'#22c55e',colorBg:'rgba(34,197,94,0.1)',tests:[
+    {n:'ipc::tests::test_is_server_running_returns_false_when_no_daemon',passed:true},{n:'ipc::tests::test_pks_command_ping_serializes_correctly',passed:true},{n:'ipc::tests::test_pks_response_err_deserializes',passed:true},{n:'ipc::tests::test_pks_command_search_serializes',passed:true},{n:'lru_manager::tests::active_repo_not_hibernated',passed:true},{n:'lru_manager::tests::from_env_reads_defaults',passed:true},{n:'lru_manager::tests::hibernate_detects_inactive_repos',passed:true},{n:'lru_manager::tests::lru_evicts_least_recently_used_repo',passed:true},{n:'lru_manager::tests::register_and_record_query_updates_status',passed:true},{n:'memory_manager::tests::collect_md_skips_hidden_dirs',passed:true},{n:'memory_manager::tests::unload_repo_deletes_snapshot',passed:true},{n:'memory_manager::tests::load_repo_indexes_md_files',passed:true},{n:'memory_writer::tests::file_rel_path_uses_date',passed:true},{n:'memory_writer::tests::render_includes_all_sections',passed:true},{n:'memory_writer::tests::render_includes_yaml_frontmatter',passed:true},{n:'memory_writer::tests::render_with_empty_decisions_shows_placeholder',passed:true},{n:'observability::tests::log_config_default_max_size_is_50mb',passed:true},{n:'observability::tests::parse_max_size_bytes_returns_default_for_empty_input',passed:true},{n:'observability::tests::parse_max_size_bytes_returns_default_for_invalid_input',passed:true},{n:'observability::tests::parse_max_size_bytes_returns_parsed_value_for_valid_input',passed:true},{n:'observability::tests::pks_logs_dir_ends_with_pks_logs_suffix',passed:true},{n:'recovery::tests::recover_repo_absent_snapshot_triggers_rebuild',passed:true},{n:'recovery::tests::rebuild_from_head_indexes_md_files',passed:true},{n:'recovery::tests::handle_rebase_clears_clock_and_rebuilds',passed:true},{n:'recovery::tests::delete_snapshots_then_recover_produces_equivalent_index',passed:true},{n:'remote_sync::tests::clone_remote_repo_returns_ok_if_dest_exists',passed:true},{n:'remote_sync::tests::poll_interval_defaults_to_300s',passed:true},{n:'remote_sync::tests::poll_interval_reads_from_env',passed:true},{n:'remote_sync::tests::fetch_non_existent_repo_returns_err',passed:true},{n:'repo_watcher::tests::is_git_repo_detects_dot_git_directory',passed:true},{n:'repo_watcher::tests::scan_existing_repos_finds_git_dirs',passed:true},{n:'repo_watcher::tests::vaults_dir_from_env_falls_back_to_home',passed:true},{n:'snapshot::tests::compact_chunk_records_removes_duplicate_hashes',passed:true},{n:'snapshot::tests::version_mismatch_returns_error_without_panicking',passed:true},{n:'snapshot::tests::write_then_read_produces_identical_snapshot_data',passed:true},{n:'state::tests::vector_clock_is_potential_rebase_on_sha_change',passed:true},{n:'state::tests::vector_clock_remove_repo_clears_all_branches',passed:true},{n:'state::tests::vector_clock_three_repos_multiple_branches_deterministic',passed:true},{n:'state::tests::vector_clock_update_and_get',passed:true},{n:'storage_policy::tests::content_type_from_tags_defaults_to_unknown',passed:true},{n:'storage_policy::tests::content_type_from_tags_detects_tracker',passed:true},{n:'storage_policy::tests::default_policy_stores_ai_summaries',passed:true},{n:'storage_policy::tests::default_policy_stores_tracker_imports',passed:true},{n:'storage_policy::tests::oversized_content_is_rejected',passed:true},{n:'storage_policy::tests::should_store_respects_size_limit',passed:true},
+  ]},
+  {id:'TRK',name:'Tracker — Export, Import, Sanitizer',color:'#a855f7',colorBg:'rgba(168,85,247,0.1)',tests:[
+    {n:'tracker::export::tests::detect_collision_empty_remote_passes',passed:true},{n:'tracker::export::tests::detect_collision_newer_remote_fails',passed:true},{n:'tracker::export::tests::detect_collision_older_remote_passes',passed:true},{n:'tracker::export::tests::inject_sync_fields_adds_and_replaces',passed:true},{n:'tracker::export::tests::parse_frontmatter_missing_delimiter_fails',passed:true},{n:'tracker::export::tests::parse_frontmatter_extracts_fields_and_body',passed:true},{n:'tracker::export::tests::resolve_tracker_from_frontmatter_notion',passed:true},{n:'tracker::export::tests::resolve_tracker_missing_fails',passed:true},{n:'tracker::export::tests::export_returns_file_not_found_for_missing_path',passed:true},{n:'tracker::export::tests::resolve_tracker_override_wins',passed:true},{n:'tracker::import::routing::tests::dest_dir_from_routing_reads_custom_dir',passed:true},{n:'tracker::import::routing::tests::file_rel_path_for_replaces_spaces',passed:true},{n:'tracker::import::routing::tests::file_rel_path_for_uses_custom_dest_dir',passed:true},{n:'tracker::import::routing::tests::file_rel_path_for_sanitizes_slashes',passed:true},{n:'tracker::import::routing::tests::synced_at_now_produces_iso8601_format',passed:true},{n:'tracker::import::routing::tests::dest_dir_from_routing_returns_default_when_no_file',passed:true},{n:'tracker::import::tests::import_tracker_page_requires_notion_token',passed:null},{n:'tracker::import::tests::build_frontmatter_contains_required_fields',passed:true},{n:'tracker::import::tests::build_frontmatter_ends_with_double_newline',passed:true},{n:'tracker::import::tests::notion_token_returns_no_token_when_unset',passed:true},{n:'tracker::sanitizer::tests::max_import_size_bytes_returns_one_mb_default',passed:true},{n:'tracker::sanitizer::tests::sanitize_preserves_code_blocks',passed:true},{n:'tracker::sanitizer::tests::sanitize_preserves_markdown_links',passed:true},{n:'tracker::sanitizer::tests::sanitize_removes_javascript_links',passed:true},{n:'tracker::sanitizer::tests::sanitize_removes_script_tags',passed:true},{n:'tracker::sanitizer::tests::sanitize_with_limit_truncates_oversized_content',passed:true},{n:'tracker::sanitizer::tests::sanitize_removes_inline_html',passed:true},
+  ]},
+  {id:'VAULT',name:'Vault Init',color:'#00e5b5',colorBg:'rgba(0,229,181,0.1)',tests:[
+    {n:'vault_init::tests::init_vault_fails_on_non_git_dir',passed:true},{n:'vault_init::tests::add_to_git_exclude_is_idempotent',passed:true},{n:'vault_init::tests::init_vault_is_idempotent',passed:true},{n:'vault_init::tests::init_vault_creates_all_prometheus_dirs',passed:true},{n:'vault_init::tests::init_vault_zettelkasten_structure_also_indexes',passed:true},
+  ]},
+  {id:'E2E',name:'E2E — Journal FSWatcher',color:'#ef4444',colorBg:'rgba(239,68,68,0.1)',tests:[
+    {n:'journal_e2e_skips_pks_knowledge_branch',passed:true},{n:'journal_e2e_skips_non_conventional_subject',passed:true},{n:'journal_fswatcher_smoke_log_file_is_valid_markdown',passed:false},{n:'journal_e2e_creates_log_file',passed:false},{n:'journal_e2e_two_commits_append_in_order',passed:false},
+  ]},
 ];
 
-/* ── RENDER: FLOW ── */
-function renderFlow() {
-  const container = document.getElementById('flowStages');
-  container.innerHTML = '';
-  flowStages.forEach((stage, i) => {
-    if (i > 0) {
-      const arrow = document.createElement('div');
-      arrow.className = 'stage-arrow';
-      arrow.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
-      container.appendChild(arrow);
+/* ══════════════════════════════════════════════════════
+   RENDER FUNCTIONS
+   ══════════════════════════════════════════════════════ */
+
+/* ── OVERVIEW ── */
+function renderOverview() {
+  let totalDone=0, totalAll=0;
+  MILESTONES.forEach(m=>{ totalDone+=m.done; totalAll+=m.total; });
+  document.getElementById('sTotalTasks').textContent = totalAll;
+  document.getElementById('sDoneTasks').textContent  = totalDone;
+
+  const pct = Math.round(totalDone/totalAll*100);
+  const C = 2*Math.PI*72;
+  setTimeout(() => {
+    document.getElementById('bigFill').style.strokeDashoffset = C*(1-pct/100);
+    animCount(document.getElementById('bigPct'), 0, pct, 1400, v=>Math.round(v)+'%');
+  }, 200);
+
+  // Phase dividers
+  const phases = [
+    {key:'Fase A', label:'FASE A — Motor Prevalente',  color:'#00e5b5', bg:'rgba(0,229,181,0.1)'},
+    {key:'Fase B', label:'FASE B — Git & Vaults',       color:'#3b82f6', bg:'rgba(59,130,246,0.1)'},
+    {key:'Fase C', label:'FASE C — Embeddings & Ops',   color:'#ec4899', bg:'rgba(236,72,153,0.1)'},
+    {key:'Fase B+',label:'FASE B+ — Journal v1',        color:'#22c55e', bg:'rgba(34,197,94,0.1)'},
+    {key:'Fase D', label:'FASE D — Instalador',          color:'#7a94b4', bg:'rgba(122,148,180,0.1)'},
+    {key:'V2',     label:'V2 — Production Hardening',   color:'#a855f7', bg:'rgba(168,85,247,0.1)'},
+  ];
+
+  const grid = document.getElementById('gaugesGrid');
+  grid.innerHTML = '';
+  let lastPhase = null;
+  MILESTONES.forEach((m,i) => {
+    if (m.phase !== lastPhase) {
+      lastPhase = m.phase;
+      const ph = phases.find(p=>p.key===m.phase);
+      if (ph && i > 0) {
+        const div = document.createElement('div');
+        div.style.gridColumn = '1 / -1';
+        div.className = 'phase-divider';
+        div.style.color = ph.color;
+        div.innerHTML = `<span class="phase-badge" style="background:${ph.bg};color:${ph.color};border:1px solid ${ph.color}40">${ph.label}</span>`;
+        grid.appendChild(div);
+      } else if (ph && i === 0) {
+        const div = document.createElement('div');
+        div.style.gridColumn = '1 / -1';
+        div.className = 'phase-divider';
+        div.style.color = ph.color;
+        div.innerHTML = `<span class="phase-badge" style="background:${ph.bg};color:${ph.color};border:1px solid ${ph.color}40">${ph.label}</span>`;
+        grid.appendChild(div);
+      }
     }
-    const stageEl = document.createElement('div');
-    stageEl.className = 'stage';
-    const cardsHTML = stage.cards.map(c => `
-      <div class="flow-card" onclick="showDetail('${c.id}',this)">
-        <div class="card-icon">${c.icon}</div>
-        <div class="card-name">${c.name}</div>
-        <div class="card-sub">${c.sub}</div>
+    const p2 = Math.round(m.done/m.total*100);
+    const R=40, C2=2*Math.PI*R;
+    const card = document.createElement('div');
+    card.className = 'gauge-card';
+    card.style.setProperty('--c', m.color);
+    card.style.setProperty('--c-glow', m.bgColor.replace('0.1)','0.15)'));
+    card.style.setProperty('--c-bg', m.bgColor);
+    card.innerHTML = `
+      <div class="gauge-top">
+        <span class="gauge-id">${m.id}</span>
+        <span class="gauge-phase">${m.priority}</span>
+      </div>
+      <div class="gauge-ring">
+        <svg width="88" height="88" viewBox="0 0 88 88" style="transform:rotate(-90deg)">
+          <circle class="ring-track" cx="44" cy="44" r="${R}"/>
+          <circle class="ring-fill" cx="44" cy="44" r="${R}"
+            stroke="${m.color}" stroke-dasharray="${C2}" stroke-dashoffset="${C2}"
+            data-offset="${C2*(1-p2/100)}"/>
+          <text transform="rotate(90,44,44)" x="44" y="44"
+            class="ring-pct" style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;fill:${m.color}">
+            ${p2}%
+          </text>
+        </svg>
+      </div>
+      <div class="gauge-name">${m.name}</div>
+      <div class="gauge-tasks"><span>${m.done}</span>/${m.total} tasks · ${m.effort}</div>
+      <div class="gauge-status"><span class="gauge-dot"></span>${m.status}</div>`;
+    grid.appendChild(card);
+    setTimeout(() => {
+      const fill = card.querySelector('.ring-fill');
+      fill.style.strokeDashoffset = fill.dataset.offset;
+    }, 350 + i*60);
+
+    card.addEventListener('click', () => {
+      const target = document.getElementById('impl-mod-'+m.id);
+      if (target) {
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+    });
+  });
+
+  renderImplModules();
+}
+
+function renderImplModules() {
+  const wrap = document.getElementById('implModules');
+  wrap.innerHTML = '';
+  MILESTONES.forEach(m => {
+    const pDone  = m.done;
+    const pTotal = m.total;
+    const pPct   = Math.round(pDone/pTotal*100);
+    const pending = m.tasks.filter(t=>!t.done).length;
+    const statusColor = pending > 0 ? 'var(--yellow)' : 'var(--green)';
+    const el = document.createElement('div');
+    el.className = 'impl-mod';
+    el.id = 'impl-mod-'+m.id;
+    el.style.setProperty('--mc', m.color);
+    el.style.setProperty('--mc-bg', m.bgColor);
+    const tasksHTML = m.tasks.map(t => `
+      <div class="task-item" data-done="${t.done}">
+        <div class="task-chk ${t.done?'done':'todo'}">${t.done?'✓':''}</div>
+        <div class="task-text">${t.name}</div>
       </div>`).join('');
-    stageEl.innerHTML = `<div class="stage-label">${stage.label}</div><div class="stage-cards">${cardsHTML}</div>`;
-    container.appendChild(stageEl);
+    el.innerHTML = `
+      <div class="impl-mod-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="impl-badge">${m.id}</div>
+        <div class="impl-mod-info">
+          <div class="impl-mod-name">${m.name}</div>
+          <div class="impl-mod-meta">${m.desc}</div>
+        </div>
+        <div class="impl-mod-stat" style="color:${statusColor}">${pPct}% · ${pDone}/${pTotal}</div>
+        <span class="impl-chevron">▼</span>
+      </div>
+      <div class="impl-body">${tasksHTML}</div>`;
+    wrap.appendChild(el);
   });
 }
 
-function showDetail(id, el) {
-  const d = details[id]; if (!d) return;
-  document.querySelectorAll('.flow-card').forEach(c => c.classList.remove('selected'));
+/* ── FLOW ── */
+function renderFlow() {
+  const c = document.getElementById('flowStages'); c.innerHTML='';
+  flowStages.forEach((stage,i) => {
+    if(i>0){
+      const a=document.createElement('div'); a.className='stage-arrow';
+      a.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+      c.appendChild(a);
+    }
+    const s=document.createElement('div'); s.className='stage';
+    s.innerHTML=`<div class="stage-label">${stage.label}</div><div class="stage-cards">${
+      stage.cards.map(cd=>`<div class="flow-card" onclick="showDetail('${cd.id}',this)"><div class="card-icon">${cd.icon}</div><div class="card-name">${cd.name}</div><div class="card-sub">${cd.sub}</div></div>`).join('')}</div>`;
+    c.appendChild(s);
+  });
+}
+function showDetail(id,el) {
+  const d=details[id]; if(!d)return;
+  document.querySelectorAll('.flow-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
-  const panel = document.getElementById('detailPanel');
-  panel.innerHTML = `
-    <h3>${d.title}</h3>
-    <p>${d.text}</p>
-    <div class="detail-tags">${d.tags.map(t => `<span class="dtag ${t.c}">${t.l}</span>`).join('')}</div>`;
+  document.getElementById('detailPanel').innerHTML=`<h3>${d.title}</h3><p>${d.text}</p><div class="detail-tags">${d.tags.map(t=>`<span class="dtag ${t.c}">${t.l}</span>`).join('')}</div>`;
 }
 
-/* ── RENDER: LAYERS ── */
+/* ── LAYERS ── */
 function renderLayers() {
-  const list = document.getElementById('layersList');
-  list.innerHTML = '';
-  layers.forEach(l => {
-    const el = document.createElement('div');
-    el.className = 'arch-tier';
-    el.style.setProperty('--tc', l.color);
-    el.style.setProperty('--tc-bg', l.colorBg);
-    const compsHTML = l.comps.map(c => `
-      <div class="arch-node">
-        <div class="arch-node-name">${c.name}</div>
-        <div class="arch-node-desc">${c.desc}</div>
-      </div>`).join('');
-    el.innerHTML = `
+  const list=document.getElementById('layersList'); list.innerHTML='';
+  layers.forEach(l=>{
+    const el=document.createElement('div'); el.className='arch-tier';
+    el.style.setProperty('--tc',l.color); el.style.setProperty('--tc-bg',l.colorBg);
+    el.innerHTML=`
       <div class="arch-tier-header" onclick="this.parentElement.classList.toggle('open')">
         <div class="tier-num">${l.num}</div>
         <div class="tier-name">${l.title}</div>
         <div class="tier-sub">${l.sub}</div>
         <span class="tier-chevron">▼</span>
       </div>
-      <div class="arch-body">${compsHTML}</div>`;
+      <div class="arch-body">${l.comps.map(c=>`<div class="arch-node"><div class="arch-node-name">${c.name}</div><div class="arch-node-desc">${c.desc}</div></div>`).join('')}</div>`;
     list.appendChild(el);
   });
 }
 
-/* ── RENDER: GAINS ── */
+/* ── GAINS ── */
 function renderGains() {
-  const grid = document.getElementById('gainsGrid');
-  grid.innerHTML = gains.map(g => `
+  document.getElementById('gainsGrid').innerHTML=gains.map(g=>`
     <div class="gain-card">
-      <div class="gain-icon">${g.icon}</div>
-      <div class="gain-title">${g.title}</div>
-      <div class="gain-text">${g.text}</div>
-      <div class="gain-metric">${g.metric}</div>
+      <div class="gain-icon">${g.icon}</div><div class="gain-title">${g.title}</div>
+      <div class="gain-text">${g.text}</div><div class="gain-metric">${g.metric}</div>
     </div>`).join('');
 }
 
-/* ── RENDER: CI ── */
+/* ── CI ── */
 function renderCI() {
-  // ring animation
-  const passRate = 97.7;
-  const C = 2 * Math.PI * 64;
-  setTimeout(() => {
-    document.getElementById('ciRingFill').style.strokeDashoffset = C * (1 - passRate / 100);
-    animCount(document.getElementById('ciPct'), 0, passRate, 1200, v => v.toFixed(1) + '%');
-  }, 200);
-
-  // coverage bars
-  setTimeout(() => {
-    document.querySelectorAll('.cov-fill').forEach(el => {
-      el.style.width = el.dataset.w;
-    });
-  }, 300);
+  const passRate=97.7, C=2*Math.PI*64;
+  setTimeout(()=>{
+    document.getElementById('ciRingFill').style.strokeDashoffset=C*(1-passRate/100);
+    animCount(document.getElementById('ciPct'),0,passRate,1200,v=>v.toFixed(1)+'%');
+  },200);
+  setTimeout(()=>{document.querySelectorAll('.cov-fill').forEach(el=>{el.style.width=el.dataset.w;});},300);
 
   // sparkline
-  const history = [
-    {rate:0},{rate:97.7},{rate:97.7},{rate:97.7},{rate:97.7},{rate:97.7},{rate:97.7}
-  ];
-  const svg = document.getElementById('sparklineSvg');
-  const W = 300, H = 72, pad = 10;
-  const pts = history.map((h, i) => {
-    const x = pad + i * (W - 2*pad) / (history.length - 1);
-    const y = H - pad - (h.rate / 100) * (H - 2*pad);
-    return `${x},${y}`;
-  });
-  const line = pts.join(' ');
-  const area = `${pad},${H-pad} ${line} ${W-pad},${H-pad}`;
-  svg.innerHTML = `
-    <defs>
-      <linearGradient id="spGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"   stop-color="#00e5b5" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="#00e5b5" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <polygon points="${area}" fill="url(#spGrad)"/>
-    <polyline points="${line}" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linejoin="round"/>
-    ${history.map((h, i) => {
-      const x = pad + i * (W - 2*pad) / (history.length - 1);
-      const y = H - pad - (h.rate / 100) * (H - 2*pad);
-      return `<circle cx="${x}" cy="${y}" r="3" fill="${h.rate > 0 ? 'var(--mint)' : 'var(--red)'}"/>`;
-    }).join('')}
+  const history=[{r:0},{r:97.7},{r:97.7},{r:97.7},{r:97.7},{r:97.7},{r:97.7}];
+  const svg=document.getElementById('sparklineSvg');
+  const W=300,H=72,pad=10;
+  const pts=history.map((h,i)=>{const x=pad+i*(W-2*pad)/(history.length-1);const y=H-pad-(h.r/100)*(H-2*pad);return`${x},${y}`;});
+  svg.innerHTML=`<defs><linearGradient id="spGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#00e5b5" stop-opacity="0.3"/><stop offset="100%" stop-color="#00e5b5" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${pad},${H-pad} ${pts.join(' ')} ${W-pad},${H-pad}" fill="url(#spGrad)"/>
+    <polyline points="${pts.join(' ')}" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linejoin="round"/>
+    ${history.map((h,i)=>{const x=pad+i*(W-2*pad)/(history.length-1);const y=H-pad-(h.r/100)*(H-2*pad);return`<circle cx="${x}" cy="${y}" r="3" fill="${h.r>0?'var(--mint)':'var(--red)'}"/>`;}).join('')}
     <text x="${pad}" y="${H-1}" font-family="'JetBrains Mono',monospace" font-size="9" fill="var(--text-3)">7 runs · 2026-03-16</text>`;
 
   // test modules
-  const wrap = document.getElementById('testModules');
-  wrap.innerHTML = '';
-  testModules.forEach(m => {
-    const total   = m.tests.length;
-    const failed  = m.tests.filter(t => t.passed === false).length;
-    const skipped = m.tests.filter(t => t.passed === null).length;
-    const passed  = total - failed - skipped;
-    const statusColor = failed > 0 ? 'var(--red)' : 'var(--green)';
-    const statusText  = failed > 0 ? `${failed} falhando` : `${passed} ok`;
-    const sec = document.createElement('div');
-    sec.className = 'mod-section';
-    sec.style.setProperty('--mc', m.color);
-    sec.style.setProperty('--mc-bg', m.colorBg);
-    const testsHTML = m.tests.map(t => {
-      const s = t.passed === false ? 'failed' : t.passed === null ? 'skipped' : 'passed';
-      const short = t.n.replace(/.*::/g, '');
-      return `<div class="test-item" data-s="${s}">
-        <div class="test-dot ${s}"></div>
-        <div class="test-name" title="${t.n}">${short}</div>
-      </div>`;
-    }).join('');
-    sec.innerHTML = `
+  const wrap=document.getElementById('testModules'); wrap.innerHTML='';
+  testModules.forEach(m=>{
+    const failed=m.tests.filter(t=>t.passed===false).length;
+    const skipped=m.tests.filter(t=>t.passed===null).length;
+    const passed=m.tests.length-failed-skipped;
+    const sc=failed>0?'var(--red)':'var(--green)';
+    const st=failed>0?`${failed} falhando`:`${passed} ok`;
+    const sec=document.createElement('div'); sec.className='mod-section';
+    sec.style.setProperty('--mc',m.color); sec.style.setProperty('--mc-bg',m.colorBg);
+    sec.innerHTML=`
       <div class="mod-header" onclick="this.parentElement.classList.toggle('open')">
         <div class="mod-badge">${m.id}</div>
-        <div class="mod-info">
-          <div class="mod-name">${m.name}</div>
-          <div class="mod-meta">${total} testes · ${passed} passed${skipped > 0 ? ' · ' + skipped + ' skipped' : ''}</div>
-        </div>
-        <div class="mod-status" style="color:${statusColor}">${statusText}</div>
+        <div class="mod-info"><div class="mod-name">${m.name}</div><div class="mod-meta">${m.tests.length} testes${skipped>0?' · '+skipped+' skipped':''}</div></div>
+        <div class="mod-status" style="color:${sc}">${st}</div>
         <span class="mod-chevron">▼</span>
       </div>
-      <div class="mod-body">${testsHTML}</div>`;
+      <div class="mod-body">${m.tests.map(t=>{const s=t.passed===false?'failed':t.passed===null?'skipped':'passed';const sh=t.n.replace(/.*::/g,'');return`<div class="test-item" data-s="${s}"><div class="test-dot ${s}"></div><div class="test-name" title="${t.n}">${sh}</div></div>`;}).join('')}</div>`;
     wrap.appendChild(sec);
-    // auto-open failing modules
-    if (failed > 0) sec.classList.add('open');
+    if(failed>0) sec.classList.add('open');
   });
 }
 
-/* ── ANIMATE COUNT ── */
-function animCount(el, from, to, dur, fmt) {
-  const start = performance.now();
-  function frame(now) {
-    const t = Math.min((now - start) / dur, 1);
-    const ease = t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
-    el.textContent = fmt(from + (to - from) * ease);
-    if (t < 1) requestAnimationFrame(frame);
-  }
+/* ── HELPERS ── */
+function animCount(el,from,to,dur,fmt){
+  const start=performance.now();
+  function frame(now){const t=Math.min((now-start)/dur,1);const e=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;el.textContent=fmt(from+(to-from)*e);if(t<1)requestAnimationFrame(frame);}
   requestAnimationFrame(frame);
 }
 
 /* ── NAV ── */
-const rendered = {};
-function switchPanel(id) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+const rendered={};
+function switchPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelector(`[data-panel="${id}"]`).classList.add('active');
-  if (!rendered[id]) {
-    rendered[id] = true;
-    if (id === 'layers') renderLayers();
-    if (id === 'gains')  renderGains();
-    if (id === 'ci')     renderCI();
+  if(!rendered[id]){
+    rendered[id]=true;
+    if(id==='flow')    renderFlow();
+    if(id==='layers')  renderLayers();
+    if(id==='gains')   renderGains();
+    if(id==='ci')      renderCI();
   }
 }
-document.querySelectorAll('nav button').forEach(btn => {
-  btn.addEventListener('click', () => switchPanel(btn.dataset.panel));
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.addEventListener('click',()=>switchPanel(btn.dataset.panel));
 });
 
 /* ── INIT ── */
-rendered.flow = true;
-renderFlow();
+rendered.overview=true;
+renderOverview();
 </script>
 </body>
 </html>

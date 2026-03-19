@@ -8,7 +8,13 @@ use crate::search::retriever::SearchBackend;
 use crate::state::{PrevalentState, RepoIndex};
 
 fn collect_md_entry(path: PathBuf, out: &mut Vec<PathBuf>) {
+    // Ignore junk directories early for performance and to avoid indexing vendor files
     if path.is_dir() {
+        if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+            if name.starts_with('.') || name == "node_modules" || name == "target" || name == "vendor" || name == "venv" || name == ".venv" {
+                return;
+            }
+        }
         walk_md_files(&path, out);
         return;
     }

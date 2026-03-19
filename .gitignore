@@ -1,8 +1,32 @@
+# Build artifacts
 /target
+
+# Secrets & environment
 .env
+.env.*
+
+# PKS runtime data
 *.bin
 *.jsonl
-.claude/squad-run-context.md
-**/.DS_Store
-**/tmp
+*.snap
+*.fst
+*.idx
+
+# PKS vault (local knowledge base — not part of source)
+prometheus/
+
+# PKS project config (contains machine-specific paths)
+.pks/
+
+# AI session data
+.claude/
+
+# Worktrees
 .worktrees/
+
+# OS & editor
+**/.DS_Store
+**/.vscode/settings.json
+
+# Temp files
+**/tmp

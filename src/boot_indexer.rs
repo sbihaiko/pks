@@ -7,11 +7,20 @@ use crate::repo_watcher::RepoWatcher;
 use crate::search::retriever::SearchBackend;
 use crate::state::{PrevalentState, RepoIndex};
 
+pub const VAULT_DIR_NAME: &str = "prometheus";
+
 fn collect_md_entry(path: PathBuf, out: &mut Vec<PathBuf>) {
     // Ignore junk directories early for performance and to avoid indexing vendor files
     if path.is_dir() {
         if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
-            if name.starts_with('.') || name == "node_modules" || name == "target" || name == "vendor" || name == "venv" || name == ".venv" {
+            if name.starts_with('.')
+                || name == "node_modules"
+                || name == "target"
+                || name == "vendor"
+                || name == "venv"
+                || name == ".venv"
+                || name == VAULT_DIR_NAME
+            {
                 return;
             }
         }
@@ -86,6 +95,32 @@ pub async fn index_repo(
     );
 }
 
+pub async fn index_vault_worktree(
+    repo_path: &Path,
+    pipeline: &mut IndexingPipeline,
+    state: &Arc<Mutex<PrevalentState>>,
+) {
+    let vault = repo_path.join(VAULT_DIR_NAME);
+    if !vault.join(".git").is_file() {
+        return;
+    }
+    let repo_id = format!(
+        "{}-vault",
+        repo_path.file_name().map(|n| n.to_string_lossy()).unwrap_or_default()
+    );
+    let mut paths = Vec::new();
+    walk_md_files(&vault, &mut paths);
+    for file_path in &paths {
+        ingest_file_chunks(&repo_id, file_path, pipeline, state).await;
+    }
+    let count = paths.len();
+    let mut guard = state.lock().unwrap();
+    guard.repos.insert(
+        repo_id.clone(),
+        RepoIndex { repo_id, chunk_count: count },
+    );
+}
+
 pub async fn index_vaults_on_boot(state: Arc<Mutex<PrevalentState>>) {
     let vaults_dir = RepoWatcher::vaults_dir_from_env();
     let (tx, _rx) = std::sync::mpsc::channel();
@@ -94,7 +129,47 @@ pub async fn index_vaults_on_boot(state: Arc<Mutex<PrevalentState>>) {
     let mut pipeline = IndexingPipeline::new_from_env();
     for repo_path in &repos {
         index_repo(repo_path, &mut pipeline, &state).await;
+        index_vault_worktree(repo_path, &mut pipeline, &state).await;
     }
     let mut guard = state.lock().unwrap();
     let _ = guard.search_index.commit();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn walker_excludes_prometheus_directory() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let prometheus_dir = tmp.path().join("prometheus");
+        fs::create_dir_all(&prometheus_dir).unwrap();
+        fs::write(prometheus_dir.join("secret.md"), "# secret").unwrap();
+
+        let mut results = Vec::new();
+        walk_md_files(tmp.path(), &mut results);
+
+        assert!(
+            results.iter().all(|p| !p.starts_with(&prometheus_dir)),
+            "prometheus/ files must not appear in walker results"
+        );
+    }
+
+    #[test]
+    fn walker_includes_normal_directories() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let docs_dir = tmp.path().join("docs");
+        fs::create_dir_all(&docs_dir).unwrap();
+        let md_file = docs_dir.join("guide.md");
+        fs::write(&md_file, "# Guide").unwrap();
+
+        let mut results = Vec::new();
+        walk_md_files(tmp.path(), &mut results);
+
+        assert!(
+            results.contains(&md_file),
+            "docs/guide.md must appear in walker results"
+        );
+    }
 }

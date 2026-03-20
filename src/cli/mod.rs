@@ -1,5 +1,8 @@
+pub mod flush_session;
 pub mod init;
+pub mod record_event;
 mod status;
+pub mod submit_journal;
 mod validate;
 
 use std::path::{Path, PathBuf};
@@ -12,6 +15,9 @@ pub enum CliCommand {
     Status { port: u16 },
     Validate { path: PathBuf },
     Refresh { dry_run: bool },
+    FlushSession { session_id: String, cwd: PathBuf },
+    RecordEvent,
+    SubmitJournal { agent: String, file: PathBuf },
     Unknown(Vec<String>),
 }
 
@@ -47,6 +53,18 @@ pub fn parse_args(args: &[String]) -> CliCommand {
             let dry_run = args.iter().any(|a| a == "--dry-run");
             CliCommand::Refresh { dry_run }
         }
+        Some("flush-session") => {
+            let session_id = args.get(2).cloned().unwrap_or_default();
+            let cwd = args.get(3).map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
+            CliCommand::FlushSession { session_id, cwd }
+        }
+        Some("record-event") => CliCommand::RecordEvent,
+        Some("submit-journal") => {
+            let agent = parse_flag_value(args, "--agent").unwrap_or_default();
+            let file = parse_flag_value(args, "--file")
+                .map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
+            CliCommand::SubmitJournal { agent, file }
+        }
         _ => CliCommand::Unknown(args.to_vec()),
     }
 }
@@ -59,9 +77,16 @@ pub async fn run_command(cmd: CliCommand) -> i32 {
         CliCommand::Status { port } => status::run_status(port).await,
         CliCommand::Validate { path } => validate::run_validate(&path),
         CliCommand::Refresh { dry_run } => run_refresh(dry_run),
+        CliCommand::FlushSession { session_id, cwd } => {
+            flush_session::run_flush_session(&session_id, &cwd)
+        }
+        CliCommand::RecordEvent => record_event::run_record_event(),
+        CliCommand::SubmitJournal { agent, file } => {
+            submit_journal::run_submit_journal(&agent, &file)
+        }
         CliCommand::Unknown(args) => {
             eprintln!("pks: unknown command. Args: {:?}", &args[1..]);
-            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh> [path]");
+            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh|record-event|flush-session|submit-journal> [args]");
             1
         }
     }
@@ -101,6 +126,10 @@ fn run_hook_post_commit(path: &Path, sha: &str, branch: &str) -> i32 {
         tracing::warn!(error = %e, "git journal append failed (non-blocking)");
     }
     0
+}
+
+fn parse_flag_value(args: &[String], flag: &str) -> Option<String> {
+    args.windows(2).find(|w| w[0] == flag).map(|w| w[1].clone())
 }
 
 fn run_refresh(dry_run: bool) -> i32 {

@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// Raw event from a single tool invocation.
 #[derive(Debug, Clone, Serialize)]
@@ -12,7 +12,7 @@ pub struct ToolEvent {
 }
 
 /// One persisted journal entry derived from a ToolEvent.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct JournalEntry {
     pub timestamp: DateTime<Utc>,
     pub tool_name: String,

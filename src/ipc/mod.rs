@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 pub const SOCKET_PATH: &str = "/tmp/pks.sock";
 
 /// IPC protocol version — bump when breaking changes are made
-pub const IPC_VER: u32 = 2;
+pub const IPC_VER: u32 = 3;
 
 /// Commands sent from client to daemon
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -24,14 +24,6 @@ pub enum PksCommand {
     Refresh {
         dry_run: bool,
     },
-    RecordToolEvent {
-        session_id: String,
-        tool_name: String,
-        input_summary: String,
-        outcome: String,
-        file_paths: Vec<String>,
-        decision_note: Option<String>,
-    },
 }
 
 /// Responses sent from daemon to client
@@ -46,7 +38,6 @@ pub enum PksResponse {
         removed: Vec<String>,
         unchanged: Vec<String>,
     },
-    EventRecorded,
     Err { message: String },
 }
 

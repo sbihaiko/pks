@@ -1,2 +1,3 @@
 - **09:58** - `2b9118b` - sbihaiko: feat: Add initial .mcp.json configuration for the pks server.
 - **10:13** - `dd8173d` - sbihaiko: fix: gate daemon server for unix-only and fix journaling tests
+- **14:04** - `25735ea` - sbihaiko: feat: implement M17 Prometheus simplification and complete v3 plan

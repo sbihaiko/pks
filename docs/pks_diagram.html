@@ -318,7 +318,7 @@ main{position:relative;z-index:1;padding:40px 32px 80px}
   </nav>
   <div class="header-badge">
     <div class="pulse"></div>
-    <span>2026-03-19 · M14</span>
+    <span>2026-03-20 · M16</span>
   </div>
 </header>
 
@@ -347,12 +347,12 @@ main{position:relative;z-index:1;padding:40px 32px 80px}
     </div>
     <div class="hero-right">
       <div class="hero-title">Implementação<br>do Projeto</div>
-      <div class="hero-sub">PKS · M1 → M14 · v1 + v2 · Rust</div>
+      <div class="hero-sub">PKS · M1 → M16 · v1 + v2 + v3 · Rust</div>
       <div class="stat-row">
         <div class="stat"><div class="stat-val" id="sTotalTasks">—</div><div class="stat-lbl">tasks totais</div></div>
         <div class="stat"><div class="stat-val" id="sDoneTasks">—</div><div class="stat-lbl">concluídas</div></div>
-        <div class="stat"><div class="stat-val">14</div><div class="stat-lbl">milestones</div></div>
-        <div class="stat"><div class="stat-val" style="color:var(--yellow)">1</div><div class="stat-lbl">em andamento</div></div>
+        <div class="stat"><div class="stat-val">16</div><div class="stat-lbl">milestones</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--green)">0</div><div class="stat-lbl">em andamento</div></div>
       </div>
     </div>
   </div>
@@ -691,13 +691,45 @@ const MILESTONES = [
       {id:'T14.8',name:'Testes E2E init: is_initialized + idempotência + --force',done:true},
     ]
   },
+  {
+    id:'M15', name:'Shadow Journaling via Hooks', phase:'V3', phaseColor:'#ec4899', phaseBg:'rgba(236,72,153,0.1)',
+    done:11, total:11, priority:'MÉDIA V3', status:'CONCLUÍDO',
+    color:'#ec4899', color2:'#db2777', bgColor:'rgba(236,72,153,0.1)',
+    effort:'~4d', desc:'Captura automática de sessões LLM via PostToolUse/Stop hooks, JSONL accumulation, CLI commands record-event/flush-session/submit-journal.',
+    tasks:[
+      {id:'T15.1',name:'PostToolUsePayload + StopPayload tipos com deserialização',done:true},
+      {id:'T15.2',name:'pks record-event: lê stdin JSON, extrai file_paths, append JSONL',done:true},
+      {id:'T15.3',name:'pks flush-session: lê JSONL, gera MD, BareCommit + cleanup',done:true},
+      {id:'T15.4',name:'pks submit-journal: batch ingestion para Antigravity workflows',done:true},
+      {id:'T15.5',name:'ShadowJournalHook::from_entries() construtor alternativo',done:true},
+      {id:'T15.6',name:'Registro record-event/flush-session/submit-journal no CLI parser',done:true},
+      {id:'T15.7',name:'Remover RecordToolEvent + EventRecorded do IPC (IPC_VER 3)',done:true},
+      {id:'T15.8',name:'.claude/hooks-example.json com configuração PostToolUse + Stop',done:true},
+      {id:'T15.9',name:'.claude/hooks/pks-flush.sh script com guard anti-loop',done:true},
+      {id:'T15.10',name:'Testes unitários para record-event, flush-session, submit-journal',done:true},
+      {id:'T15.11',name:'IPC Refresh após BareCommit para pesquisabilidade imediata',done:true},
+    ]
+  },
+  {
+    id:'M16', name:'Vault Isolation', phase:'V3', phaseColor:'#ec4899', phaseBg:'rgba(236,72,153,0.1)',
+    done:5, total:5, priority:'PEQUENA V3', status:'CONCLUÍDO',
+    color:'#f97316', color2:'#ea580c', bgColor:'rgba(249,115,22,0.1)',
+    effort:'~1d', desc:'prometheus/ excluído do walker do repo pai, indexado com repo_id próprio ({repo}-vault).',
+    tasks:[
+      {id:'T16.1',name:'Constante VAULT_DIR_NAME e exclusão no walker',done:true},
+      {id:'T16.2',name:'index_vault_worktree() com repo_id {repo}-vault',done:true},
+      {id:'T16.3',name:'Chamada index_vault_worktree() em index_vaults_on_boot()',done:true},
+      {id:'T16.4',name:'Teste: walker não indexa prometheus/ junto com repo pai',done:true},
+      {id:'T16.5',name:'Teste: diretórios normais (docs/) continuam indexados',done:true},
+    ]
+  },
 ];
 
 /* ── FLOW DATA ── */
 const flowStages=[
   {label:'Entrada',cards:[
     {id:'fs-watcher',icon:'👁️',name:'Directory Scanner',sub:'RepoWatcher (std::fs)'},
-    {id:'git-hook',  icon:'🔗',name:'Git Hook',         sub:'post-commit passivo'},
+    {id:'git-hook',  icon:'🔗',name:'Agent Hooks',       sub:'PostToolUse + Stop (M15)'},
     {id:'mcp-client',icon:'🤖',name:'LLM / MCP',        sub:'SSE/HTTP, stdio, IPC'},
   ]},
   {label:'Parsing',cards:[
@@ -723,7 +755,7 @@ const flowStages=[
 ];
 const details={
   'fs-watcher':   {title:'👁️ Directory Scanner',text:'Rastreamento de diretórios para identificar vaults Git. Atualizações ocorrem no boot ou via pks refresh manual.',tags:[{l:'Rust',c:'blue'},{l:'std::fs',c:''},{l:'Manual/Boot',c:'orange'}]},
-  'git-hook':     {title:'🔗 Git Hook — Shadow Journaling (M12)',text:'Hook post-commit passivo que registra sessões LLM na branch pks-knowledge. Opera em background sem intervenção.',tags:[{l:'M12',c:'orange'},{l:'post-commit',c:''},{l:'Passivo',c:'green'}]},
+  'git-hook':     {title:'🔗 Agent Hooks — Shadow Journaling (M15)',text:'Hooks PostToolUse + Stop capturam sessões LLM em JSONL, flush via BareCommit na branch pks-knowledge. Suporta Claude Code (hooks) e Antigravity (batch).',tags:[{l:'M15',c:'orange'},{l:'PostToolUse/Stop',c:''},{l:'JSONL→BareCommit',c:'green'}]},
   'mcp-client':   {title:'🤖 MCP Client — Interface Universal',text:'Expõe tools search_knowledge_vault e list_knowledge_vaults. Suporta SSE/HTTP, stdio e IPC Unix Socket.',tags:[{l:'SSE/HTTP',c:'green'},{l:'stdio',c:'blue'},{l:'IPC Socket',c:'orange'}]},
   'chunker':      {title:'✂️ Chunker Semântico',text:'Divide documentos Markdown por headings com sliding window. 400 tokens max, 80 tokens overlap, 100 tokens mínimo.',tags:[{l:'400 tok',c:'blue'},{l:'80 overlap',c:''},{l:'pulldown-cmark',c:'green'}]},
   'frontmatter':  {title:'📋 Heading Hierarchy',text:'Extrai hierarquia de títulos (# ## ###) para contextualizar chunks. YAML Frontmatter planejado.',tags:[{l:'Markdown',c:''},{l:'Heading Aware',c:'blue'}]},
@@ -764,7 +796,7 @@ const layers=[
   {num:'5',color:'#7a94b4',colorBg:'rgba(122,148,180,0.08)',title:'Operação & Observabilidade',sub:'Infraestrutura',comps:[
     {name:'Daemon fork (M10)',desc:'Processo singleton em background, RAM compartilhada.'},
     {name:'FS Watcher (notify)',desc:'Re-indexação automática ao salvar arquivos.'},
-    {name:'Shadow journaling (M12)',desc:'Git hook post-commit passivo para sessões LLM.'},
+    {name:'Shadow journaling (M15)',desc:'Agent hooks PostToolUse/Stop + JSONL → BareCommit. Dual path: Claude (streaming) + Antigravity (batch).'},
     {name:'Logs estruturados JSON',desc:'Health check, pks doctor, observabilidade.'},
   ]},
 ];
@@ -796,8 +828,8 @@ const testModules=[
   {id:'GIT',name:'Git — Commits, Journal, LFS, Branch',color:'#f97316',colorBg:'rgba(249,115,22,0.1)',tests:[
     {n:'git::bare_commit::tests::ensure_branch_is_idempotent',passed:true},{n:'git::bare_commit::tests::ensure_branch_creates_pks_knowledge',passed:true},{n:'git::bare_commit::tests::write_file_content_readable_from_branch',passed:true},{n:'git::bare_commit::tests::write_file_does_not_dirty_working_tree',passed:true},{n:'git::repo_identity::tests::from_path_returns_err_on_non_git_dir',passed:true},{n:'git::repo_identity::tests::from_path_returns_ok_on_git_repo',passed:true},{n:'git::repo_identity::tests::is_same_repo_false_for_different_repos',passed:true},{n:'git::repo_identity::tests::is_same_repo_false_for_non_git_dir',passed:true},{n:'git::repo_identity::tests::is_same_repo_true_for_same_path',passed:true},{n:'git_branch::tests::worktree_exists_returns_false_when_no_prometheus_dir',passed:true},{n:'git_branch::tests::branch_exists_returns_false_for_nonexistent',passed:true},{n:'git_branch::tests::get_head_sha_returns_none_for_non_git',passed:true},{n:'git_journal::tests::get_changed_md_files_returns_empty_for_invalid_repo',passed:true},{n:'git_journal::tests::notify_commit_detects_rebase_on_sha_change',passed:true},{n:'git_journal::tests::notify_commit_enqueues_transaction',passed:true},{n:'git_journal_append::tests::append_commit_skips_pks_knowledge_branch',passed:true},{n:'git_journal_append::tests::conventional_prefix_accepted_with_scope',passed:true},{n:'git_journal_append::tests::append_commit_skips_when_disabled',passed:true},{n:'git_journal_append::tests::append_line_to_file_creates_parent_dirs',passed:true},{n:'git_journal_append::tests::daily_log_path_uses_vault_root',passed:true},{n:'git_journal_append::tests::ignored_author_is_skipped',passed:true},{n:'git_journal_append::tests::log_line_format_is_correct',passed:true},{n:'git_journal_append::tests::non_conventional_prefix_rejected',passed:true},{n:'git_journal_append::tests::min_words_filter_works',passed:true},{n:'git_journal_append::tests::pks_knowledge_branch_is_skipped',passed:true},{n:'git_journal_append::tests::journal_config_defaults_when_env_absent',passed:true},{n:'git_journal_date::tests::current_date_utc_returns_valid_format',passed:true},{n:'git_journal_date::tests::unix_timestamp_1430_gives_correct_hhmm',passed:true},{n:'git_journal_date::tests::unix_timestamp_midnight_gives_0000',passed:true},{n:'git_lfs_sync::tests::local_store_load_missing_repo_returns_error',passed:true},{n:'git_lfs_sync::tests::local_store_sync_is_equivalent_to_save',passed:true},{n:'git_lfs_sync::tests::local_store_save_and_load_roundtrip',passed:true},
   ]},
-  {id:'HOOKS',name:'Hooks — Journal Entry, Shadow Journal',color:'#ec4899',colorBg:'rgba(236,72,153,0.1)',tests:[
-    {n:'hooks::journal_entry::tests::redact_secrets_leaves_normal_text',passed:true},{n:'hooks::journal_entry::tests::truncate_long_string_appends_ellipsis',passed:true},{n:'hooks::journal_entry::tests::redact_secrets_removes_api_keys',passed:true},{n:'hooks::journal_entry::tests::truncate_short_string_unchanged',passed:true},{n:'hooks::shadow_journal::tests::disabled_hook_does_not_accumulate',passed:true},{n:'hooks::shadow_journal::tests::max_entries_drops_excess',passed:true},{n:'hooks::shadow_journal::tests::record_event_zero_io',passed:true},{n:'hooks::shadow_journal::tests::render_contains_required_sections',passed:true},
+  {id:'HOOKS',name:'Hooks — Journal Entry, Shadow Journal, Payloads',color:'#ec4899',colorBg:'rgba(236,72,153,0.1)',tests:[
+    {n:'hooks::journal_entry::tests::redact_secrets_leaves_normal_text',passed:true},{n:'hooks::journal_entry::tests::truncate_long_string_appends_ellipsis',passed:true},{n:'hooks::journal_entry::tests::redact_secrets_removes_api_keys',passed:true},{n:'hooks::journal_entry::tests::truncate_short_string_unchanged',passed:true},{n:'hooks::journal_entry::tests::journal_entry_deserializes_from_jsonl',passed:true},{n:'hooks::shadow_journal::tests::disabled_hook_does_not_accumulate',passed:true},{n:'hooks::shadow_journal::tests::max_entries_drops_excess',passed:true},{n:'hooks::shadow_journal::tests::record_event_zero_io',passed:true},{n:'hooks::shadow_journal::tests::render_contains_required_sections',passed:true},{n:'hooks::shadow_journal::tests::from_entries_populates_hook',passed:true},{n:'hooks::hook_payload::tests::deserialize_post_tool_use_edit_example',passed:true},{n:'hooks::hook_payload::tests::deserialize_stop_payload',passed:true},{n:'hooks::hook_payload::tests::unknown_fields_are_ignored',passed:true},
   ]},
   {id:'IDX',name:'Indexer — Dirty Tracker, Pipeline',color:'#eab308',colorBg:'rgba(234,179,8,0.1)',tests:[
     {n:'indexer::dirty_tracker::tests::multiple_paragraphs_split_correctly',passed:true},{n:'indexer::dirty_tracker::tests::same_paragraph_produces_same_hash',passed:true},{n:'indexer::dirty_tracker::tests::paragraph_hash_changes_when_content_changes',passed:true},{n:'indexer::pipeline::tests::new_file_all_chunks_are_dirty',passed:true},{n:'indexer::pipeline::tests::unchanged_file_has_no_dirty_chunks',passed:true},{n:'indexer::pipeline::tests::editing_one_paragraph_marks_only_affected_chunks_as_dirty',passed:true},
@@ -807,6 +839,12 @@ const testModules=[
   ]},
   {id:'TRK',name:'Tracker — Export, Import, Sanitizer',color:'#a855f7',colorBg:'rgba(168,85,247,0.1)',tests:[
     {n:'tracker::export::tests::detect_collision_empty_remote_passes',passed:true},{n:'tracker::export::tests::detect_collision_newer_remote_fails',passed:true},{n:'tracker::export::tests::detect_collision_older_remote_passes',passed:true},{n:'tracker::export::tests::inject_sync_fields_adds_and_replaces',passed:true},{n:'tracker::export::tests::parse_frontmatter_missing_delimiter_fails',passed:true},{n:'tracker::export::tests::parse_frontmatter_extracts_fields_and_body',passed:true},{n:'tracker::export::tests::resolve_tracker_from_frontmatter_notion',passed:true},{n:'tracker::export::tests::resolve_tracker_missing_fails',passed:true},{n:'tracker::export::tests::export_returns_file_not_found_for_missing_path',passed:true},{n:'tracker::export::tests::resolve_tracker_override_wins',passed:true},{n:'tracker::import::routing::tests::dest_dir_from_routing_reads_custom_dir',passed:true},{n:'tracker::import::routing::tests::file_rel_path_for_replaces_spaces',passed:true},{n:'tracker::import::routing::tests::file_rel_path_for_uses_custom_dest_dir',passed:true},{n:'tracker::import::routing::tests::file_rel_path_for_sanitizes_slashes',passed:true},{n:'tracker::import::routing::tests::synced_at_now_produces_iso8601_format',passed:true},{n:'tracker::import::routing::tests::dest_dir_from_routing_returns_default_when_no_file',passed:true},{n:'tracker::import::tests::import_tracker_page_requires_notion_token',passed:null},{n:'tracker::import::tests::build_frontmatter_contains_required_fields',passed:true},{n:'tracker::import::tests::build_frontmatter_ends_with_double_newline',passed:true},{n:'tracker::import::tests::notion_token_returns_no_token_when_unset',passed:true},{n:'tracker::sanitizer::tests::max_import_size_bytes_returns_one_mb_default',passed:true},{n:'tracker::sanitizer::tests::sanitize_preserves_code_blocks',passed:true},{n:'tracker::sanitizer::tests::sanitize_preserves_markdown_links',passed:true},{n:'tracker::sanitizer::tests::sanitize_removes_javascript_links',passed:true},{n:'tracker::sanitizer::tests::sanitize_removes_script_tags',passed:true},{n:'tracker::sanitizer::tests::sanitize_with_limit_truncates_oversized_content',passed:true},{n:'tracker::sanitizer::tests::sanitize_removes_inline_html',passed:true},
+  ]},
+  {id:'V3_CLI',name:'V3 — record-event, flush-session, submit-journal',color:'#ec4899',colorBg:'rgba(236,72,153,0.1)',tests:[
+    {n:'cli::record_event::tests::extract_edit_returns_single_path',passed:true},{n:'cli::record_event::tests::extract_bash_returns_empty',passed:true},{n:'cli::record_event::tests::build_summary_edit_uses_file_path',passed:true},{n:'cli::record_event::tests::filtered_tools_not_in_captured_list',passed:true},{n:'cli::record_event::tests::integration_writes_jsonl_for_edit',passed:true},{n:'cli::record_event::tests::integration_appends_multiple_lines',passed:true},{n:'cli::record_event::tests::secrets_redacted_in_sanitize_summary',passed:true},{n:'cli::flush_session::tests::nonexistent_jsonl_returns_0',passed:true},{n:'cli::flush_session::tests::min_words_guard_deletes_file_without_commit',passed:true},{n:'cli::flush_session::tests::full_flow_commits_journal_and_deletes_jsonl',passed:true},{n:'cli::submit_journal::tests::frontmatter_is_prepended_correctly',passed:true},{n:'cli::submit_journal::tests::sanitize_filename_replaces_special_chars',passed:true},{n:'cli::submit_journal::tests::sanitize_filename_limits_to_50_chars',passed:true},{n:'cli::submit_journal::tests::sanitize_filename_preserves_underscores_at_boundaries',passed:true},{n:'cli::submit_journal::tests::full_flow_commits_to_pks_knowledge',passed:true},
+  ]},
+  {id:'V3_INDEXER',name:'V3 — Boot Indexer (Vault Isolation)',color:'#f97316',colorBg:'rgba(249,115,22,0.1)',tests:[
+    {n:'boot_indexer::tests::walker_excludes_prometheus_directory',passed:true},{n:'boot_indexer::tests::walker_includes_normal_directories',passed:true},
   ]},
   {id:'VAULT',name:'Vault Init',color:'#00e5b5',colorBg:'rgba(0,229,181,0.1)',tests:[
     {n:'vault_init::tests::init_vault_fails_on_non_git_dir',passed:true},{n:'vault_init::tests::add_to_git_exclude_is_idempotent',passed:true},{n:'vault_init::tests::init_vault_is_idempotent',passed:true},{n:'vault_init::tests::init_vault_creates_all_prometheus_dirs',passed:true},{n:'vault_init::tests::init_vault_zettelkasten_structure_also_indexes',passed:true},
@@ -842,6 +880,7 @@ function renderOverview() {
     {key:'Fase B+',label:'FASE B+ — Journal v1',        color:'#22c55e', bg:'rgba(34,197,94,0.1)'},
     {key:'Fase D', label:'FASE D — Instalador',          color:'#7a94b4', bg:'rgba(122,148,180,0.1)'},
     {key:'V2',     label:'V2 — Production Hardening',   color:'#a855f7', bg:'rgba(168,85,247,0.1)'},
+    {key:'V3',     label:'V3 — Hooks & Isolation',     color:'#ec4899', bg:'rgba(236,72,153,0.1)'},
   ];
 
   const grid = document.getElementById('gaugesGrid');

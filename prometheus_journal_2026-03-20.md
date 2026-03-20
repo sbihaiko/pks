@@ -1,0 +1,1 @@
+- **03:34** - `6172a67` - sbihaiko: feat(v3): implement M15 Shadow Journaling + M16 Vault Isolation

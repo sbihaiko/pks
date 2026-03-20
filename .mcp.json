@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "pks": {
+      "type": "stdio",
+      "command": "/Users/bihaiko/.cargo/bin/pks",
+      "args": ["--stdio"],
+      "env": {
+        "PKS_VAULTS_DIR": "/Users/bihaiko/VSCodeProjects",
+        "PKS_EMBEDDING_PROVIDER": "none"
+      }
+    }
+  }
+}

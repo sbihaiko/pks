@@ -1,3 +1,0 @@
-- **03:34** - `6172a67` - sbihaiko: feat(v3): implement M15 Shadow Journaling + M16 Vault Isolation
-- **03:37** - `6cdd3f8` - sbihaiko: docs: update Mission Control dashboard for v3 (M15 + M16)
-- **09:44** - `d230473` - sbihaiko: feat: introduce v3 general plan and detailed designs for vault isolation and shadow journaling.

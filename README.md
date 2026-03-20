@@ -11,7 +11,7 @@ PKS runs as a local MCP server (stdio). Once configured, your AI agent can searc
 **What it does:**
 
 - **Hybrid search** — BM25 full-text (always on) + optional vector search via Ollama
-- **Git journal** — post-commit hook appends filtered commits to daily markdown logs automatically
+- **Session journal** — captures tool events (PostToolUse/Stop hooks) and batch submissions into daily markdown logs on the `pks-knowledge` branch
 - **Multi-project** — indexes all repos under a root directory simultaneously
 - **Offline-capable** — no cloud dependency; everything runs locally
 
@@ -219,14 +219,17 @@ ollama pull nomic-embed-text
 ## CLI Reference
 
 ```bash
-pks init [path]          # Initialize PKS in a Git repo
-pks refresh [path]       # Re-index a vault
-pks search "<query>"     # Search from the terminal
-pks status               # Show indexer status
-pks doctor               # Diagnose configuration issues
-pks hook-post-commit     # Run the post-commit hook manually
-pks --stdio              # Start as MCP stdio server (used by IDEs)
-pks --daemon             # Start as background daemon
+pks init [path]                          # Initialize PKS in a Git repo
+pks refresh [path]                       # Re-index a vault
+pks search "<query>"                     # Search from the terminal
+pks status                               # Show indexer status
+pks doctor                               # Diagnose configuration issues
+pks hook-post-commit                     # Run the post-commit hook manually
+pks record-event                         # Append a tool event to the session JSONL (stdin: PostToolUse JSON)
+pks flush-session <session_id> <cwd>     # Flush a session JSONL to a journal entry on pks-knowledge
+pks submit-journal --agent <n> --file <f> # Commit a markdown journal file directly to pks-knowledge
+pks --stdio                              # Start as MCP stdio server (used by IDEs)
+pks --daemon                             # Start as background daemon
 ```
 
 ---
@@ -240,6 +243,7 @@ pks --daemon             # Start as background daemon
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API endpoint |
 | `OLLAMA_EMBED_MODEL` | `nomic-embed-text` | Embedding model |
 | `PKS_LOG_MAX_SIZE` | `10485760` | Max log file size in bytes (10 MB) |
+| `PKS_JOURNAL_MIN_WORDS` | `10` | Minimum word count to flush a session journal (sessions below threshold are discarded) |
 
 ---
 
@@ -302,7 +306,7 @@ Add the stdio server block to the project's `.mcp.json`. Replace `<PKS_BINARY>` 
 pks init
 ```
 
-If output shows `⚠ PKS já inicializado`, run `pks init --force` instead.
+If output shows `PKS already initialized`, run `pks init --force` instead.
 
 **Step 6 — Verify**
 

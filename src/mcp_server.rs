@@ -1,5 +1,6 @@
 use crate::execute_tool::{ExecuteParams, ExecuteResponse, run_execute};
 use crate::health::health_handler;
+use crate::knowledge_writer::{self as kw, AddDecisionParams, AddFeatureParams};
 use rmcp::{
     ServerHandler,
     handler::server::{router::tool::ToolRouter, wrapper::Parameters},
@@ -103,6 +104,54 @@ impl PksHandler {
     ) -> String {
         let response: ExecuteResponse = run_execute(params);
         serde_json::to_string(&response).unwrap_or_else(|_| r#"{"error":"serialization failed"}"#.to_string())
+    }
+
+    #[tool(
+        name = "pks_add_decision",
+        description = "Record an architecture decision (ADR) in the project's knowledge vault. \
+                       Writes to decisions/ on the pks-knowledge branch via BareCommit."
+    )]
+    async fn pks_add_decision(
+        &self,
+        Parameters(params): Parameters<AddDecisionParams>,
+    ) -> String {
+        let cwd = match env::current_dir() {
+            Ok(p) => p,
+            Err(e) => return format!("{{\"error\":\"cannot determine cwd: {e}\"}}"),
+        };
+        let now = chrono::Utc::now();
+        let hash = kw::hash_8(&params.note);
+        let content = kw::build_decision_content(&params.note, &now.to_rfc3339(), "mcp", params.context.as_deref());
+        let file_path = kw::decision_file_path(&now.format("%Y-%m-%d").to_string(), &hash);
+        let msg = format!("pks(decision): {}", kw::safe_truncate(&params.note, 60));
+        match kw::commit_to_vault(&cwd, &file_path, content.as_bytes(), &msg) {
+            Ok(()) => format!("{{\"status\":\"ok\",\"file\":\"{file_path}\"}}"),
+            Err(e) => format!("{{\"error\":\"{e}\"}}"),
+        }
+    }
+
+    #[tool(
+        name = "pks_add_feature",
+        description = "Record a feature specification in the project's knowledge vault. \
+                       Writes to features/ on the pks-knowledge branch via BareCommit."
+    )]
+    async fn pks_add_feature(
+        &self,
+        Parameters(params): Parameters<AddFeatureParams>,
+    ) -> String {
+        let cwd = match env::current_dir() {
+            Ok(p) => p,
+            Err(e) => return format!("{{\"error\":\"cannot determine cwd: {e}\"}}"),
+        };
+        let now = chrono::Utc::now();
+        let content = kw::build_feature_content(&params.title, &params.content, &now.to_rfc3339(), params.tracker_id.as_deref());
+        let safe_title = crate::cli::submit_journal::sanitize_filename(&params.title);
+        let file_path = format!("features/{}_{safe_title}.md", now.format("%Y-%m-%d"));
+        let msg = format!("pks(feature): {}", kw::safe_truncate(&params.title, 60));
+        match kw::commit_to_vault(&cwd, &file_path, content.as_bytes(), &msg) {
+            Ok(()) => format!("{{\"status\":\"ok\",\"file\":\"{file_path}\"}}"),
+            Err(e) => format!("{{\"error\":\"{e}\"}}"),
+        }
     }
 }
 

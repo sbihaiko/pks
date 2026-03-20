@@ -54,13 +54,13 @@ fn log_line_format_is_correct() {
 fn daily_log_path_uses_vault_root() {
     let root = std::path::PathBuf::from("/repo");
     let path = daily_log_path(&root, "prometheus", "2026-03-10");
-    assert_eq!(path, std::path::PathBuf::from("/repo/prometheus/90-ai-memory/2026-03-10_log.md"));
+    assert_eq!(path, std::path::PathBuf::from("/repo/prometheus/journals/2026-03-10_log.md"));
 }
 
 #[test]
 fn append_line_to_file_creates_parent_dirs() {
     let dir = tempfile::TempDir::new().unwrap();
-    let path = dir.path().join("90-ai-memory/2026-03-10_log.md");
+    let path = dir.path().join("journals/2026-03-10_log.md");
     append_line_to_file(&path, "- **10:00** - `abc1234` - author: feat: test\n").unwrap();
     let contents = std::fs::read_to_string(&path).unwrap();
     assert!(contents.contains("abc1234"));
@@ -93,7 +93,7 @@ fn append_commit_skips_when_disabled() {
     };
     let result = append_commit_to_daily_log(dir.path(), "abc1234", "main", &config);
     assert!(result.is_ok());
-    assert!(!dir.path().join("prometheus/90-ai-memory").exists());
+    assert!(!dir.path().join("prometheus/journals").exists());
 }
 
 #[test]
@@ -108,5 +108,5 @@ fn append_commit_skips_pks_knowledge_branch() {
     };
     let result = append_commit_to_daily_log(dir.path(), "abc1234", "pks-knowledge", &config);
     assert!(result.is_ok());
-    assert!(!dir.path().join("prometheus/90-ai-memory").exists());
+    assert!(!dir.path().join("prometheus/journals").exists());
 }

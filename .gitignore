@@ -35,3 +35,4 @@ ci-dashboard/
 # Temp files
 **/tmp
 .claude/squad-results/
+.claude/squad-run-context.md

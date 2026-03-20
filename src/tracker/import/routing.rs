@@ -1,7 +1,7 @@
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub const DEFAULT_DEST_DIR: &str = "02-features";
+pub const DEFAULT_DEST_DIR: &str = "features";
 const ROUTING_CONFIG_FILE: &str = ".pks-routing.yaml";
 
 fn extract_dest_dir(line: &str) -> Option<String> {
@@ -85,14 +85,14 @@ mod tests {
 
     #[test]
     fn file_rel_path_for_sanitizes_slashes() {
-        let result = file_rel_path_for("PAY-4421", "02-features");
-        assert_eq!(result, "02-features/PAY-4421.md");
+        let result = file_rel_path_for("PAY-4421", "features");
+        assert_eq!(result, "features/PAY-4421.md");
     }
 
     #[test]
     fn file_rel_path_for_replaces_spaces() {
-        let result = file_rel_path_for("PAY 123", "02-features");
-        assert_eq!(result, "02-features/PAY_123.md");
+        let result = file_rel_path_for("PAY 123", "features");
+        assert_eq!(result, "features/PAY_123.md");
     }
 
     #[test]

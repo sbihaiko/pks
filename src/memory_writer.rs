@@ -1,6 +1,6 @@
 /// Reflexive Global Memory writer — T4.7 (F2.6)
 ///
-/// Writes AI session summaries to `prometheus/90-ai-memory/YYYY-MM-DD.md`
+/// Writes AI session summaries to `prometheus/journals/YYYY-MM-DD.md`
 /// in the pks-knowledge branch. Committed with source_commit_sha for
 /// bidirectional traceability (code <-> context).
 ///
@@ -61,9 +61,9 @@ impl SessionSummary {
         )
     }
 
-    /// File path relative to the prometheus/ root (90-ai-memory/YYYY-MM-DD.md).
+    /// File path relative to the prometheus/ root (journals/YYYY-MM-DD.md).
     pub fn file_rel_path(&self) -> String {
-        format!("90-ai-memory/{}.md", self.date)
+        format!("journals/{}.md", self.date)
     }
 }
 
@@ -141,7 +141,7 @@ mod tests {
     #[test]
     fn file_rel_path_uses_date() {
         let s = sample_summary();
-        assert_eq!(s.file_rel_path(), "90-ai-memory/2026-03-09.md");
+        assert_eq!(s.file_rel_path(), "journals/2026-03-09.md");
     }
 
     #[test]

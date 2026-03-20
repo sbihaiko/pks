@@ -2,12 +2,9 @@ use std::fs;
 use std::path::Path;
 
 const PROMETHEUS_DIRS: &[&str] = &[
-    "prometheus/01-domains",
-    "prometheus/02-features",
-    "prometheus/03-testing",
-    "prometheus/04-workflows",
-    "prometheus/05-decisions",
-    "prometheus/90-ai-memory",
+    "prometheus/features",
+    "prometheus/decisions",
+    "prometheus/journals",
 ];
 
 const OBSIDIAN_APP_JSON: &str = r#"{

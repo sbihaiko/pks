@@ -1,3 +1,4 @@
+pub mod decision;
 pub mod flush_session;
 pub mod init;
 pub mod record_event;
@@ -18,6 +19,8 @@ pub enum CliCommand {
     FlushSession { session_id: String, cwd: PathBuf },
     RecordEvent,
     SubmitJournal { agent: String, file: PathBuf },
+    Decision { note: String },
+    Search { query: String },
     Unknown(Vec<String>),
 }
 
@@ -65,6 +68,14 @@ pub fn parse_args(args: &[String]) -> CliCommand {
                 .map(PathBuf::from).unwrap_or_else(|| PathBuf::from("."));
             CliCommand::SubmitJournal { agent, file }
         }
+        Some("decision") => {
+            let note = args[2..].join(" ");
+            CliCommand::Decision { note }
+        }
+        Some("search") => {
+            let query = args.get(2).cloned().unwrap_or_default();
+            CliCommand::Search { query }
+        }
         _ => CliCommand::Unknown(args.to_vec()),
     }
 }
@@ -84,9 +95,11 @@ pub async fn run_command(cmd: CliCommand) -> i32 {
         CliCommand::SubmitJournal { agent, file } => {
             submit_journal::run_submit_journal(&agent, &file)
         }
+        CliCommand::Decision { note } => decision::run_decision(&note),
+        CliCommand::Search { query } => run_search(&query).await,
         CliCommand::Unknown(args) => {
             eprintln!("pks: unknown command. Args: {:?}", &args[1..]);
-            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh|record-event|flush-session|submit-journal> [args]");
+            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh|record-event|flush-session|submit-journal|decision|search> [args]");
             1
         }
     }
@@ -134,6 +147,49 @@ fn parse_flag_value(args: &[String], flag: &str) -> Option<String> {
 
 fn run_refresh(dry_run: bool) -> i32 {
     crate::commands::refresh::RefreshCommand::run(dry_run)
+}
+
+async fn run_search(query: &str) -> i32 {
+    if query.is_empty() {
+        eprintln!("✗ Error: query is empty. Usage: pks search \"<query>\"");
+        return 1;
+    }
+
+    use crate::ipc::{IpcClient, PksCommand, PksResponse};
+    let cmd = PksCommand::Search {
+        query: query.to_string(),
+        repo_id: None,
+        top_n: 10,
+    };
+
+    match IpcClient::send_command(&cmd).await {
+        Ok(PksResponse::SearchResults { hits }) => {
+            if hits.is_empty() {
+                println!("No results found for \"{}\"", query);
+            } else {
+                for hit in &hits {
+                    println!("[{}] {} (score: {:.4})", hit.repo_id, hit.file_path, hit.score);
+                    println!("    {}", hit.snippet);
+                    println!("");
+                }
+                println!("Found {} results.", hits.len());
+            }
+            0
+        }
+        Ok(PksResponse::Err { message }) => {
+            eprintln!("✗ Error: {message}");
+            1
+        }
+        Ok(_) => {
+            eprintln!("✗ Error: unexpected response from daemon");
+            1
+        }
+        Err(e) => {
+            eprintln!("✗ Error connecting to daemon: {e}");
+            eprintln!("  Check if daemon is running with `pks --daemon` or `pks status`.");
+            1
+        }
+    }
 }
 
 #[cfg(test)]

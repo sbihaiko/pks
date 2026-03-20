@@ -119,7 +119,7 @@ pub(crate) fn format_log_line(meta: &CommitMeta) -> String {
 
 #[allow(dead_code)] // used in unit tests
 pub(crate) fn daily_log_path(repo_root: &Path, vault_root: &str, date: &str) -> PathBuf {
-    repo_root.join(vault_root).join("90-ai-memory").join(format!("{}_log.md", date))
+    repo_root.join(vault_root).join("journals").join(format!("{}_log.md", date))
 }
 
 #[allow(dead_code)] // used in unit tests

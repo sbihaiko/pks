@@ -1,7 +1,7 @@
 # PKS v3 — Plano Geral
 
 **Data:** 2026-03-19
-**Status:** Planejamento
+**Status:** Concluído
 **Baseline:** v2 (M10–M14) concluído e em produção local
 
 ---
@@ -32,6 +32,7 @@ O `pks init` não instalava o post-commit hook, não criava o worktree `promethe
 |---|---|---|---|
 | **M15** | Shadow Journaling via Agent Hooks | Captura automática de sessões LLM via `PostToolUse`/`Stop` hooks com acumulação em JSONL | **M** |
 | **M16** | Vault Isolation | Separar `prometheus/` do índice do repo pai com `repo_id` próprio e walker exclusion | **P** |
+| **M17** | Simplificação Prometheus + Gatilhos | Reduzir de 6→3 pastas, todas com gatilhos CLI + MCP (`features/`, `decisions/`, `journals/`) | **M** |
 
 ---
 
@@ -40,9 +41,11 @@ O `pks init` não instalava o post-commit hook, não criava o worktree `promethe
 ```
 M16 (Vault Isolation)     ← pode ser feito independente
 M15 (Hooks)               ← pode ser feito independente
+M17 (Simplificação)       ← depende de M15 e M16 concluídos
 ```
 
-Ambos os milestones são independentes entre si e podem ser implementados em paralelo.
+M15 e M16 são independentes entre si e podem ser implementados em paralelo.
+M17 depende de ambos: M15 define o fluxo de journals, M16 isola o vault — M17 reorganiza a estrutura e adiciona gatilhos universais.
 
 ---
 
@@ -52,20 +55,25 @@ Ambos os milestones são independentes entre si e podem ser implementados em par
 - Novos tipos de fonte indexada além de `.md`
 - Interface web ou dashboard
 - Antigravity: Integrado via método Batch/Workflow, logo hooks granulares não estão no escopo
+- Migração de vaults existentes com pastas antigas (projeto em fase de testes)
 
 ---
 
 ## Critérios de Conclusão da v3
 
-- [ ] **M15:** Após qualquer sessão Claude Code com ≥1 tool call de escrita (Edit/Write/Bash), um arquivo `journals/YYYY-MM-DD_{session_id}.md` existe na branch `pks-knowledge` sem intervenção manual
-- [ ] **M15:** `pks record-event` lê JSON do stdin e faz append em `~/.pks/sessions/{session_id}.jsonl` sem I/O adicional
-- [ ] **M15:** `pks flush-session <session_id>` gera o markdown consolidado, commita via BareCommit e limpa o arquivo de sessão
-- [ ] **M15:** `pks record-event` aplica redação de secrets antes de gravar no JSONL
-- [ ] **M15:** `pks submit-journal --agent <nome> --file <arquivo.md>` implementado para ingestão em lote (Antigravity workflows)
-- [ ] **M16:** `prometheus/` é excluído do walker do repo pai (nunca aparece no mesmo `repo_id`)
-- [ ] **M16:** O conteúdo de `prometheus/` é indexado com `repo_id` próprio derivado do seu `.git` (worktree pointer)
-- [ ] `cargo test --workspace` passa 100% após ambos os milestones
-- [ ] `.claude/settings.json` do projeto PKS contém a configuração de hooks pronta para uso
+- [x] **M15:** Após qualquer sessão Claude Code com ≥1 tool call de escrita (Edit/Write/Bash), um arquivo `journals/YYYY-MM-DD_{session_id}.md` existe na branch `pks-knowledge` sem intervenção manual
+- [x] **M15:** `pks record-event` lê JSON do stdin e faz append em `~/.pks/sessions/{session_id}.jsonl` sem I/O adicional
+- [x] **M15:** `pks flush-session <session_id>` gera o markdown consolidado, commita via BareCommit e limpa o arquivo de sessão
+- [x] **M15:** `pks record-event` aplica redação de secrets antes de gravar no JSONL
+- [x] **M15:** `pks submit-journal --agent <nome> --file <arquivo.md>` implementado para ingestão em lote (Antigravity workflows)
+- [x] **M16:** `prometheus/` é excluído do walker do repo pai (nunca aparece no mesmo `repo_id`)
+- [x] **M16:** O conteúdo de `prometheus/` é indexado com `repo_id` próprio derivado do seu `.git` (worktree pointer)
+- [x] **M17:** `pks init` cria exatamente 3 pastas: `features/`, `decisions/`, `journals/`
+- [x] **M17:** `pks decision <msg>` grava ADR em `decisions/` via BareCommit
+- [x] **M17:** Ferramentas MCP `pks_add_decision` e `pks_add_feature` operacionais
+- [x] **M17:** Referências a `90-ai-memory` eliminadas — tudo usando `journals/`
+- [x] `cargo test --workspace` passa 100% após todos os milestones
+- [x] `.claude/settings.json` do projeto PKS contém a configuração de hooks pronta para uso
 
 ---
 

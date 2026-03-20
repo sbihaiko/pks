@@ -16,7 +16,7 @@ pub struct ShadowJournalHook {
     pub(crate) started_at: chrono::DateTime<Utc>,
     pub(crate) entries: Vec<JournalEntry>,
     pub(crate) dropped_events: usize,
-    pub(crate) config: JournalConfig,
+    pub config: JournalConfig,
 }
 
 impl ShadowJournalHook {

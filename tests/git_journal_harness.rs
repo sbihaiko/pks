@@ -1,7 +1,8 @@
 use pks::git_journal_append::{append_commit_to_daily_log, JournalConfig};
 use pks::git_journal_date::current_date_utc;
-use std::fs;
 use std::path::Path;
+use git2::Repository;
+use pks::git::bare_commit::PKS_BRANCH;
 
 fn make_config(vault_root: &str) -> JournalConfig {
     JournalConfig {
@@ -29,8 +30,33 @@ fn create_test_repo_with_commit(dir: &Path, subject: &str) -> String {
     oid.to_string()
 }
 
-fn log_path(dir: &Path, vault: &str) -> std::path::PathBuf {
-    dir.join(vault).join("90-ai-memory").join(format!("{}_log.md", current_date_utc()))
+fn read_log_from_branch(dir: &Path, filename: &str) -> String {
+    let repo = Repository::open(dir).unwrap();
+    let branch = repo.find_branch(PKS_BRANCH, git2::BranchType::Local).unwrap();
+    let commit = branch.get().peel_to_commit().unwrap();
+    let tree = commit.tree().unwrap();
+    let entry = tree.get_name(filename).expect("file not found in branch");
+    let blob = repo.find_blob(entry.id()).unwrap();
+    std::str::from_utf8(blob.content()).unwrap().to_owned()
+}
+
+fn journal_exists_in_branch(dir: &Path, filename: &str) -> bool {
+    let repo = match Repository::open(dir) {
+        Ok(r) => r,
+        Err(_) => return false,
+    };
+    let branch = match repo.find_branch(PKS_BRANCH, git2::BranchType::Local) {
+        Ok(b) => b,
+        Err(_) => return false,
+    };
+    let commit = branch.get().peel_to_commit().unwrap_or_else(|_| panic!("failed to peel commit"));
+    let tree = commit.tree().unwrap();
+    let exists = tree.get_name(filename).is_some();
+    exists
+}
+
+fn log_filename(vault: &str) -> String {
+    format!("{}_journal_{}.md", vault, current_date_utc())
 }
 
 #[test]
@@ -41,9 +67,9 @@ fn journal_e2e_creates_log_file() {
 
     append_commit_to_daily_log(tmp.path(), &sha, "main", &config).unwrap();
 
-    let path = log_path(tmp.path(), "vault");
-    assert!(path.exists(), "log file must exist");
-    let contents = fs::read_to_string(&path).unwrap();
+    let filename = log_filename("vault");
+    assert!(journal_exists_in_branch(tmp.path(), &filename), "log file must exist in branch");
+    let contents = read_log_from_branch(tmp.path(), &filename);
     assert!(contents.contains(&sha[..7]), "log must contain short sha");
     assert!(contents.contains("feat: add user authentication flow"), "log must contain subject");
 }
@@ -70,7 +96,7 @@ fn journal_e2e_two_commits_append_in_order() {
     append_commit_to_daily_log(tmp.path(), &sha1, "main", &config).unwrap();
     append_commit_to_daily_log(tmp.path(), &sha2, "main", &config).unwrap();
 
-    let contents = fs::read_to_string(log_path(tmp.path(), "vault")).unwrap();
+    let contents = read_log_from_branch(tmp.path(), &log_filename("vault"));
     assert!(contents.contains(&sha1[..7]), "log must contain first sha");
     assert!(contents.contains(&sha2[..7]), "log must contain second sha");
     assert_eq!(contents.lines().count(), 2, "log must have exactly 2 lines");
@@ -84,7 +110,7 @@ fn journal_e2e_skips_pks_knowledge_branch() {
 
     append_commit_to_daily_log(tmp.path(), &sha, "pks-knowledge", &config).unwrap();
 
-    assert!(!log_path(tmp.path(), "vault").exists(), "log file must NOT be created for pks-knowledge branch");
+    assert!(!journal_exists_in_branch(tmp.path(), &log_filename("vault")), "log file must NOT be created in branch for pks-knowledge branch");
 }
 
 #[test]
@@ -95,7 +121,7 @@ fn journal_e2e_skips_non_conventional_subject() {
 
     append_commit_to_daily_log(tmp.path(), &sha, "main", &config).unwrap();
 
-    assert!(!log_path(tmp.path(), "vault").exists(), "log file must NOT be created for non-conventional subject");
+    assert!(!journal_exists_in_branch(tmp.path(), &log_filename("vault")), "log file must NOT be created in branch for non-conventional subject");
 }
 
 #[test]
@@ -106,8 +132,8 @@ fn journal_fswatcher_smoke_log_file_is_valid_markdown() {
 
     append_commit_to_daily_log(tmp.path(), &sha, "main", &config).unwrap();
 
-    let path = log_path(tmp.path(), "vault");
-    let contents = fs::read_to_string(&path).unwrap();
+    let filename = log_filename("vault");
+    let contents = read_log_from_branch(tmp.path(), &filename);
     let line = contents.lines().next().unwrap_or("");
     assert!(line.starts_with("- **"), "markdown line must start with '- **'");
     assert!(line.contains('`'), "markdown line must contain backtick-quoted sha");

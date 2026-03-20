@@ -83,11 +83,10 @@ fn flush_disabled_journal_writes_nothing() {
     let bc = BareCommit::new(tmp.path());
     bc.ensure_branch().unwrap();
 
-    std::env::set_var("PKS_SHADOW_JOURNAL", "false");
     let mut hook = ShadowJournalHook::new(tmp.path().to_path_buf(), "disabled-session".to_string());
+    hook.config.enabled = false;
     hook.record_tool_event(make_event("Edit", "some edit", Some("file.rs"), None));
     let result = hook.flush_to_vault(&bc);
-    std::env::remove_var("PKS_SHADOW_JOURNAL");
 
     assert!(result.is_ok(), "disabled flush must return Ok");
     // pks-knowledge branch exists but has empty root tree (only the init commit)

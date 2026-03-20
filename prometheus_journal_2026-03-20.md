@@ -1,0 +1,1 @@
+- **09:48** - `1cba678` - sbihaiko: docs: Update README to describe the new session journaling system, add new CLI commands for event recording and session flushing, introduce `PKS_JOURNAL_MIN_WORDS`, and correct an initialization message.

@@ -1,0 +1,1 @@
+- **09:58** - `2b9118b` - sbihaiko: feat: Add initial .mcp.json configuration for the pks server.

@@ -126,29 +126,36 @@ impl PrevalentState {
     }
 
     pub fn save_all_snapshots(&self) -> std::io::Result<()> {
-        use crate::snapshot::{SnapshotData, SnapshotManager, ChunkRecord};
+        use crate::snapshot::{SnapshotData, SnapshotManager};
         let mgr = SnapshotManager::new_from_env();
+        let created_at_secs = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
         for repo_id in self.repos.keys() {
-            let chunks: Vec<ChunkRecord> = self.search_index.vectors.iter()
-                .filter(|_| true) // simplificado por enquanto; idealmente filtra pelo repo_id se o Tantivy suportasse
-                .map(|(text, _vec)| ChunkRecord {
-                    file_path: "unknown".to_string(), // No MVP, o mapeamento 1:1 de chunk -> file pode estar simplificado
-                    heading_hierarchy: vec![],
-                    chunk_index: 0,
-                    chunk_hash: "".to_string(),
-                    chunk_text: text.clone(),
-                })
-                .collect();
-
+            let chunks = self.chunks_for_repo_snapshot(repo_id);
             let data = SnapshotData {
                 repo_id: repo_id.clone(),
                 chunks,
-                vector_clock_sha: "".to_string(), // Ajustar conforme vector_clock evoluir
-                created_at_secs: SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs(),
+                vector_clock_sha: "".to_string(),
+                created_at_secs,
             };
             mgr.write_snapshot_for_repo(&data)?;
         }
         Ok(())
+    }
+
+    fn chunks_for_repo_snapshot(&self, repo_id: &str) -> Vec<crate::snapshot::ChunkRecord> {
+        self.search_index.chunk_meta.iter()
+            .filter(|(_, meta)| meta.repo_id == repo_id)
+            .map(|(text, meta)| crate::snapshot::ChunkRecord {
+                file_path: meta.file_path.clone(),
+                heading_hierarchy: meta.heading_hierarchy.clone(),
+                chunk_index: meta.chunk_index,
+                chunk_hash: meta.chunk_hash.clone(),
+                chunk_text: text.clone(),
+            })
+            .collect()
     }
 }
 

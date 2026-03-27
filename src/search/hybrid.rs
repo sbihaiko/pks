@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::retriever::{SearchResult, VectorChunkMeta};
+use super::retriever::{ChunkMeta, SearchResult};
 
 pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
     let dot: f32 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
@@ -44,7 +44,7 @@ fn build_bm25_lookup(bm25_results: &[SearchResult]) -> HashMap<String, &SearchRe
 fn resolve_metadata<'a>(
     chunk_text: &str,
     bm25_lookup: &HashMap<String, &'a SearchResult>,
-    vector_meta: &'a HashMap<String, VectorChunkMeta>,
+    vector_meta: &'a HashMap<String, ChunkMeta>,
 ) -> (String, Vec<String>, String) {
     if let Some(r) = bm25_lookup.get(chunk_text) {
         return (r.file_path.clone(), r.heading_hierarchy.clone(), r.repo_id.clone());
@@ -59,7 +59,7 @@ fn build_ranked_rrf_results(
     bm25_results: &[SearchResult],
     scores: HashMap<String, f32>,
     top_k: usize,
-    vector_meta: &HashMap<String, VectorChunkMeta>,
+    vector_meta: &HashMap<String, ChunkMeta>,
 ) -> Vec<SearchResult> {
     let lookup = build_bm25_lookup(bm25_results);
     let mut merged: Vec<SearchResult> = scores
@@ -80,7 +80,7 @@ pub fn reciprocal_rank_fusion(
     bm25_results: &[SearchResult],
     vector_results: &[(String, f32)],
     top_k: usize,
-    vector_meta: &HashMap<String, VectorChunkMeta>,
+    vector_meta: &HashMap<String, ChunkMeta>,
 ) -> Vec<SearchResult> {
     const RRF_K: f32 = 60.0;
     let mut scores: HashMap<String, f32> = HashMap::new();
@@ -94,7 +94,7 @@ pub fn search_hybrid(
     query_vector: &[f32],
     bm25_results: Vec<SearchResult>,
     top_k: usize,
-    vector_meta: &HashMap<String, VectorChunkMeta>,
+    vector_meta: &HashMap<String, ChunkMeta>,
 ) -> Vec<SearchResult> {
     if stored_vectors.is_empty() {
         return bm25_results.into_iter().take(top_k).collect();

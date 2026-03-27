@@ -16,23 +16,23 @@ pub struct SearchResult {
     pub repo_id: String,
 }
 
+/// Metadata stored per chunk text for snapshot filtering and RRF metadata fallback.
+#[derive(Debug, Clone)]
+pub struct ChunkMeta {
+    pub repo_id: String,
+    pub file_path: String,
+    pub heading_hierarchy: Vec<String>,
+    pub chunk_index: usize,
+    pub chunk_hash: String,
+}
+
 pub trait SearchBackend {
     fn add_chunk(&mut self, chunk: &Chunk) -> tantivy::Result<()>;
     fn remove_chunks_for_file(&mut self, repo_id: &str, file_path: &str) -> tantivy::Result<()>;
     fn remove_chunks_for_repo(&mut self, repo_id: &str) -> tantivy::Result<()>;
-    fn search(
-        &self,
-        query: &str,
-        top_k: usize,
-        repo_filter: Option<&[String]>,
-    ) -> tantivy::Result<Vec<SearchResult>>;
+    fn search(&self, query: &str, top_k: usize, repo_filter: Option<&[String]>) -> tantivy::Result<Vec<SearchResult>>;
     fn commit(&mut self) -> tantivy::Result<()>;
-
-    fn add_chunk_with_vector(
-        &mut self,
-        chunk: &Chunk,
-        _vector: Vec<f32>,
-    ) -> tantivy::Result<()> {
+    fn add_chunk_with_vector(&mut self, chunk: &Chunk, _vector: Vec<f32>) -> tantivy::Result<()> {
         self.add_chunk(chunk)
     }
 }
@@ -45,19 +45,13 @@ struct SchemaFields {
     chunk_hash: Field,
 }
 
-pub struct VectorChunkMeta {
-    pub repo_id: String,
-    pub file_path: String,
-    pub heading_hierarchy: Vec<String>,
-}
-
 pub struct TantivyBackend {
     index: Index,
     writer: IndexWriter,
     reader: IndexReader,
     fields: SchemaFields,
     pub vectors: HashMap<String, Vec<f32>>,
-    pub vector_metadata: HashMap<String, VectorChunkMeta>,
+    pub chunk_meta: HashMap<String, ChunkMeta>,
 }
 
 fn build_schema() -> (Schema, SchemaFields) {
@@ -67,18 +61,14 @@ fn build_schema() -> (Schema, SchemaFields) {
     let heading_hierarchy = builder.add_text_field("heading_hierarchy", TEXT | STORED);
     let chunk_text = builder.add_text_field("chunk_text", TEXT | STORED);
     let chunk_hash = builder.add_text_field("chunk_hash", STRING | STORED);
-    let schema = builder.build();
-    let fields = SchemaFields { repo_id, file_path, heading_hierarchy, chunk_text, chunk_hash };
-    (schema, fields)
+    (builder.build(), SchemaFields { repo_id, file_path, heading_hierarchy, chunk_text, chunk_hash })
 }
 
 fn extract_str<'a>(doc: &'a TantivyDocument, field: Field) -> &'a str {
-    doc.get_first(field)
-        .and_then(|v| match v {
-            OwnedValue::Str(s) => Some(s.as_str()),
-            _ => None,
-        })
-        .unwrap_or("")
+    doc.get_first(field).and_then(|v| match v {
+        OwnedValue::Str(s) => Some(s.as_str()),
+        _ => None,
+    }).unwrap_or("")
 }
 
 impl TantivyBackend {
@@ -86,42 +76,21 @@ impl TantivyBackend {
         let (schema, fields) = build_schema();
         let index = Index::create_in_ram(schema);
         let writer = index.writer(50_000_000)?;
-        let reader = index
-            .reader_builder()
-            .reload_policy(ReloadPolicy::Manual)
-            .try_into()?;
-        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), vector_metadata: HashMap::new() })
+        let reader = index.reader_builder().reload_policy(ReloadPolicy::Manual).try_into()?;
+        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), chunk_meta: HashMap::new() })
     }
 
     pub fn new_on_disk(path: &std::path::Path) -> tantivy::Result<Self> {
         let (schema, fields) = build_schema();
         let index = Index::open_or_create(tantivy::directory::MmapDirectory::open(path)?, schema)?;
         let writer = index.writer(50_000_000)?;
-        let reader = index
-            .reader_builder()
-            .reload_policy(ReloadPolicy::Manual)
-            .try_into()?;
-        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), vector_metadata: HashMap::new() })
+        let reader = index.reader_builder().reload_policy(ReloadPolicy::Manual).try_into()?;
+        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), chunk_meta: HashMap::new() })
     }
 }
 
 fn repo_passes_filter(repo_id: &str, repo_filter: Option<&[String]>) -> bool {
     repo_filter.map_or(true, |filter| filter.iter().any(|r| r == repo_id))
-}
-
-fn doc_into_search_result(
-    doc: &TantivyDocument,
-    fields: &SchemaFields,
-    score: f32,
-    repo_id: String,
-) -> SearchResult {
-    SearchResult {
-        file_path: extract_str(doc, fields.file_path).to_string(),
-        heading_hierarchy: vec![extract_str(doc, fields.heading_hierarchy).to_string()],
-        chunk_text: extract_str(doc, fields.chunk_text).to_string(),
-        score,
-        repo_id,
-    }
 }
 
 impl SearchBackend for TantivyBackend {
@@ -133,59 +102,48 @@ impl SearchBackend for TantivyBackend {
         doc.add_text(self.fields.chunk_text, &chunk.text);
         doc.add_text(self.fields.chunk_hash, &chunk.chunk_hash);
         self.writer.add_document(doc)?;
+        self.chunk_meta.insert(chunk.text.clone(), ChunkMeta {
+            repo_id: chunk.repo_id.clone(),
+            file_path: chunk.file_path.clone(),
+            heading_hierarchy: chunk.heading_hierarchy.clone(),
+            chunk_index: chunk.chunk_index,
+            chunk_hash: chunk.chunk_hash.clone(),
+        });
         Ok(())
     }
 
     fn add_chunk_with_vector(&mut self, chunk: &Chunk, vector: Vec<f32>) -> tantivy::Result<()> {
         self.add_chunk(chunk)?;
         self.vectors.insert(chunk.text.clone(), vector);
-        self.vector_metadata.insert(
-            chunk.text.clone(),
-            VectorChunkMeta {
-                repo_id: chunk.repo_id.clone(),
-                file_path: chunk.file_path.clone(),
-                heading_hierarchy: chunk.heading_hierarchy.clone(),
-            },
-        );
         Ok(())
     }
 
     fn remove_chunks_for_file(&mut self, _repo_id: &str, file_path: &str) -> tantivy::Result<()> {
-        let term = Term::from_field_text(self.fields.file_path, file_path);
-        self.writer.delete_term(term);
+        self.writer.delete_term(Term::from_field_text(self.fields.file_path, file_path));
         Ok(())
     }
 
     fn remove_chunks_for_repo(&mut self, repo_id: &str) -> tantivy::Result<()> {
-        let term = Term::from_field_text(self.fields.repo_id, repo_id);
-        self.writer.delete_term(term);
+        self.writer.delete_term(Term::from_field_text(self.fields.repo_id, repo_id));
         Ok(())
     }
 
-    fn search(
-        &self,
-        query: &str,
-        top_k: usize,
-        repo_filter: Option<&[String]>,
-    ) -> tantivy::Result<Vec<SearchResult>> {
+    fn search(&self, query: &str, top_k: usize, repo_filter: Option<&[String]>) -> tantivy::Result<Vec<SearchResult>> {
         let searcher = self.reader.searcher();
-        let query_parser = QueryParser::for_index(
-            &self.index,
-            vec![self.fields.chunk_text, self.fields.heading_hierarchy],
-        );
-        let parsed = query_parser.parse_query(query)?;
-        let top_docs = searcher.search(&parsed, &TopDocs::with_limit(top_k * 10))?;
+        let query_parser = QueryParser::for_index(&self.index, vec![self.fields.chunk_text, self.fields.heading_hierarchy]);
+        let top_docs = searcher.search(&query_parser.parse_query(query)?, &TopDocs::with_limit(top_k * 10))?;
         let mut results = Vec::new();
         for (score, doc_address) in top_docs {
             let doc: TantivyDocument = searcher.doc(doc_address)?;
             let repo_id = extract_str(&doc, self.fields.repo_id).to_string();
-            if !repo_passes_filter(&repo_id, repo_filter) {
-                continue;
-            }
-            results.push(doc_into_search_result(&doc, &self.fields, score, repo_id));
-            if results.len() >= top_k {
-                break;
-            }
+            if !repo_passes_filter(&repo_id, repo_filter) { continue; }
+            results.push(SearchResult {
+                file_path: extract_str(&doc, self.fields.file_path).to_string(),
+                heading_hierarchy: vec![extract_str(&doc, self.fields.heading_hierarchy).to_string()],
+                chunk_text: extract_str(&doc, self.fields.chunk_text).to_string(),
+                score, repo_id,
+            });
+            if results.len() >= top_k { break; }
         }
         Ok(results)
     }

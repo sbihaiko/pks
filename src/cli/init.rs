@@ -134,9 +134,12 @@ fn add_pks_to_exclude(git_root: &Path) -> Result<(), std::io::Error> {
     let exclude = git_root.join(".git").join("info").join("exclude");
     if let Some(p) = exclude.parent() { fs::create_dir_all(p)?; }
     let contents = fs::read_to_string(&exclude).unwrap_or_default();
+    let mut f = OpenOptions::new().create(true).append(true).open(&exclude)?;
     if !contents.contains(".pks/") {
-        let mut f = OpenOptions::new().create(true).append(true).open(exclude)?;
         writeln!(f, ".pks/")?;
+    }
+    if !contents.contains("prometheus/") {
+        writeln!(f, "prometheus/")?;
     }
     Ok(())
 }

@@ -16,6 +16,16 @@ pub struct SearchResult {
     pub repo_id: String,
 }
 
+/// Metadata stored per chunk text to enable repo-scoped snapshot filtering.
+#[derive(Debug, Clone)]
+pub struct ChunkMeta {
+    pub repo_id: String,
+    pub file_path: String,
+    pub heading_hierarchy: Vec<String>,
+    pub chunk_index: usize,
+    pub chunk_hash: String,
+}
+
 pub trait SearchBackend {
     fn add_chunk(&mut self, chunk: &Chunk) -> tantivy::Result<()>;
     fn remove_chunks_for_file(&mut self, repo_id: &str, file_path: &str) -> tantivy::Result<()>;
@@ -51,6 +61,7 @@ pub struct TantivyBackend {
     reader: IndexReader,
     fields: SchemaFields,
     pub vectors: HashMap<String, Vec<f32>>,
+    pub chunk_meta: HashMap<String, ChunkMeta>,
 }
 
 fn build_schema() -> (Schema, SchemaFields) {
@@ -83,7 +94,7 @@ impl TantivyBackend {
             .reader_builder()
             .reload_policy(ReloadPolicy::Manual)
             .try_into()?;
-        Ok(Self { index, writer, reader, fields, vectors: HashMap::new() })
+        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), chunk_meta: HashMap::new() })
     }
 
     pub fn new_on_disk(path: &std::path::Path) -> tantivy::Result<Self> {
@@ -94,7 +105,7 @@ impl TantivyBackend {
             .reader_builder()
             .reload_policy(ReloadPolicy::Manual)
             .try_into()?;
-        Ok(Self { index, writer, reader, fields, vectors: HashMap::new() })
+        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), chunk_meta: HashMap::new() })
     }
 }
 
@@ -126,6 +137,13 @@ impl SearchBackend for TantivyBackend {
         doc.add_text(self.fields.chunk_text, &chunk.text);
         doc.add_text(self.fields.chunk_hash, &chunk.chunk_hash);
         self.writer.add_document(doc)?;
+        self.chunk_meta.insert(chunk.text.clone(), ChunkMeta {
+            repo_id: chunk.repo_id.clone(),
+            file_path: chunk.file_path.clone(),
+            heading_hierarchy: chunk.heading_hierarchy.clone(),
+            chunk_index: chunk.chunk_index,
+            chunk_hash: chunk.chunk_hash.clone(),
+        });
         Ok(())
     }
 

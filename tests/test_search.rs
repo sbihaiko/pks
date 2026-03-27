@@ -123,6 +123,7 @@ mod tests {
                 file_path: "a.md".to_string(),
                 heading_hierarchy: vec![],
                 chunk_text: "alpha content".to_string(),
+                chunk_hash: "hash-alpha".to_string(),
                 score: 0.9,
                 repo_id: "repo1".to_string(),
             },
@@ -130,13 +131,14 @@ mod tests {
                 file_path: "b.md".to_string(),
                 heading_hierarchy: vec![],
                 chunk_text: "beta content".to_string(),
+                chunk_hash: "hash-beta".to_string(),
                 score: 0.7,
                 repo_id: "repo1".to_string(),
             },
         ];
         let vector_results = vec![
-            ("beta content".to_string(), 0.95_f32),
-            ("alpha content".to_string(), 0.6_f32),
+            ("hash-beta".to_string(), 0.95_f32),
+            ("hash-alpha".to_string(), 0.6_f32),
         ];
         let empty_meta: HashMap<String, ChunkMeta> = HashMap::new();
         let merged = reciprocal_rank_fusion(&bm25, &vector_results, 5, &empty_meta);

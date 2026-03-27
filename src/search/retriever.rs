@@ -12,11 +12,12 @@ pub struct SearchResult {
     pub file_path: String,
     pub heading_hierarchy: Vec<String>,
     pub chunk_text: String,
+    pub chunk_hash: String,
     pub score: f32,
     pub repo_id: String,
 }
 
-/// Metadata stored per chunk text for snapshot filtering and RRF metadata fallback.
+/// Metadata stored per chunk hash for snapshot filtering and RRF metadata fallback.
 #[derive(Debug, Clone)]
 pub struct ChunkMeta {
     pub repo_id: String,
@@ -24,6 +25,7 @@ pub struct ChunkMeta {
     pub heading_hierarchy: Vec<String>,
     pub chunk_index: usize,
     pub chunk_hash: String,
+    pub text: String,
 }
 
 pub trait SearchBackend {
@@ -64,7 +66,7 @@ fn build_schema() -> (Schema, SchemaFields) {
     (builder.build(), SchemaFields { repo_id, file_path, heading_hierarchy, chunk_text, chunk_hash })
 }
 
-fn extract_str<'a>(doc: &'a TantivyDocument, field: Field) -> &'a str {
+fn extract_str(doc: &TantivyDocument, field: Field) -> &str {
     doc.get_first(field).and_then(|v| match v {
         OwnedValue::Str(s) => Some(s.as_str()),
         _ => None,
@@ -90,7 +92,7 @@ impl TantivyBackend {
 }
 
 fn repo_passes_filter(repo_id: &str, repo_filter: Option<&[String]>) -> bool {
-    repo_filter.map_or(true, |filter| filter.iter().any(|r| r == repo_id))
+    repo_filter.is_none_or(|filter| filter.iter().any(|r| r == repo_id))
 }
 
 impl SearchBackend for TantivyBackend {
@@ -98,23 +100,24 @@ impl SearchBackend for TantivyBackend {
         let mut doc = TantivyDocument::default();
         doc.add_text(self.fields.repo_id, &chunk.repo_id);
         doc.add_text(self.fields.file_path, &chunk.file_path);
-        doc.add_text(self.fields.heading_hierarchy, &chunk.heading_hierarchy.join(" > "));
+        doc.add_text(self.fields.heading_hierarchy, chunk.heading_hierarchy.join(" > "));
         doc.add_text(self.fields.chunk_text, &chunk.text);
         doc.add_text(self.fields.chunk_hash, &chunk.chunk_hash);
         self.writer.add_document(doc)?;
-        self.chunk_meta.insert(chunk.text.clone(), ChunkMeta {
+        self.chunk_meta.insert(chunk.chunk_hash.clone(), ChunkMeta {
             repo_id: chunk.repo_id.clone(),
             file_path: chunk.file_path.clone(),
             heading_hierarchy: chunk.heading_hierarchy.clone(),
             chunk_index: chunk.chunk_index,
             chunk_hash: chunk.chunk_hash.clone(),
+            text: chunk.text.clone(),
         });
         Ok(())
     }
 
     fn add_chunk_with_vector(&mut self, chunk: &Chunk, vector: Vec<f32>) -> tantivy::Result<()> {
         self.add_chunk(chunk)?;
-        self.vectors.insert(chunk.text.clone(), vector);
+        self.vectors.insert(chunk.chunk_hash.clone(), vector);
         Ok(())
     }
 
@@ -141,6 +144,7 @@ impl SearchBackend for TantivyBackend {
                 file_path: extract_str(&doc, self.fields.file_path).to_string(),
                 heading_hierarchy: vec![extract_str(&doc, self.fields.heading_hierarchy).to_string()],
                 chunk_text: extract_str(&doc, self.fields.chunk_text).to_string(),
+                chunk_hash: extract_str(&doc, self.fields.chunk_hash).to_string(),
                 score, repo_id,
             });
             if results.len() >= top_k { break; }

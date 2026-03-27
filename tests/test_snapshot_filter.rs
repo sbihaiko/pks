@@ -68,7 +68,7 @@ mod tests {
                     heading_hierarchy: meta.heading_hierarchy.clone(),
                     chunk_index: meta.chunk_index,
                     chunk_hash: meta.chunk_hash.clone(),
-                    chunk_text: text.clone(),
+                    chunk_text: meta.text.clone(),
                 })
                 .collect::<Vec<_>>();
             let data = pks::snapshot::SnapshotData {

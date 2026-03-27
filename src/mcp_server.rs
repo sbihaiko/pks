@@ -68,8 +68,11 @@ impl PksHandler {
             .unwrap_or_default();
 
         let bm25_only: Vec<_> = bm25_results_raw.into_iter().take(top_k).collect();
-        let results_raw = query_vector.is_empty().then(|| bm25_only.clone())
-            .unwrap_or_else(|| search_hybrid(&guard.search_index.vectors, &query_vector, bm25_only, top_k, &guard.search_index.chunk_meta));
+        let results_raw = if query_vector.is_empty() {
+            bm25_only
+        } else {
+            search_hybrid(&guard.search_index.vectors, &query_vector, bm25_only, top_k, &guard.search_index.chunk_meta)
+        };
 
         let results: Vec<SearchResult> = results_raw.into_iter().map(|r| SearchResult {
             file_path: r.file_path,

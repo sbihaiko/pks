@@ -148,12 +148,12 @@ impl PrevalentState {
     fn chunks_for_repo_snapshot(&self, repo_id: &str) -> Vec<crate::snapshot::ChunkRecord> {
         self.search_index.chunk_meta.iter()
             .filter(|(_, meta)| meta.repo_id == repo_id)
-            .map(|(text, meta)| crate::snapshot::ChunkRecord {
+            .map(|(_, meta)| crate::snapshot::ChunkRecord {
                 file_path: meta.file_path.clone(),
                 heading_hierarchy: meta.heading_hierarchy.clone(),
                 chunk_index: meta.chunk_index,
                 chunk_hash: meta.chunk_hash.clone(),
-                chunk_text: text.clone(),
+                chunk_text: meta.text.clone(),
             })
             .collect()
     }

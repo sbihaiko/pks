@@ -1,2 +1,0 @@
-- **01:41** - `2379751` - sbihaiko: docs: corrige e melhora STEERING_turboquant_pks com análise do codebase real
-- **20:28** - `ff69b08` - sbihaiko: feat: Add `remove` command to CLI and introduce new steering documents for core fixes, TurboQuant, and v3 roadmap.

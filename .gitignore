@@ -37,3 +37,5 @@ ci-dashboard/
 .claude/squad-results/
 .claude/squad-run-context.md
 .claude/squad-*-run-context.md
+
+.mcp.json

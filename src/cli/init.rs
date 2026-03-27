@@ -69,6 +69,9 @@ impl InitCommand {
         if let Err(e) = add_pks_to_exclude(&git_root) {
             eprintln!("⚠ Aviso: could not update .git/info/exclude: {e}");
         }
+        if let Err(e) = hide_worktree_from_vscode(&git_root) {
+            eprintln!("⚠ Aviso: could not update .vscode/settings.json: {e}");
+        }
         println!("PKS ativo. Buscar: pks search \"<sua consulta>\"");
         Ok(())
     }
@@ -141,6 +144,30 @@ fn add_pks_to_exclude(git_root: &Path) -> Result<(), std::io::Error> {
     if !contents.contains("prometheus/") {
         writeln!(f, "prometheus/")?;
     }
+    Ok(())
+}
+
+fn hide_worktree_from_vscode(git_root: &Path) -> Result<(), std::io::Error> {
+    use std::fs;
+    let vscode_dir = git_root.join(".vscode");
+    fs::create_dir_all(&vscode_dir)?;
+    let settings_path = vscode_dir.join("settings.json");
+    let mut obj: serde_json::Map<String, serde_json::Value> = if settings_path.exists() {
+        let raw = fs::read_to_string(&settings_path)?;
+        serde_json::from_str(&raw).unwrap_or_default()
+    } else {
+        serde_json::Map::new()
+    };
+    let key = "git.ignoredRepositories";
+    let repos = obj.entry(key.to_string())
+        .or_insert_with(|| serde_json::Value::Array(vec![]));
+    if let serde_json::Value::Array(arr) = repos {
+        let entry = serde_json::Value::String("prometheus".to_string());
+        if !arr.contains(&entry) {
+            arr.push(entry);
+        }
+    }
+    fs::write(&settings_path, serde_json::to_string_pretty(&obj).unwrap())?;
     Ok(())
 }
 

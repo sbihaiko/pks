@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use pks::indexer::chunker::{Chunk, MarkdownChunker};
-    use pks::search::retriever::{SearchBackend, SearchResult, TantivyBackend};
+    use pks::search::retriever::{SearchBackend, SearchResult, TantivyBackend, VectorChunkMeta};
     use pks::search::hybrid::{cosine_similarity, reciprocal_rank_fusion, search_hybrid};
     use std::collections::HashMap;
 
@@ -138,7 +138,8 @@ mod tests {
             ("beta content".to_string(), 0.95_f32),
             ("alpha content".to_string(), 0.6_f32),
         ];
-        let merged = reciprocal_rank_fusion(&bm25, &vector_results, 5);
+        let empty_meta: HashMap<String, VectorChunkMeta> = HashMap::new();
+        let merged = reciprocal_rank_fusion(&bm25, &vector_results, 5, &empty_meta);
         assert_eq!(merged.len(), 2, "RRF must return both chunks");
         assert!(
             merged[0].score > 0.0 && merged[1].score > 0.0,
@@ -158,7 +159,8 @@ mod tests {
 
         let empty_vectors: HashMap<String, Vec<f32>> = HashMap::new();
         let query_vector = vec![0.1_f32, 0.2, 0.3];
-        let hybrid_results = search_hybrid(&empty_vectors, &query_vector, bm25_results.clone(), 5);
+        let empty_meta: HashMap<String, VectorChunkMeta> = HashMap::new();
+        let hybrid_results = search_hybrid(&empty_vectors, &query_vector, bm25_results.clone(), 5, &empty_meta);
         assert_eq!(
             hybrid_results.len(),
             bm25_results.len(),
@@ -180,8 +182,32 @@ mod tests {
 
         let bm25_results = backend.search("cognitive sleep", 5, None).unwrap();
         let query_vector = vec![0.85_f32, 0.15, 0.0];
-        let hybrid_results = search_hybrid(&backend.vectors, &query_vector, bm25_results, 5);
+        let hybrid_results = search_hybrid(&backend.vectors, &query_vector, bm25_results, 5, &backend.vector_metadata);
         assert!(!hybrid_results.is_empty(), "hybrid search must return results");
         assert!(hybrid_results[0].score > 0.0, "top hybrid result must have positive RRF score");
+    }
+
+    #[test]
+    fn vector_only_hit_carries_correct_metadata() {
+        let mut backend = TantivyBackend::new_in_memory().unwrap();
+
+        // chunk_a: added with a vector but NOT indexed in BM25 (no add_chunk call)
+        // We simulate this by NOT calling commit and searching against an empty bm25 result set.
+        let chunk_a = make_chunk("repo_vec", "vec_only.md", "Mitochondria are the powerhouse of the cell.", 0);
+        let vector_a = vec![1.0_f32, 0.0, 0.0];
+        backend.add_chunk_with_vector(&chunk_a, vector_a).unwrap();
+        // Deliberately skip commit so BM25 index has no documents; vector_metadata is populated.
+        backend.commit().unwrap();
+
+        // Empty BM25 results to simulate a vector-only hit scenario.
+        let bm25_results: Vec<pks::search::retriever::SearchResult> = vec![];
+        let query_vector = vec![1.0_f32, 0.0, 0.0];
+        let results = search_hybrid(&backend.vectors, &query_vector, bm25_results, 5, &backend.vector_metadata);
+
+        assert!(!results.is_empty(), "vector-only hit must appear in hybrid results");
+        let top = &results[0];
+        assert_eq!(top.file_path, "vec_only.md", "file_path must be recovered from vector_metadata");
+        assert_eq!(top.repo_id, "repo_vec", "repo_id must be recovered from vector_metadata");
+        assert!(!top.chunk_text.is_empty(), "chunk_text must not be empty");
     }
 }

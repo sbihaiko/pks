@@ -45,12 +45,19 @@ struct SchemaFields {
     chunk_hash: Field,
 }
 
+pub struct VectorChunkMeta {
+    pub repo_id: String,
+    pub file_path: String,
+    pub heading_hierarchy: Vec<String>,
+}
+
 pub struct TantivyBackend {
     index: Index,
     writer: IndexWriter,
     reader: IndexReader,
     fields: SchemaFields,
     pub vectors: HashMap<String, Vec<f32>>,
+    pub vector_metadata: HashMap<String, VectorChunkMeta>,
 }
 
 fn build_schema() -> (Schema, SchemaFields) {
@@ -83,7 +90,7 @@ impl TantivyBackend {
             .reader_builder()
             .reload_policy(ReloadPolicy::Manual)
             .try_into()?;
-        Ok(Self { index, writer, reader, fields, vectors: HashMap::new() })
+        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), vector_metadata: HashMap::new() })
     }
 
     pub fn new_on_disk(path: &std::path::Path) -> tantivy::Result<Self> {
@@ -94,7 +101,7 @@ impl TantivyBackend {
             .reader_builder()
             .reload_policy(ReloadPolicy::Manual)
             .try_into()?;
-        Ok(Self { index, writer, reader, fields, vectors: HashMap::new() })
+        Ok(Self { index, writer, reader, fields, vectors: HashMap::new(), vector_metadata: HashMap::new() })
     }
 }
 
@@ -132,6 +139,14 @@ impl SearchBackend for TantivyBackend {
     fn add_chunk_with_vector(&mut self, chunk: &Chunk, vector: Vec<f32>) -> tantivy::Result<()> {
         self.add_chunk(chunk)?;
         self.vectors.insert(chunk.text.clone(), vector);
+        self.vector_metadata.insert(
+            chunk.text.clone(),
+            VectorChunkMeta {
+                repo_id: chunk.repo_id.clone(),
+                file_path: chunk.file_path.clone(),
+                heading_hierarchy: chunk.heading_hierarchy.clone(),
+            },
+        );
         Ok(())
     }
 

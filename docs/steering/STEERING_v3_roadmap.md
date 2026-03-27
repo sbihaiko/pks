@@ -27,7 +27,7 @@
 ### Dívida Estrutural Aberta
 | # | Bug | Arquivo | Impacto |
 |---|-----|---------|---------|
-| B1 | **Snapshot isolation violation** — `save_all_snapshots()` despeja vetores de TODOS os repos em CADA snapshot | `state.rs:128-146` | Cross-contaminação de dados entre projetos; snapshots inflados |
+| B1 | ~~Snapshot isolation violation~~ | `state.rs:128-146` | ✅ **Corrigido em a173755/36393e2** — `chunks_for_repo_snapshot()` filtra por `repo_id` |
 | B2 | **HashMap key bloat** — vetores indexados por `chunk.text` (500 bytes/key) em vez de `chunk_hash` (32 bytes) | `search/retriever.rs` | ~50MB de overhead para 100k chunks; bloqueia ganhos reais do TurboQuant |
 | B3 | ~~Metadata loss in RRF para vector-only hits~~ | `search/hybrid.rs` | ✅ **Corrigido em c05c86e** |
 

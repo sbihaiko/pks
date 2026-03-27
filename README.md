@@ -213,6 +213,9 @@ ollama pull nomic-embed-text
 |------|-------------|
 | `search_knowledge_vault` | Hybrid BM25 + vector search across all indexed repos. Returns ranked markdown chunks. |
 | `pks_execute` | Runs a shell command in the context of the active vault. |
+| `list_knowledge_vaults` | List all registered Git repository vaults known to PKS. |
+| `pks_add_decision` | Record an architecture decision (ADR) in the project's knowledge vault. Writes to decisions/ on pks-knowledge branch. |
+| `pks_add_feature` | Record a feature specification in the project's knowledge vault. Writes to features/ on pks-knowledge branch. |
 
 ---
 
@@ -221,13 +224,15 @@ ollama pull nomic-embed-text
 ```bash
 pks init [path]                          # Initialize PKS in a Git repo
 pks refresh [path]                       # Re-index a vault
-pks search "<query>"                     # Search from the terminal
+pks search "<query>"                     # Search from the terminal (requires daemon)
 pks status                               # Show indexer status
 pks doctor                               # Diagnose configuration issues
 pks hook-post-commit                     # Run the post-commit hook manually
 pks record-event                         # Append a tool event to the session JSONL (stdin: PostToolUse JSON)
 pks flush-session <session_id> <cwd>     # Flush a session JSONL to a journal entry on pks-knowledge
 pks submit-journal --agent <n> --file <f> # Commit a markdown journal file directly to pks-knowledge
+pks decision <note>                      # Record an architecture decision (ADR) in the vault
+pks remove <repo_id>                     # Remove a vault from the daemon index
 pks --stdio                              # Start as MCP stdio server (used by IDEs)
 pks --daemon                             # Start as background daemon
 ```

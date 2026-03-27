@@ -9,6 +9,8 @@ A resolução desses problemas é prioritária em relação a qualquer nova func
 
 ## 1. Vazamento de Dados e Inchaço nos Snapshots (`save_all_snapshots`)
 
+> ✅ **Corrigido** em commits `a173755` e `36393e2` (Março 2026). `save_all_snapshots()` agora filtra chunks por `repo_id` via `chunks_for_repo_snapshot()`.
+
 ### O Problema
 No arquivo `state.rs` (por volta da linha 132), a função `save_all_snapshots` está utilizando um filtro `filter(|_| true)` ao iterar sobre o `HashMap` global de vetores.
 Isso significa que o PKS está fazendo o dump de **todos os vetores residentes em memória para dentro de cada snapshot de repositório individual**.
@@ -24,6 +26,8 @@ Isso significa que o PKS está fazendo o dump de **todos os vetores residentes e
 ---
 
 ## 2. Perda de Metadados em Hits Puramente Vetoriais (`build_ranked_rrf_results`)
+
+> ✅ **Corrigido** em commit `c05c86e` (Março 2026). RRF fusion agora recupera metadados para vector-only hits.
 
 ### O Problema
 No arquivo `hybrid.rs` (por volta das linhas 53-55), a função `build_ranked_rrf_results` agrupa os scores de RRF (Reciprocal Rank Fusion) do Tantivy (BM25) e do Dense Retriever.
@@ -53,6 +57,14 @@ Levando em conta uma média de 500 bytes por texto de chunk:
 ---
 
 ## Próximos Passos (Execução)
-- Abrir os arquivos `src/state.rs` e `src/hybrid.rs`.
-- Avaliar a tipagem de state global para acoplar `chunk_hash` em vez do raw `chunk.text`.
-- Executar e testar (testes unitários e manuais via CLI) as rotinas puras de busca vetorial para se certificar de que os metadados param de vir rasurados.
+
+**Status atual:**
+- ✅ **B1 — Vazamento de Dados nos Snapshots (seção 1):** Corrigido (commits `a173755`, `36393e2`).
+- 🔲 **B2 — Sobrecarga de RAM nas Chaves do HashMap (seção 3):** Em aberto. Migração de `chunk.text` para `chunk_hash` como chave ainda não realizada.
+- ✅ **B3 — Perda de Metadados em Hits Vetoriais (seção 2):** Corrigido (commit `c05c86e`).
+
+**Ação pendente (apenas B2):**
+- Avaliar a tipagem do state global para acoplar `chunk_hash` em vez do raw `chunk.text`.
+- Refatorar o dicionário de vetores para usar `chunk_hash` como chave (`HashMap<String, Vec<f32>>` ou `HashMap<[u8; 32], Vec<f32>>`).
+- Garantir atualização simétrica nos fluxos de insert, update, delete e busca.
+- Executar e testar (testes unitários e manuais via CLI) as rotinas de busca vetorial após a migração.

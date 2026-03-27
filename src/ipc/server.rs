@@ -73,7 +73,38 @@ impl IpcServer {
             }
             PksCommand::Search { query, top_n, .. } => self.dispatch_search(&query, top_n),
             PksCommand::Refresh { dry_run } => self.dispatch_refresh(dry_run),
+            PksCommand::Remove { repo_id } => self.dispatch_remove(&repo_id),
         }
+    }
+
+    fn dispatch_remove(&self, repo_id: &str) -> PksResponse {
+        let mut guard = match self.state.lock() {
+            Ok(g) => g,
+            Err(_) => return PksResponse::Err { message: "state lock poisoned".to_string() },
+        };
+
+        if !guard.repos.contains_key(repo_id) {
+            return PksResponse::Err {
+                message: format!("repo '{}' não encontrado. Use list_knowledge_vaults para ver os vaults registrados.", repo_id),
+            };
+        }
+
+        guard.repos.remove(repo_id);
+        guard.vector_clock.remove_repo(repo_id);
+        guard.embedding_debt.retain(|e| e.repo_id != repo_id);
+
+        if let Err(e) = guard.search_index.remove_chunks_for_repo(repo_id) {
+            tracing::warn!(error = %e, "failed to remove chunks from search index for {}", repo_id);
+        }
+        let _ = guard.search_index.commit();
+
+        let mgr = crate::snapshot::SnapshotManager::new_from_env();
+        if let Err(e) = mgr.delete_snapshot_for_repo(repo_id) {
+            tracing::warn!(error = %e, "failed to delete snapshot for {}", repo_id);
+        }
+
+        tracing::info!("repo removed: {}", repo_id);
+        PksResponse::RemoveDone { repo_id: repo_id.to_string() }
     }
 
     fn dispatch_refresh(&self, dry_run: bool) -> PksResponse {

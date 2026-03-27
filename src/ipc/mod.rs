@@ -24,6 +24,9 @@ pub enum PksCommand {
     Refresh {
         dry_run: bool,
     },
+    Remove {
+        repo_id: String,
+    },
 }
 
 /// Responses sent from daemon to client
@@ -38,6 +41,7 @@ pub enum PksResponse {
         removed: Vec<String>,
         unchanged: Vec<String>,
     },
+    RemoveDone { repo_id: String },
     Err { message: String },
 }
 

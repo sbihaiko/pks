@@ -36,3 +36,4 @@ ci-dashboard/
 **/tmp
 .claude/squad-results/
 .claude/squad-run-context.md
+.claude/squad-*-run-context.md

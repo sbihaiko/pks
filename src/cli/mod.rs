@@ -2,6 +2,7 @@ pub mod decision;
 pub mod flush_session;
 pub mod init;
 pub mod record_event;
+pub mod remove;
 mod status;
 pub mod submit_journal;
 mod validate;
@@ -21,6 +22,7 @@ pub enum CliCommand {
     SubmitJournal { agent: String, file: PathBuf },
     Decision { note: String },
     Search { query: String },
+    Remove { repo_id: String },
     Unknown(Vec<String>),
 }
 
@@ -76,6 +78,10 @@ pub fn parse_args(args: &[String]) -> CliCommand {
             let query = args.get(2).cloned().unwrap_or_default();
             CliCommand::Search { query }
         }
+        Some("remove") => {
+            let repo_id = args.get(2).cloned().unwrap_or_default();
+            CliCommand::Remove { repo_id }
+        }
         _ => CliCommand::Unknown(args.to_vec()),
     }
 }
@@ -97,9 +103,10 @@ pub async fn run_command(cmd: CliCommand) -> i32 {
         }
         CliCommand::Decision { note } => decision::run_decision(&note),
         CliCommand::Search { query } => run_search(&query).await,
+        CliCommand::Remove { repo_id } => remove::run_remove(&repo_id).await,
         CliCommand::Unknown(args) => {
             eprintln!("pks: unknown command. Args: {:?}", &args[1..]);
-            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh|record-event|flush-session|submit-journal|decision|search> [args]");
+            eprintln!("Usage: pks <init|doctor|hook-post-commit|status|validate|refresh|record-event|flush-session|submit-journal|decision|search|remove> [args]");
             1
         }
     }

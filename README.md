@@ -11,7 +11,7 @@ PKS runs as a local MCP server (stdio). Once configured, your AI agent can searc
 **What it does:**
 
 - **Hybrid search** — BM25 full-text (always on) + optional vector search via Ollama
-- **Session journal** — captures tool events (PostToolUse/Stop hooks) and batch submissions into daily markdown logs on the `pks-knowledge` branch
+- **Session journal** — captures tool events (PostToolUse/Stop hooks) and git commits (via append-then-flush: `hook-post-commit` appends to `.git/pks_pending_commits.jsonl` atomically; `flush-session` batches all pending entries into daily markdown logs on the `pks-knowledge` branch)
 - **Multi-project** — indexes all repos under a root directory simultaneously
 - **Offline-capable** — no cloud dependency; everything runs locally
 
@@ -227,9 +227,9 @@ pks refresh [path]                       # Re-index a vault
 pks search "<query>"                     # Search from the terminal (requires daemon)
 pks status                               # Show indexer status
 pks doctor                               # Diagnose configuration issues
-pks hook-post-commit                     # Run the post-commit hook manually
+pks hook-post-commit                     # Append commit event to .git/pks_pending_commits.jsonl (O_APPEND, <5ms — no git lock)
 pks record-event                         # Append a tool event to the session JSONL (stdin: PostToolUse JSON)
-pks flush-session <session_id> <cwd>     # Flush a session JSONL to a journal entry on pks-knowledge
+pks flush-session <session_id> <cwd>     # Flush session JSONL + pending commit events to pks-knowledge (batched git commit)
 pks submit-journal --agent <n> --file <f> # Commit a markdown journal file directly to pks-knowledge
 pks decision <note>                      # Record an architecture decision (ADR) in the vault
 pks remove <repo_id>                     # Remove a vault from the daemon index

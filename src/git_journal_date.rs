@@ -39,6 +39,28 @@ fn month_lengths_for_year(year: u32) -> [u32; 12] {
     [31, feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 }
 
+pub fn unix_timestamp_to_date(timestamp: i64) -> String {
+    let secs = timestamp.max(0) as u64;
+    let days_since_epoch = secs / 86400;
+    let mut year = 1970u32;
+    let mut remaining_days = days_since_epoch as u32;
+    loop {
+        let days_in_year = if is_leap_year(year) { 366 } else { 365 };
+        if remaining_days < days_in_year { break; }
+        remaining_days -= days_in_year;
+        year += 1;
+    }
+    let month_lengths = month_lengths_for_year(year);
+    let mut month = 1u32;
+    for &length in &month_lengths {
+        if remaining_days < length { break; }
+        remaining_days -= length;
+        month += 1;
+    }
+    let day = remaining_days + 1;
+    format!("{:04}-{:02}-{:02}", year, month, day)
+}
+
 pub fn unix_timestamp_to_hhmm(timestamp: i64) -> String {
     let secs_in_day = timestamp.rem_euclid(86400);
     let hours = secs_in_day / 3600;

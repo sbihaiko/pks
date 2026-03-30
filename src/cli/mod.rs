@@ -141,9 +141,8 @@ fn run_hook_post_commit(path: &Path, sha: &str, branch: &str) -> i32 {
     let trigger_file = path.join(".git/pks_hook_trigger");
     let payload = format!("{}:{}\n", sha, branch);
     let _ = std::fs::write(trigger_file, payload);
-    let config = crate::git_journal_append::JournalConfig::from_env();
-    if let Err(e) = crate::git_journal_append::append_commit_to_daily_log(path, sha, branch, &config) {
-        tracing::warn!(error = %e, "git journal append failed (non-blocking)");
+    if let Err(e) = crate::hooks::commit_event_log::append_commit_event(path, sha, branch) {
+        tracing::warn!(error = %e, "commit event log append failed (non-blocking)");
     }
     0
 }

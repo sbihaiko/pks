@@ -138,6 +138,10 @@ pub(crate) fn branch_log_filename(vault_root: &str, date: &str) -> String {
 }
 
 /// Reads the current content of a flat file from the pks-knowledge branch, if it exists.
+pub(crate) fn read_log_from_branch_pub(repo_root: &Path, filename: &str) -> Option<String> {
+    read_log_from_branch(repo_root, filename)
+}
+
 fn read_log_from_branch(repo_root: &Path, filename: &str) -> Option<String> {
     use crate::git::bare_commit::PKS_BRANCH;
     let repo = git2::Repository::open(repo_root).ok()?;

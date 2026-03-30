@@ -73,6 +73,9 @@ pub fn flush_session_with_dir(session_id: &str, cwd: &Path, sessions_dir: &Path)
     let Some(entries) = load_entries(&jsonl_path) else { return 0 };
     flush_entries(session_id, cwd, entries);
     let _ = std::fs::remove_file(&jsonl_path);
+    if let Err(e) = crate::hooks::commit_event_log::flush_pending_commits(cwd) {
+        eprintln!("pks flush-session: flush pending commits failed: {e}");
+    }
     try_ipc_refresh();
     0
 }

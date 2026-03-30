@@ -595,9 +595,9 @@ const MILESTONES = [
     id:'M8', name:'Shadow Journal Passivo v1', phase:'Fase B+', phaseColor:'#22c55e', phaseBg:'rgba(34,197,94,0.1)',
     done:3, total:3, priority:'ALTA', status:'CONCLUÍDO',
     color:'#22c55e', color2:'#16a34a', bgColor:'rgba(34,197,94,0.1)',
-    effort:'~2d', desc:'Hook post-commit básico, journal entries em Markdown, FSWatcher para git_journal_date.',
+    effort:'~2d', desc:'Hook post-commit (append-then-flush): appenda JSONL em .git/pks_pending_commits.jsonl (O_APPEND, &lt;5ms); flush-session comita em batch no pks-knowledge. Journal entries em Markdown, FSWatcher para git_journal_date.',
     tasks:[
-      {id:'T8.1',name:'post-commit hook básico + skips pks-knowledge branch',done:true},
+      {id:'T8.1',name:'post-commit hook: append JSONL atômico (O_APPEND, &lt;5ms) + skips pks-knowledge branch',done:true},
       {id:'T8.2',name:'Journal entries Markdown (git_journal_append)',done:true},
       {id:'T8.3',name:'git_journal_date: timestamps UTC + HHMM',done:true},
     ]

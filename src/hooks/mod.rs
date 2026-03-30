@@ -1,3 +1,4 @@
+pub mod commit_event_log;
 pub mod hook_payload;
 pub mod journal_entry;
 pub mod shadow_journal;

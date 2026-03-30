@@ -53,6 +53,7 @@ pub fn run_doctor(repo_root: &Path) -> DoctorReport {
             check_git_exclude(repo_root),
             check_post_commit_hook(repo_root),
             check_pks_knowledge_branch(repo_root),
+            check_pending_commits(repo_root),
         ],
     }
 }
@@ -103,6 +104,20 @@ fn check_pks_knowledge_branch(repo_root: &Path) -> DoctorCheck {
         status: CheckStatus::Warn(format!("branch '{PKS_BRANCH}' not found — run 'pks init'")),
         repaired: false,
     }
+}
+
+fn check_pending_commits(repo_root: &Path) -> DoctorCheck {
+    let stale = repo_root.join(".git/pks_pending_commits.processing.jsonl");
+    if stale.exists() {
+        return DoctorCheck {
+            name: "commit-event-log:no-stale-processing-file",
+            status: CheckStatus::Warn(
+                "stale .git/pks_pending_commits.processing.jsonl found — possible crash during processing".to_string(),
+            ),
+            repaired: false,
+        };
+    }
+    DoctorCheck { name: "commit-event-log:no-stale-processing-file", status: CheckStatus::Ok, repaired: false }
 }
 
 #[cfg(test)]

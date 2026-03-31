@@ -1,5 +1,8 @@
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
+
+use crate::circuit_breaker::CircuitBreaker;
 
 use crate::git::RepoIdentity;
 use crate::indexer::pipeline::IndexingPipeline;
@@ -127,9 +130,24 @@ pub async fn index_vaults_on_boot(state: Arc<Mutex<PrevalentState>>) {
     let watcher = RepoWatcher::new(vaults_dir, tx);
     let repos = watcher.scan_existing_repos();
     let mut pipeline = IndexingPipeline::new_from_env();
+    let mut circuit_breaker = CircuitBreaker::default();
     for repo_path in &repos {
-        index_repo(repo_path, &mut pipeline, &state).await;
-        index_vault_worktree(repo_path, &mut pipeline, &state).await;
+        if !circuit_breaker.is_available(repo_path) {
+            tracing::info!(repo = %repo_path.display(), "repo offline (circuit breaker) — skipping");
+            continue;
+        }
+        let result = tokio::time::timeout(
+            Duration::from_millis(500),
+            async {
+                index_repo(repo_path, &mut pipeline, &state).await;
+                index_vault_worktree(repo_path, &mut pipeline, &state).await;
+            },
+        )
+        .await;
+        if result.is_err() {
+            tracing::warn!(repo = %repo_path.display(), "repo offline — skipping (I/O timeout)");
+            circuit_breaker.mark_offline(repo_path);
+        }
     }
     let mut guard = state.lock().unwrap();
     let _ = guard.search_index.commit();
@@ -154,6 +172,15 @@ mod tests {
             results.iter().all(|p| !p.starts_with(&prometheus_dir)),
             "prometheus/ files must not appear in walker results"
         );
+    }
+
+    #[test]
+    fn circuit_breaker_mark_then_skip() {
+        let mut cb = CircuitBreaker::new(std::time::Duration::from_secs(60));
+        let repo = std::path::PathBuf::from("/tmp/boot_test_repo");
+        assert!(cb.is_available(&repo), "initially available");
+        cb.mark_offline(&repo);
+        assert!(!cb.is_available(&repo), "unavailable after mark_offline");
     }
 
     #[test]

@@ -96,24 +96,37 @@ pub fn add_to_git_exclude(repo_root: &Path) -> std::io::Result<()> {
     fs::write(exclude_path, content)
 }
 
+const PKS_HOOK_BLOCK: &str = r#"
+# --- PKS post-commit hook — hard timeout 100ms to never block git commit ---
+SHA=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+
+if command -v gtimeout >/dev/null 2>&1; then
+    gtimeout 0.1s pks hook-post-commit . "$SHA" "$BRANCH" 2>/dev/null &
+elif command -v timeout >/dev/null 2>&1; then
+    timeout 0.1s pks hook-post-commit . "$SHA" "$BRANCH" 2>/dev/null &
+else
+    pks hook-post-commit . "$SHA" "$BRANCH" 2>/dev/null &
+fi
+"#;
+
 pub fn install_post_commit_hook(repo_root: &Path) -> std::io::Result<()> {
     let hooks_dir = repo_root.join(".git/hooks");
     fs::create_dir_all(&hooks_dir)?;
     let hook_path = hooks_dir.join("post-commit");
-
-    let hook_line = "pks hook-post-commit \"$PWD\" \"$(git rev-parse HEAD)\" \"$(git rev-parse --abbrev-ref HEAD)\" &\n";
 
     let existing = fs::read_to_string(&hook_path).unwrap_or_default();
     if existing.contains("pks hook-post-commit") {
         return Ok(());
     }
 
-    let mut updated = existing;
-    if updated.is_empty() {
-        updated.push_str("#!/bin/sh\n");
-    }
-    updated.push_str(hook_line);
-    fs::write(&hook_path, updated)?;
+    let mut content = if existing.is_empty() {
+        "#!/bin/sh\n".to_string()
+    } else {
+        existing
+    };
+    content.push_str(PKS_HOOK_BLOCK);
+    fs::write(&hook_path, content)?;
 
     #[cfg(unix)]
     {
@@ -177,6 +190,29 @@ mod tests {
 
         let content = fs::read_to_string(repo.join(".git/info/exclude")).unwrap();
         assert_eq!(content.matches("prometheus/").count(), 1);
+    }
+
+    #[test]
+    fn install_post_commit_hook_contains_timeout() {
+        let dir = TempDir::new().unwrap();
+        let repo = make_git_repo(&dir);
+        fs::create_dir_all(repo.join(".git/hooks")).unwrap();
+        install_post_commit_hook(&repo).unwrap();
+        let content = fs::read_to_string(repo.join(".git/hooks/post-commit")).unwrap();
+        assert!(content.contains("gtimeout") || content.contains("timeout"));
+        assert!(content.contains("pks hook-post-commit"));
+    }
+
+    #[test]
+    fn install_post_commit_hook_is_idempotent() {
+        let dir = TempDir::new().unwrap();
+        let repo = make_git_repo(&dir);
+        fs::create_dir_all(repo.join(".git/hooks")).unwrap();
+        install_post_commit_hook(&repo).unwrap();
+        let first = fs::read_to_string(repo.join(".git/hooks/post-commit")).unwrap();
+        install_post_commit_hook(&repo).unwrap();
+        let second = fs::read_to_string(repo.join(".git/hooks/post-commit")).unwrap();
+        assert_eq!(first, second, "hook must be identical after second install");
     }
 
     #[test]

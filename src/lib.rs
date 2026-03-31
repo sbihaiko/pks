@@ -28,6 +28,7 @@ pub mod cli;
 pub mod git_lfs_sync;
 pub mod storage_policy;
 pub mod tracker;
+pub mod circuit_breaker;
 pub mod ipc;
 pub mod commands;
 pub mod daemon;

@@ -49,12 +49,40 @@ impl DoctorReport {
 pub fn run_doctor(repo_root: &Path) -> DoctorReport {
     DoctorReport {
         checks: vec![
+            check_io_latency(repo_root),
+            check_cloud_filesystem(repo_root),
             check_worktree(repo_root),
             check_git_exclude(repo_root),
             check_post_commit_hook(repo_root),
             check_pks_knowledge_branch(repo_root),
             check_pending_commits(repo_root),
         ],
+    }
+}
+
+fn check_io_latency(repo_root: &Path) -> DoctorCheck {
+    let (tx, rx) = std::sync::mpsc::channel();
+    let target = repo_root.join(".git");
+    std::thread::spawn(move || { let s = std::time::Instant::now(); let _ = std::fs::metadata(&target); let _ = tx.send(s.elapsed()); });
+    match rx.recv_timeout(std::time::Duration::from_millis(500)) {
+        Ok(e) if e > std::time::Duration::from_millis(100) =>
+            DoctorCheck { name: "io:latency", status: CheckStatus::Warn(format!("slow I/O ({}ms)", e.as_millis())), repaired: false },
+        Ok(_) => DoctorCheck { name: "io:latency", status: CheckStatus::Ok, repaired: false },
+        Err(_) => DoctorCheck { name: "io:latency", status: CheckStatus::Error("disk unreachable — kernel I/O timeout".into()), repaired: false },
+    }
+}
+
+fn check_cloud_filesystem(repo_root: &Path) -> DoctorCheck {
+    let out = std::process::Command::new("stat").args(["-f", "%T", &repo_root.to_string_lossy()]).output();
+    match out {
+        Ok(o) if o.status.success() => {
+            let fs = String::from_utf8_lossy(&o.stdout).trim().to_lowercase();
+            if ["fuse", "smbfs", "nfs", "cifs", "osxfuse", "macfuse"].iter().any(|t| fs.contains(t)) {
+                return DoctorCheck { name: "fs:cloud", status: CheckStatus::Warn(format!("cloud filesystem detected: {fs}")), repaired: false };
+            }
+            DoctorCheck { name: "fs:cloud", status: CheckStatus::Ok, repaired: false }
+        }
+        _ => DoctorCheck { name: "fs:cloud", status: CheckStatus::Ok, repaired: false },
     }
 }
 
@@ -130,6 +158,23 @@ mod tests {
         std::fs::create_dir_all(repo.join(".git/info")).unwrap();
         std::fs::create_dir_all(repo.join(".git/hooks")).unwrap();
         repo
+    }
+
+    #[test]
+    fn check_io_latency_returns_ok_on_local_disk() {
+        let dir = TempDir::new().unwrap();
+        let repo = make_git_dir(&dir);
+        let check = check_io_latency(&repo);
+        assert_eq!(check.name, "io:latency");
+        assert_eq!(check.status, CheckStatus::Ok);
+    }
+
+    #[test]
+    fn check_cloud_filesystem_ok_on_local() {
+        let dir = TempDir::new().unwrap();
+        let check = check_cloud_filesystem(dir.path());
+        assert_eq!(check.name, "fs:cloud");
+        assert_eq!(check.status, CheckStatus::Ok);
     }
 
     #[test]

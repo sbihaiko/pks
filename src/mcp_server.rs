@@ -211,7 +211,8 @@ impl McpServer {
         use rmcp::transport::streamable_http_server::{StreamableHttpServerConfig, StreamableHttpService};
 
         let ct = self.cancellation_token.clone();
-        let config = StreamableHttpServerConfig { cancellation_token: ct.child_token(), ..Default::default() };
+        let mut config = StreamableHttpServerConfig::default();
+        config.cancellation_token = ct.child_token();
         let health_state = Arc::clone(&state);
         let service: StreamableHttpService<PksHandler, LocalSessionManager> = StreamableHttpService::new(
             move || Ok(PksHandler::new(Arc::clone(&state))),

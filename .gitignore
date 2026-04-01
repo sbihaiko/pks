@@ -39,3 +39,4 @@ ci-dashboard/
 .claude/squad-*-run-context.md
 
 .mcp.json
+.claude/squad-*-results/

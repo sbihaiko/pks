@@ -139,13 +139,27 @@ fn commit_grouped_lines(
     by_date: &std::collections::HashMap<String, String>,
 ) -> Result<(), String> {
     use crate::git_journal_append::read_log_from_branch_pub;
+    let mut file_contents: Vec<(String, Vec<u8>)> = Vec::new();
     for (date, lines) in by_date {
         let filename = branch_log_filename(vault_root, date);
         let existing = read_log_from_branch_pub(repo_root, &filename).unwrap_or_default();
         let new_content = format!("{existing}{lines}");
-        bc.write_file(&filename, new_content.as_bytes(), &format!("pks(journal): batch append commits to {date}"))
-            .map_err(|e| format!("write_file: {e}"))?;
+        file_contents.push((filename, new_content.into_bytes()));
     }
+    let files: Vec<(&str, &[u8])> = file_contents
+        .iter()
+        .map(|(name, content)| (name.as_str(), content.as_slice()))
+        .collect();
+    let dates: Vec<&String> = by_date.keys().collect();
+    let msg = if dates.len() == 1 {
+        format!("pks(journal): batch append commits to {}", dates[0])
+    } else {
+        let mut sorted = dates.clone();
+        sorted.sort();
+        format!("pks(journal): batch append commits to {}..{}", sorted[0], sorted[sorted.len() - 1])
+    };
+    bc.write_files_batch(&files, &msg)
+        .map_err(|e| format!("write_files_batch: {e}"))?;
     Ok(())
 }
 

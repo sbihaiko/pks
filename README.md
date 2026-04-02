@@ -193,10 +193,13 @@ Expected output:
 ```
 ✓ Git root detected: /path/to/your/repo
 ✓ Config generated: /path/to/your/repo/.pks/config.toml
-✓ Branch created: pks-knowledge
+✓ Branch created: pks-knowledge (com estrutura Obsidian)
+✓ Worktree: prometheus/ → pks-knowledge
 ✓ Daemon registered: your-project (RepoId: /path/to/.git)
 PKS active. Search: pks search "<your query>"
 ```
+
+This creates a `prometheus/` directory as a git worktree linked to the `pks-knowledge` branch. It comes pre-configured with an Obsidian vault structure (`features/`, `decisions/`, `journals/`) and `.obsidian/` settings — open it directly in [Obsidian](https://obsidian.md) to browse your project's knowledge base alongside the code.
 
 To enable semantic search (optional):
 
@@ -312,6 +315,14 @@ pks init
 ```
 
 If output shows `PKS already initialized`, run `pks init --force` instead.
+
+Verify that `prometheus/` directory was created with Obsidian vault structure:
+
+```bash
+ls prometheus/
+```
+
+Expected: `features/  decisions/  journals/` directories and `.obsidian/` config.
 
 **Step 6 — Verify**
 

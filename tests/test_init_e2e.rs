@@ -51,6 +51,29 @@ fn pks_init_creates_all_expected_artifacts() {
 }
 
 #[test]
+fn pks_init_seeds_obsidian_skeleton_in_pks_knowledge() {
+    let tmp = tempfile::tempdir().unwrap();
+    init_repo_with_commit(tmp.path());
+    InitCommand::new(tmp.path().to_path_buf(), false).run().unwrap();
+
+    let repo = git2::Repository::open(tmp.path()).unwrap();
+    let branch = repo.find_branch(PKS_BRANCH, git2::BranchType::Local).unwrap();
+    let commit = branch.get().peel_to_commit().unwrap();
+    let tree = commit.tree().unwrap();
+
+    // Verify scaffold directories exist via .gitkeep
+    assert!(tree.get_name("features").is_some(), "features/ must exist");
+    assert!(tree.get_name("decisions").is_some(), "decisions/ must exist");
+    assert!(tree.get_name("journals").is_some(), "journals/ must exist");
+
+    // Verify .obsidian config
+    let obsidian = tree.get_name(".obsidian").expect(".obsidian/ must exist");
+    let obsidian_tree = repo.find_tree(obsidian.id()).unwrap();
+    assert!(obsidian_tree.get_name("app.json").is_some(), "app.json must exist");
+    assert!(obsidian_tree.get_name("workspace.json").is_some(), "workspace.json must exist");
+}
+
+#[test]
 fn pks_init_second_run_without_force_returns_error() {
     let tmp = tempfile::tempdir().unwrap();
     init_repo_with_commit(tmp.path());

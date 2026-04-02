@@ -60,12 +60,17 @@ impl InitCommand {
 
         let bc = BareCommit::new(&git_root);
         bc.ensure_branch()?;
-        println!("✓ Branch criada: pks-knowledge");
+        seed_vault_skeleton(&bc)?;
+        println!("✓ Branch criada: pks-knowledge (com estrutura Obsidian)");
+
+        setup_worktree(&git_root);
 
         let repo_id = git_common_dir.to_string_lossy().into_owned();
         register_with_daemon(&repo_id);
         println!("✓ Daemon registrado: {project_name} (RepoId: {repo_id})");
 
+        crate::vault_init::install_post_commit_hook(&git_root)
+            .unwrap_or_else(|e| eprintln!("⚠ Aviso: hook install failed: {e}"));
         if let Err(e) = add_pks_to_exclude(&git_root) {
             eprintln!("⚠ Aviso: could not update .git/info/exclude: {e}");
         }
@@ -119,6 +124,36 @@ pub(crate) fn generate_config(config_path: &Path, name: &str, git_common_dir: &P
     let mut file = OpenOptions::new().write(true).create(true).truncate(true).open(config_path)?;
     file.write_all(content.as_bytes())?;
     Ok(())
+}
+
+fn seed_vault_skeleton(bc: &BareCommit) -> Result<(), InitError> {
+    use crate::vault_init::{OBSIDIAN_APP_JSON, OBSIDIAN_WORKSPACE_JSON};
+    let files: Vec<(&str, &[u8])> = vec![
+        ("features/.gitkeep", b""),
+        ("decisions/.gitkeep", b""),
+        ("journals/.gitkeep", b""),
+        (".obsidian/app.json", OBSIDIAN_APP_JSON.as_bytes()),
+        (".obsidian/workspace.json", OBSIDIAN_WORKSPACE_JSON.as_bytes()),
+    ];
+    bc.write_files_batch(&files, "chore(pks): seed Obsidian vault structure")?;
+    Ok(())
+}
+
+fn setup_worktree(git_root: &Path) {
+    use crate::git_branch::{create_pks_branch_and_worktree, worktree_exists};
+    if let Err(e) = create_pks_branch_and_worktree(git_root) {
+        eprintln!("⚠ Aviso: worktree setup: {e}");
+    } else {
+        println!("✓ Worktree: prometheus/ → pks-knowledge");
+    }
+    // Ensure worktree files are checked out (handles pre-existing empty worktrees)
+    if worktree_exists(git_root) {
+        let prometheus = git_root.join("prometheus");
+        let _ = Command::new("git")
+            .current_dir(&prometheus)
+            .args(["checkout", "pks-knowledge", "--", "."])
+            .output();
+    }
 }
 
 fn register_with_daemon(repo_id: &str) {

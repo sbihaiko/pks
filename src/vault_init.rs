@@ -7,14 +7,14 @@ const PROMETHEUS_DIRS: &[&str] = &[
     "prometheus/journals",
 ];
 
-const OBSIDIAN_APP_JSON: &str = r#"{
+pub const OBSIDIAN_APP_JSON: &str = r#"{
   "legacyEditor": false,
   "livePreview": true,
   "defaultViewMode": "source"
 }
 "#;
 
-const OBSIDIAN_WORKSPACE_JSON: &str = r#"{
+pub const OBSIDIAN_WORKSPACE_JSON: &str = r#"{
   "main": { "id": "main", "type": "split", "direction": "vertical", "items": [] },
   "left": { "id": "left", "type": "leaves", "value": [] },
   "right": { "id": "right", "type": "leaves", "value": [] }

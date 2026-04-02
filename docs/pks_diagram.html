@@ -318,7 +318,7 @@ main{position:relative;z-index:1;padding:40px 32px 80px}
   </nav>
   <div class="header-badge">
     <div class="pulse"></div>
-    <span>2026-03-20 · M16</span>
+    <span>2026-04-01 · M17</span>
   </div>
 </header>
 
@@ -434,16 +434,16 @@ main{position:relative;z-index:1;padding:40px 32px 80px}
           </linearGradient>
         </defs>
       </svg>
-      <div class="ci-ring-center"><div class="ci-pct" id="ciPct">0%</div><div class="ci-pct-lbl">pass rate</div></div>
+      <div class="ci-ring-center"><div class="ci-pct" id="ciPct">100%</div><div class="ci-pct-lbl">pass rate</div></div>
     </div>
     <div class="ci-hero-right">
       <div class="ci-hero-title">Test Suite<br>PKS · Rust</div>
-      <div class="ci-hero-sub">branch main · cargo test · última execução 16/03</div>
+      <div class="ci-hero-sub">branch main · cargo test · última execução 01/04</div>
       <div class="ci-stat-row">
-        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--text-1)">177</div><div class="ci-stat-lbl">total</div></div>
-        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--green)">173</div><div class="ci-stat-lbl">passed</div></div>
-        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--red)">3</div><div class="ci-stat-lbl">failed</div></div>
-        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--yellow)">1</div><div class="ci-stat-lbl">skipped</div></div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--text-1)">178</div><div class="ci-stat-lbl">total</div></div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--green)">178</div><div class="ci-stat-lbl">passed</div></div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--green)">0</div><div class="ci-stat-lbl">failed</div></div>
+        <div class="ci-stat"><div class="ci-stat-val" style="color:var(--yellow)">0</div><div class="ci-stat-lbl">skipped</div></div>
       </div>
     </div>
   </div>
@@ -723,6 +723,17 @@ const MILESTONES = [
       {id:'T16.5',name:'Teste: diretórios normais (docs/) continuam indexados',done:true},
     ]
   },
+  {
+    id:'M17', name:'Verificação Final', phase:'Fase G', phaseColor:'#22c55e', phaseBg:'rgba(34,197,94,0.1)',
+    done:3, total:3, priority:'FINAL', status:'CONCLUÍDO',
+    color:'#22c55e', color2:'#16a34a', bgColor:'rgba(34,197,94,0.1)',
+    effort:'~1h', desc:'Deploy em produção, verificação multi-repo search E2E e consolidação da documentação.',
+    tasks:[
+      {id:'T17.1',name:'Deploy em ambiente real (macOS Antigravity)',done:true},
+      {id:'T17.2',name:'Verificação E2E multi-repo search (IPC proxy)',done:true},
+      {id:'T17.3',name:'Consolidação de PRD e Diagramas',done:true},
+    ]
+  },
 ];
 
 /* ── FLOW DATA ── */
@@ -849,8 +860,8 @@ const testModules=[
   {id:'VAULT',name:'Vault Init',color:'#00e5b5',colorBg:'rgba(0,229,181,0.1)',tests:[
     {n:'vault_init::tests::init_vault_fails_on_non_git_dir',passed:true},{n:'vault_init::tests::add_to_git_exclude_is_idempotent',passed:true},{n:'vault_init::tests::init_vault_is_idempotent',passed:true},{n:'vault_init::tests::init_vault_creates_all_prometheus_dirs',passed:true},{n:'vault_init::tests::init_vault_zettelkasten_structure_also_indexes',passed:true},
   ]},
-  {id:'E2E',name:'E2E — Journal FSWatcher',color:'#ef4444',colorBg:'rgba(239,68,68,0.1)',tests:[
-    {n:'journal_e2e_skips_pks_knowledge_branch',passed:true},{n:'journal_e2e_skips_non_conventional_subject',passed:true},{n:'journal_fswatcher_smoke_log_file_is_valid_markdown',passed:false},{n:'journal_e2e_creates_log_file',passed:false},{n:'journal_e2e_two_commits_append_in_order',passed:false},
+  {id:'E2E',name:'E2E — Journal FSWatcher',color:'#22c55e',colorBg:'rgba(34,197,94,0.1)',tests:[
+    {n:'journal_e2e_skips_pks_knowledge_branch',passed:true},{n:'journal_e2e_skips_non_conventional_subject',passed:true},{n:'journal_fswatcher_smoke_log_file_is_valid_markdown',passed:true},{n:'journal_e2e_creates_log_file',passed:true},{n:'journal_e2e_two_commits_append_in_order',passed:true},
   ]},
 ];
 
@@ -881,6 +892,7 @@ function renderOverview() {
     {key:'Fase D', label:'FASE D — Instalador',          color:'#7a94b4', bg:'rgba(122,148,180,0.1)'},
     {key:'V2',     label:'V2 — Production Hardening',   color:'#a855f7', bg:'rgba(168,85,247,0.1)'},
     {key:'V3',     label:'V3 — Hooks & Isolation',     color:'#ec4899', bg:'rgba(236,72,153,0.1)'},
+    {key:'Fase G', label:'FASE G — Verificação Final',  color:'#22c55e', bg:'rgba(34,197,94,0.1)'},
   ];
 
   const grid = document.getElementById('gaugesGrid');
@@ -1036,7 +1048,7 @@ function renderGains() {
 
 /* ── CI ── */
 function renderCI() {
-  const passRate=97.7, C=2*Math.PI*64;
+  const passRate=100, C=2*Math.PI*64;
   setTimeout(()=>{
     document.getElementById('ciRingFill').style.strokeDashoffset=C*(1-passRate/100);
     animCount(document.getElementById('ciPct'),0,passRate,1200,v=>v.toFixed(1)+'%');
@@ -1052,7 +1064,7 @@ function renderCI() {
     <polygon points="${pad},${H-pad} ${pts.join(' ')} ${W-pad},${H-pad}" fill="url(#spGrad)"/>
     <polyline points="${pts.join(' ')}" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linejoin="round"/>
     ${history.map((h,i)=>{const x=pad+i*(W-2*pad)/(history.length-1);const y=H-pad-(h.r/100)*(H-2*pad);return`<circle cx="${x}" cy="${y}" r="3" fill="${h.r>0?'var(--mint)':'var(--red)'}"/>`;}).join('')}
-    <text x="${pad}" y="${H-1}" font-family="'JetBrains Mono',monospace" font-size="9" fill="var(--text-3)">7 runs · 2026-03-16</text>`;
+    <text x="${pad}" y="${H-1}" font-family="'JetBrains Mono',monospace" font-size="9" fill="var(--text-3)">8 runs · 2026-04-01</text>`;
 
   // test modules
   const wrap=document.getElementById('testModules'); wrap.innerHTML='';

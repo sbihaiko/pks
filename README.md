@@ -8,10 +8,20 @@ Persistent memory and hybrid search for AI agents. PKS indexes your Git reposito
 
 PKS runs as a local MCP server (stdio). Once configured, your AI agent can search across all your projects using a single tool call — with results in milliseconds.
 
+### Key Capabilities & MCP Tools
+
+Your AI agent gains a "long-term memory" of all your projects. PKS exposes several tools via MCP:
+
+*   **`search_knowledge_vault`** — Hybrid search (BM25 + optional Semantic) across all indexed repositories in milliseconds.
+*   **`pks_add_decision`** — Record architecture decisions (ADRs) directly into the knowledge vault branch.
+*   **`pks_add_feature`** — Capture feature requirements and specs for future context retrieval.
+*   **`list_knowledge_vaults`** — Discover which repos are currently being managed by PKS.
+*   **`pks_execute`** — Execute terminal commands in the context of the indexed projects.
+
 **What it does:**
 
 - **Hybrid search** — BM25 full-text (always on) + optional vector search via Ollama
-- **Session journal** — captures tool events (PostToolUse/Stop hooks) and git commits (via append-then-flush: `hook-post-commit` appends to `.git/pks_pending_commits.jsonl` atomically; `flush-session` batches all pending entries into daily markdown logs on the `pks-knowledge` branch)
+- **Session journal** — captures tool events (PostToolUse/Stop hooks) and git commits (via `hook-post-commit` + `flush-session`) into daily markdown logs on the `pks-knowledge` branch.
 - **Multi-project** — indexes all repos under a root directory simultaneously
 - **Offline-capable** — no cloud dependency; everything runs locally
 
@@ -27,11 +37,15 @@ Your IDE / AI Agent
        ├── search_knowledge_vault("auth architecture")
        │         └── returns ranked markdown chunks from all indexed repos
        │
+       ├── pks_add_decision("We are using Rust for the parser")
+       │         └── saves ADR to pks-knowledge branch
+       │
        └── pks_execute("git log --oneline -10")
                  └── runs commands in vault context
 ```
 
 PKS indexes all `.md` files it finds under `PKS_VAULTS_DIR`. Each Git repo it finds gets a `pks-knowledge` branch where indexed snapshots and git journal logs are stored — isolated from your main branch history.
+
 
 ---
 
